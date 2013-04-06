@@ -1,0 +1,77 @@
+<?php
+
+namespace Face\Core;
+
+
+class EntityFace implements \IteratorAggregate, FaceInterface{
+    private $elements;
+    private $sqlTable;
+    private $primaries;
+    
+    /**
+     * 
+     * @param array $params array to construct the face is described here :  TODO array description
+     */
+    function __construct($params) {
+        $this->elements=array();
+        $this->primaries=array();
+        
+        if(isset($params["sqlTable"]))
+            $this->sqlTable=$params["sqlTable"];
+        
+        if(isset($params['elements'])){
+            foreach($params['elements'] as $k=>$elmParams){
+                $element=new EntityFaceElement($k,$elmParams);
+                $this->addElement($element);
+            }
+        }
+    }
+    
+    public function addElement(EntityFaceElement $element){
+        $this->elements[$element->getName()]=$element;
+        
+        if($element->isPrimary())
+            $this->primaries[]=$element->getName();
+    }
+    
+    public function getElement($name){
+
+        if(!isset($this->elements[$name]))
+            throw new \Exception("Face has no element called '".$name."'");
+        
+        return $this->elements[$name];
+    }
+    
+    public function getElements() {
+        return $this->elements;
+    }
+
+    public function setElements($elements) {
+        $this->elements = $elements;
+    }
+
+    public function getSqlTable() {
+        return $this->sqlTable;
+    }
+
+    public function setSqlTable($sqlTable) {
+        $this->sqlTable = $sqlTable;
+    }
+
+    public function getPrimaries() {
+        return $this->primaries;
+    }
+
+    public function setPrimaries($primaries) {
+        $this->primaries = $primaries;
+    }
+
+    
+
+    public function getIterator() {
+        return new \ArrayIterator($this->elements);
+    }
+
+}
+
+?>

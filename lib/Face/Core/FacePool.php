@@ -1,0 +1,31 @@
+<?php
+
+namespace Face\Core;
+
+use Peek\OOPUtils;
+
+/**
+ * This is an internal core class, it should be used only internally by the library
+ */
+abstract class FacePool implements \IteratorAggregate{
+    
+
+    private static $faces=array();
+    
+    
+
+    
+    public static function getFace($className){
+        if(!isset(self::$faces[$className])){   // if the class is not in the pool then register it
+            
+            if(OOPUtils::UsesTrait($className, "Face\Traits\EntityFaceTrait"))    // using the trait is needed. If no let's throw an exception.
+                self::$faces[$className]= FaceFactory::buildFace(call_user_func($className."::__getEntityFace"));
+            else
+                throw new Exception("The class ".$className." doesn't use the trait Face\Traits\EntityFaceTrait");
+        }
+
+        return self::$faces[$className];
+    }
+}
+
+?>
