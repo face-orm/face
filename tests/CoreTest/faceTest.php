@@ -4,19 +4,21 @@
 class LineTest extends PHPUnit_Framework_TestCase
 {
 
-    public function testTrait()
+    public function testGetter()
     {
-     
-        $a=new A();
         $b=new B();
+        $b->setName("B string");
         
-        $a->setA("this is a of A");
+        $a=new A();
+        
+        $a->setA("A string");
         $a->setB($b);
         
-        $b->setA("This is a of B");
+        $this->assertEquals("A string", $a->faceGetter("a"));
+        $this->assertEquals("B string", $b->faceGetter("name"));
+        $this->assertEquals($b, $a->faceGetter("b"));
+        $this->assertEquals("B string", $a->faceGetter("b.name"));
         
-        $aStr=$a->faceGetter("b.a");
-        var_dump($aStr);
     }
  
 
@@ -69,15 +71,15 @@ class A{
 class B{
     use \Face\Traits\EntityFaceTrait;
     
-    protected $a;
+    protected $name;
 
     
     public static function __getEntityFace() {
         return [
             
             "elements"=>[
-                "a"=>[
-                    "propertyName"=>"a",
+                "name"=>[
+                    "propertyName"=>"name",
                     "type"=>"value",
                 ],
             ]
@@ -85,13 +87,15 @@ class B{
         ];
     }
     
-    public function getA() {
-        return $this->a;
+    public function getName() {
+        return $this->name;
     }
 
-    public function setA($a) {
-        $this->a = $a;
+    public function setName($name) {
+        $this->name = $name;
     }
+
+
 
 
     

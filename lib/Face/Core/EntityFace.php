@@ -34,6 +34,12 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
             $this->primaries[]=$element->getName();
     }
     
+    /**
+     * get the element in this element with the given name
+     * @param string $name name of the element to get
+     * @return EntityFaceElement the EntityFaceElement with the given name
+     * @throws \Exception
+     */
     public function getElement($name){
 
         if(!isset($this->elements[$name]))
