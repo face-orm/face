@@ -65,10 +65,10 @@ trait EntityFaceTrait {
      * @param \Face\Core\EntityFaceElement $element the element to get
      * @return mixed
      */
-    public function faceSetter($needle,$value){
+    public function faceSetter($path,$value){
         
         // look the type of $needle then dispatch
-        if( is_string($needle) ){
+        if( is_string($path) ){
             /*
              * if it is a string the string can be the name of the element or a chain of elements separated by a dot
              * e.g 
@@ -77,29 +77,25 @@ trait EntityFaceTrait {
              */
             // TODO catch "this.elementName" case for dont instanciate a Navigator not needed for performances
             
-            if(false!==strpos($needle, ".")){// "elementName1.elementName2.elementName3" case
-                $n=new Navigator($needle);
-                $lastElementString=$n->pop();
-                $lastElement=$this->getEntityFace()->getElement($lastElementString); 
-                $entityToUseSetter=$n->chainGet($this); 
+            if(false!==strpos($path, ".")){// "elementName1.elementName2.elementName3" case
+                (new Navigator($path))->chainSet($this, $value);
+                return $value;
             }else{
-                $lastElement=$this->getEntityFace()->getElement($needle);
-                $entityToUseSetter=$this;
+                $element=$this->getEntityFace()->getElement($path);
             }
             
-        }else if(is_a($needle, "\Face\Core\EntityFaceElement")){
+        }else if(is_a($path, "\Face\Core\EntityFaceElement")){
             /*  if is already a face element, dont need anymore work */
-            $lastElement=$needle;
-            $entityToUseSetter=$this;
+            $element=$path;
         }else
-            throw new Exception("Variable of type '".gettype($needle)."' is not a valide type for faceSetter");
+            throw new Exception("Variable of type '".gettype($path)."' is not a valide type for faceSetter");
         
         /* @var $lastElement \Face\Core\EntityFaceElement */
         
         // if has a getter, it can be a custom callable anonymous function, or the name of the the method to call on this object
-        if($lastElement->hasSetter()){
+        if($element->hasSetter()){
             
-            $setter = $lastElement->getSetter();
+            $setter = $element->getSetter();
             if(is_string($setter)){ //method of this object
                 return $this->$setter($value);
             }else if(is_callable($setter)){ // custom callable
@@ -111,8 +107,8 @@ trait EntityFaceTrait {
         // else we use the property directly
         }else{
             
-            $property = $lastElement->getPropertyName();
-            $entityToUseSetter->$property=$value;
+            $property = $element->getPropertyName();
+            $this->$property=$value;
             
         }
         // TODO chainSet in Navigator instead than in this trait

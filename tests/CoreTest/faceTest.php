@@ -34,6 +34,8 @@ class LineTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($b, $a->faceGetter("b"));
         $this->assertEquals("my B", $a->faceGetter("b.name"));
         
+        $a->faceSetter("b.name", "new B str");
+        $this->assertEquals("new B str", $a->faceGetter("this.b.name"));
         
     }
  

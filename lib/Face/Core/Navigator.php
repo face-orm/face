@@ -52,6 +52,22 @@ class Navigator{
         
     }
     
+    /**
+     * 
+     * @param mixed $baseEntity an entity which uses @see Face\Trait\EntityFaceTrait 
+     */
+    public function chainSet($baseEntity,$value){
+        
+        $lastElementStr=$this->pop();
+        $this->iterator->rewind();
+
+        $entityToUseSetter=$this->chainGet($baseEntity);
+        $entityToUseSetter->faceSetter($lastElementStr,$value);
+        
+        $this->push($lastElementStr);
+
+    }
+    
     public function pop(){
         $arrayCopy=$this->iterator->getArrayCopy();
         $popedItem=array_pop($arrayCopy);
@@ -59,6 +75,13 @@ class Navigator{
         $this->iterator=new \ArrayIterator($arrayCopy);
         
         return $popedItem;
+    }
+    
+    public function push($pushedValue){
+        $arrayCopy=$this->iterator->getArrayCopy();
+        $arrayCopy[]=$pushedValue;
+        
+        $this->iterator=new \ArrayIterator($arrayCopy);
     }
     
 }
