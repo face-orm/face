@@ -88,36 +88,36 @@ trait EntityFaceTrait {
             }
             
         }else if(is_a($needle, "\Face\Core\EntityFaceElement")){
-            /*  if is already a face element, dont beed anymore work */
-            $element=$needle;
+            /*  if is already a face element, dont need anymore work */
+            $lastElement=$needle;
             $entityToUseSetter=$this;
         }else
             throw new Exception("Variable of type '".gettype($needle)."' is not a valide type for faceSetter");
-
-/*
-        // if has a getter, it can be a custom callable annonymous function, or the name of the the method to call on this object
-        if($element->hasGetter()){
+        
+        /* @var $lastElement \Face\Core\EntityFaceElement */
+        
+        // if has a getter, it can be a custom callable anonymous function, or the name of the the method to call on this object
+        if($lastElement->hasSetter()){
             
-            $getter = $element->getGetter();
-            if(is_string($getter)){ //method of this object
-                return $this->$getter();
-            }else if(is_callable($getter)){ // custom callable
-                return $getter();
+            $setter = $lastElement->getSetter();
+            if(is_string($setter)){ //method of this object
+                return $this->$setter($value);
+            }else if(is_callable($setter)){ // custom callable
+                return $setter($value);
             }else{
-                throw new Exception('Getter is set but it is not usable : '.var_export($getter,true));
+                throw new Exception('Setter is set but it is not usable : '.var_export($setter,true));
             }
         
         // else we use the property directly
         }else{
             
-            $property = $element->getPropertyName();
-            return $this->$property;
+            $property = $lastElement->getPropertyName();
+            $entityToUseSetter->$property=$value;
             
         }
-        
-        // TODO throw exception on no way to get element
- * 
- */
+        // TODO chainSet in Navigator instead than in this trait
+        // TODO throw exception on "no way to get element"
+
     }
     
     

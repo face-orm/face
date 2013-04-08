@@ -65,6 +65,10 @@ class EntityFaceElement{
     public function getSetter() {
         return $this->setter;
     }
+    
+    public function hasSetter(){
+        return null !== $this->setter;
+    }
 
     public function setSetter($setter) {
         $this->setter = $setter;

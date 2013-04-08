@@ -4,6 +4,7 @@
 class LineTest extends PHPUnit_Framework_TestCase
 {
 
+    
     public function testGetter()
     {
         $b=new B();
@@ -18,6 +19,21 @@ class LineTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("B string", $b->faceGetter("name"));
         $this->assertEquals($b, $a->faceGetter("b"));
         $this->assertEquals("B string", $a->faceGetter("b.name"));
+        
+    }
+    
+    public function testSetter()
+    {
+        $b=new B();
+        $b->faceSetter("name","my B");
+        $this->assertEquals("my B", $b->getName());
+        $this->assertEquals("my B", $b->faceGetter("name"));
+        
+        $a=new A();
+        $a->faceSetter("b",$b);
+        $this->assertEquals($b, $a->faceGetter("b"));
+        $this->assertEquals("my B", $a->faceGetter("b.name"));
+        
         
     }
  
