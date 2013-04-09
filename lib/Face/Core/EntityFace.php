@@ -41,7 +41,14 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
      * @throws \Exception
      */
     public function getElement($name){
-
+        
+        if(false!==strpos($name, ".")){
+            
+            $firstChildFace=$this->getElement(strstr($name, ".",true))->getFace();
+            
+            return $firstChildFace->getElement(trim(strstr($name, "."),"."));
+        }
+        
         if(!isset($this->elements[$name]))
             throw new \Exception("Face has no element called '".$name."'");
         
@@ -77,6 +84,8 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     public function getIterator() {
         return new \ArrayIterator($this->elements);
     }
+
+   
 
 }
 

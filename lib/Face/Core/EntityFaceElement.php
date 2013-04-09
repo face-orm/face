@@ -137,7 +137,28 @@ class EntityFaceElement{
     public function setClass($class) {
         $this->class = $class;
     }
-
+    
+    public function isEntity(){
+        return "entity"===$this->getType();
+    }
+    
+    public function isValue(){
+        return "value"===$this->getType();
+    }
+    
+    /**
+     * 
+     * if this is a value type, it means it cant have a face
+     * if this is an entity it will return the face matching with the class
+     * 
+     * @return EntityFace the EntityFace or null
+     */
+    public function getFace(){
+        if($this->isEntity())
+            return call_user_func($this->getClass()."::getEntityFace");
+        else
+            throw new Exception("A value Element has no face. Only entity with an associed class can have a face");
+    }
 
     
    

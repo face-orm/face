@@ -38,6 +38,15 @@ class LineTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("new B str", $a->faceGetter("this.b.name"));
         
     }
+    
+    public function testRecursiveGetFace()
+    {
+        $AFace=A::getEntityFace();
+        $CFace=C::getEntityFace();
+        
+        $this->assertEquals($AFace->getElement("b.c")->getFace(), $CFace);
+        
+    }
  
 
 }
@@ -87,6 +96,43 @@ class A{
 }
 
 class B{
+    use \Face\Traits\EntityFaceTrait;
+    
+    protected $name;
+
+    
+    public static function __getEntityFace() {
+        return [
+            
+            "elements"=>[
+                "name"=>[
+                    "propertyName"=>"name",
+                    "type"=>"value",
+                ],
+                "c"=>[
+                    "type"          =>  "entity",
+                    "class"         =>  "C",
+                ]
+            ]
+            
+        ];
+    }
+    
+    public function getName() {
+        return $this->name;
+    }
+
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+
+
+
+    
+}
+
+class C{
     use \Face\Traits\EntityFaceTrait;
     
     protected $name;
