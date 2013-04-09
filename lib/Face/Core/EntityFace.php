@@ -53,9 +53,16 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
                 $name=substr($name,0,$lastDot);
                 $offset--;
             }
+            
+            
+            
             $lastPath=rtrim($lastPath,".");
             $pieceOfPath[0]=$name;
             $pieceOfPath[1]=$lastPath;
+            
+            if(""===$name){
+                throw new \Face\Exception\RootFaceReachedException("Offset was depthly enough to reach root face then it cant get element which references the root Face");
+            }
         }
         
         
