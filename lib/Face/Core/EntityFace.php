@@ -40,7 +40,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
      * @return EntityFaceElement the EntityFaceElement with the given name
      * @throws \Exception
      */
-    public function getElement($name,$offset=null,&$lastPath=null){
+    public function getElement($name,$offset=null,&$pieceOfPath=null){
         
         if(null!==$offset){
             if($offset<0)
@@ -54,6 +54,8 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
                 $offset--;
             }
             $lastPath=rtrim($lastPath,".");
+            $pieceOfPath[0]=$name;
+            $pieceOfPath[1]=$lastPath;
         }
         
         

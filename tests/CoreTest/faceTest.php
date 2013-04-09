@@ -45,10 +45,13 @@ class LineTest extends PHPUnit_Framework_TestCase
         $BFace=B::getEntityFace();
         $CFace=C::getEntityFace();
         
-        $str;
-        $this->assertEquals($AFace->getElement("b.c",1,$str)->getFace(), $BFace);
+        
         $this->assertEquals($AFace->getElement("b.c")->getFace(), $CFace);
-        $this->assertEquals("c", $str);
+        
+        $pieces;
+        $this->assertEquals($AFace->getElement("b.c",1,$pieces)->getFace(), $BFace);
+        $this->assertEquals("c", $pieces[1]);
+        $this->assertEquals("b", $pieces[0]);
     }
  
 
