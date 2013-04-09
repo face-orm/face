@@ -34,17 +34,21 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
             $this->primaries[]=$element->getName();
     }
     
+
     /**
-     * get the element in this element with the given name
+     *  get the element in this element with the given name
      * @param string $name name of the element to get
+     * @param type $offset
+     * @param type $pieceOfPath
      * @return EntityFaceElement the EntityFaceElement with the given name
      * @throws \Exception
+     * @throws \Face\Exception\RootFaceReachedException
      */
     public function getElement($name,$offset=null,&$pieceOfPath=null){
         
         if(null!==$offset){
             if($offset<0)
-                throw new Exception("\$offset can't be negativ. ".$offset." given");
+                throw new \Exception("\$offset can't be negativ. ".$offset." given");
 
             $lastPath="";
             while($offset>0){
