@@ -42,8 +42,10 @@ class LineTest extends PHPUnit_Framework_TestCase
     public function testRecursiveGetFace()
     {
         $AFace=A::getEntityFace();
+        $BFace=B::getEntityFace();
         $CFace=C::getEntityFace();
         
+        $this->assertEquals($AFace->getElement("b.c",1)->getFace(), $BFace);
         $this->assertEquals($AFace->getElement("b.c")->getFace(), $CFace);
         
     }

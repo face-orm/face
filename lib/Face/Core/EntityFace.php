@@ -43,11 +43,11 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     public function getElement($name,$offset=0){
         
         if($offset<0)
-            throw new Exception("\$offset can't be negativ. ".$offset. "given");
+            throw new Exception("\$offset can't be negativ. ".$offset." given");
 
 
         while($offset>0){
-            $lastDot=  strrchr($name, ".");
+            $lastDot= strrpos($name, ".");
             $name=substr($name,0,$lastDot);
             $offset--;
         }
