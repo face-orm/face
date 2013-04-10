@@ -9,6 +9,8 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     private $primaries;
     private $identifiers;
     
+    private $class;
+    
     /**
      * 
      * @param array $params array to construct the face is described here :  TODO array description
@@ -28,6 +30,15 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         }
     }
     
+    public function getClass() {
+        return $this->class;
+    }
+
+    public function setClass($class) {
+        $this->class = $class;
+    }
+
+        
     public function addElement(EntityFaceElement $element){
         $this->elements[$element->getName()]=$element;
         
