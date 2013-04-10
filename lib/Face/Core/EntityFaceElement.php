@@ -18,7 +18,8 @@ class EntityFaceElement{
     
     protected $type;
     protected $class;
-
+    
+    protected $isIdentifier;
 
     /**
      * 
@@ -33,6 +34,7 @@ class EntityFaceElement{
         
         $this->type         =  ValuesUtils::getIfArrayKey($params, "type");
         $this->class        =  ValuesUtils::getIfArrayKey($params, "class");
+        $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier");
         
         if( isset($params['sql']) ){
             
@@ -146,6 +148,19 @@ class EntityFaceElement{
         return "value"===$this->getType();
     }
     
+    public function getIsIdentifier() {
+        return $this->isIdentifier;
+    }
+    
+    public function isIdentifier() {
+        return true===$this->isIdentifier;
+    }
+
+    public function setIsIdentifier($isIdentifier) {
+        $this->isIdentifier = $isIdentifier;
+    }
+
+        
     /**
      * 
      * if this is a value type, it means it cant have a face

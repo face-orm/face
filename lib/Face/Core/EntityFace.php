@@ -7,6 +7,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     private $elements;
     private $sqlTable;
     private $primaries;
+    private $identifiers;
     
     /**
      * 
@@ -31,7 +32,10 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         $this->elements[$element->getName()]=$element;
         
         if($element->isPrimary())
-            $this->primaries[]=$element->getName();
+            $this->primaries[]=$element;
+        
+        if($element->isIdentifier())
+            $this->identifiers[]=$element;
     }
     
 
@@ -106,7 +110,10 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     public function setPrimaries($primaries) {
         $this->primaries = $primaries;
     }
-
+    
+    public function getIdentifiers(){
+        return $this->identifiers;
+    }
     
 
     public function getIterator() {
