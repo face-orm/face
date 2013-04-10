@@ -7,6 +7,7 @@ class LineTest extends PHPUnit_Framework_TestCase
     
     public function testGetter()
     {
+
         $b=new B();
         $b->setName("B string");
         

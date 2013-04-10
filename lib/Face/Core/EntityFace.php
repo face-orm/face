@@ -2,6 +2,7 @@
 
 namespace Face\Core;
 
+use Peek\StringUtils;
 
 class EntityFace implements \IteratorAggregate, FaceInterface{
     private $elements;
@@ -61,6 +62,9 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
      */
     public function getElement($name,$offset=null,&$pieceOfPath=null){
         
+        if(StringUtils::beginsWith("this.", $name))
+            $name = substr($name, 5);
+        
         if(null!==$offset){
             if($offset<0)
                 throw new \Exception("\$offset can't be negativ. ".$offset." given");
@@ -79,7 +83,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
             $pieceOfPath[0]=$name;
             $pieceOfPath[1]=$lastPath;
             
-            if(""===$name || "this"===$name){
+            if(""===$name){
                 throw new \Face\Exception\RootFaceReachedException("Offset was depthly enough to reach root face then it cant get element which references the root Face");
             }
         }
