@@ -108,7 +108,10 @@ trait EntityFaceTrait {
         }else{
             
             $property = $element->getPropertyName();
-            $this->$property=$value;
+            if(!empty($property))
+                $this->$property=$value;
+            else
+                ; // TODO  exception or something else ?
             
         }
         // TODO chainSet in Navigator instead than in this trait
