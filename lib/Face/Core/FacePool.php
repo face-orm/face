@@ -2,7 +2,7 @@
 
 namespace Face\Core;
 
-use Peek\OOPUtils;
+use Peek\Utils\OOPUtils;
 
 /**
  * This is an internal core class, it should be used only internally by the library
