@@ -2,7 +2,7 @@
 
 namespace Face\Core;
 
-use Peek\ValuesUtils;
+use Peek\Utils\ValuesUtils;
 
 class EntityFaceElement{
     
