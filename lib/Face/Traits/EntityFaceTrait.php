@@ -145,13 +145,18 @@ trait EntityFaceTrait {
      */
     public static function faceDefaultMap($exclude=[],$include=[]){
         $map=array();
-        foreach(self::__getEntityFace() as $elm){
+        $face=self::getEntityFace();
+
+        foreach($face as $elm){
             /* @var $elm EntityFaceElement */
-            if(!in_array($elm->getName(), $exclude))
+            if(!in_array($elm->getName(), $exclude) && $elm->getDefaultMap())
                 $map[$elm->getName()]=$elm->getDefaultMap();
         }
-        array_replace($map,$include);
         
+        foreach($include as $name=>$mapName){
+            $map[$name]=$mapName;
+        }
+
         return $map;
     }
     
