@@ -6,8 +6,6 @@ use Peek\StringUtils;
 
 class EntityFace implements \IteratorAggregate, FaceInterface{
     private $elements;
-    private $sqlTable;
-    private $primaries;
     private $identifiers;
     
     private $class;
@@ -20,9 +18,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         $this->elements=array();
         $this->primaries=array();
         
-        if(isset($params["sqlTable"]))
-            $this->sqlTable=$params["sqlTable"];
-        
+
         if(isset($params['elements'])){
             foreach($params['elements'] as $k=>$elmParams){
                 $element=new EntityFaceElement($k,$elmParams);
@@ -39,12 +35,9 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         $this->class = $class;
     }
 
-        
     public function addElement(EntityFaceElement $element){
         $this->elements[$element->getName()]=$element;
         
-        if($element->isPrimary())
-            $this->primaries[]=$element;
         
         if($element->isIdentifier())
             $this->identifiers[]=$element;
@@ -110,21 +103,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         $this->elements = $elements;
     }
 
-    public function getSqlTable() {
-        return $this->sqlTable;
-    }
 
-    public function setSqlTable($sqlTable) {
-        $this->sqlTable = $sqlTable;
-    }
-
-    public function getPrimaries() {
-        return $this->primaries;
-    }
-
-    public function setPrimaries($primaries) {
-        $this->primaries = $primaries;
-    }
     
     public function getIdentifiers(){
         return $this->identifiers;

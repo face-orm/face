@@ -129,6 +129,32 @@ trait EntityFaceTrait {
         return \Face\Core\FacePool::getFace(__CLASS__);
     }
     
+    public function faceHydrate($data,$map){
+        foreach($map as $elmName=>$dataName){
+            $this->faceSetter($elmName,$data[$dataName]);
+        }
+    }
+    
+    /**
+     * Takes the DefaultMap contained in this face to create a default map.
+     * The given array (the map) maps the element name (the key) to a string (which most of time represnts the sql column name).
+     * Each line of the array has this form : ElementName => Wished name
+     * @param array $exclude Elements to exclude. e.g. : if you want to exlucde elements "id" and "name" just use ["id","name"]
+     * @param array $include Elements to include or replace. e.g : if "name" has not default it wont be included if you dont specify it in the map. Just use ["name"=>"name"]
+     * @return array The map with the form [ElementName => Wished name]
+     */
+    public static function faceDefaultMap($exclude=[],$include=[]){
+        $map=array();
+        foreach($this as $elm){
+            /* @var $elm EntityFaceElement */
+            if(!in_array($elm->getName(), $exclude))
+                $map[$elm->getName()]=$elm->getDefaultMap();
+        }
+        array_replace($map,$include);
+        
+        return $map;
+    }
+    
     abstract public static function __getEntityFace();
     
 }

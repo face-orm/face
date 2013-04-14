@@ -11,11 +11,9 @@ class EntityFaceElement{
     protected $setter;
     protected $getter;
    
-    protected $sqlColumnName;
-    protected $sqlIsPrimary;
-    protected $sqlJoin;
-    protected $sqlBridge;
-    
+    protected $defaultMap;
+
+
     protected $type;
     protected $class;
     
@@ -32,17 +30,12 @@ class EntityFaceElement{
         $this->setter       =  ValuesUtils::getIfArrayKey($params, "setter");
         $this->getter       =  ValuesUtils::getIfArrayKey($params, "getter");
         
+        $this->defaultMap   =  ValuesUtils::getIfArrayKey($params, "defaultMap");
+        
         $this->type         =  ValuesUtils::getIfArrayKey($params, "type");
         $this->class        =  ValuesUtils::getIfArrayKey($params, "class");
         $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier");
         
-        if( isset($params['sql']) ){
-            
-            $this->sqlColumnName=  ValuesUtils::getIfArrayKey($params['sql'], "columnName");
-            $this->sqlIsPrimary =  ValuesUtils::getIfArrayKey($params['sql'], "isPrimary");
-            $this->sqlJoin      =  ValuesUtils::getIfArrayKey($params['sql'], "join");
-            $this->sqlBridge    =  ValuesUtils::getIfArrayKey($params['sql'], "bridge");
-        }
         
        
     }
@@ -88,41 +81,7 @@ class EntityFaceElement{
         $this->getter = $getter;
     }
 
-    public function getSqlColumnName() {
-        return $this->sqlColumnName;
-    }
-
-    public function setSqlColumnName($sqlColumnName) {
-        $this->sqlColumnName = $sqlColumnName;
-    }
-
-    public function getSqlIsPrimary() {
-        return $this->sqlIsPrimary;
-    }
-    
-    public function isPrimary(){
-        return $this->sqlIsPrimary;
-    }
-
-    public function setSqlIsPrimary($sqlIsPrimary) {
-        $this->sqlIsPrimary = $sqlIsPrimary;
-    }
-
-    public function getSqlJoin() {
-        return $this->sqlJoin;
-    }
-
-    public function setSqlJoin($sqlJoin) {
-        $this->sqlJoin = $sqlJoin;
-    }
-
-    public function getSqlBridge() {
-        return $this->sqlBridge;
-    }
-
-    public function setSqlBridge($sqlBridge) {
-        $this->sqlBridge = $sqlBridge;
-    }
+   
 
     public function getType() {
         return $this->type;
@@ -159,7 +118,12 @@ class EntityFaceElement{
     public function setIsIdentifier($isIdentifier) {
         $this->isIdentifier = $isIdentifier;
     }
+    
+    public function getDefaultMap() {
+        return $this->defaultMap;
+    }
 
+    
         
     /**
      * 
