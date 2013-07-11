@@ -7,7 +7,7 @@ class Tree {
     
     public $id;
     public $age;
-    public $lemons;
+    public $lemons=array();
     
     public function getId() {
         return $this->id;
@@ -31,6 +31,7 @@ class Tree {
 
     public function setLemons($lemons) {
         $this->lemons = $lemons;
+        echo "TREE : ".$this->id." SET LEMON : ".$lemons->getId().PHP_EOL;
     }
 
         
@@ -45,6 +46,7 @@ class Tree {
             "elements"=>[
                 "id"=>[
                     "type"=>"value",
+                    "identifier"=>true,
                     "sql"=>[
                         "columnName"=> "id",
                         "isPrimary" => true
@@ -59,6 +61,7 @@ class Tree {
                 "lemons"=>[
                     "type"      => "entity",
                     "class"     => "Lemon",
+                    "relation"  => "hasMany",
                     "relatedBy" => "tree",
                     "sql"   =>[
                         "join"  => ["id"=>"tree_id"]
@@ -123,6 +126,7 @@ class Lemon {
             "elements"=>[
                 "id"=>[
                     "type"=>"value",
+                    "identifier"=>true,
                     "sql"=>[
                         "columnName"=> "id",
                         "isPrimary" => true

@@ -52,6 +52,8 @@ class QueryArrayReader {
                     $this->instancesKeeper->addInstance($instance, $identity);
                 }
                 
+                $this->instanceHyndrateAndForwardEntities($instance, $face, $row, $basePath, $faceList);
+                
                 
                 
 
@@ -88,13 +90,21 @@ class QueryArrayReader {
             if($element->isValue()){
                 $value=$array[$this->FQuery->_doFQLTableName($basePath.".".$element->getName())];
                 $instance->faceSetter($element,$value);
-            }else{
+            }
+        }
+        
+        return $instance;
+    }
+    
+    protected function instanceHyndrateAndForwardEntities($instance,\Face\Core\EntityFace $face,$array,$basePath, $faceList){
+        foreach($face as $element){
+            if($element->isEntity()){
                 if( isset($faceList[$basePath.".".$element->getName()])  ){ // if element is joined
                     $identity = $this->getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
-                    
-                    
-                    
-                    
+
+
+
+
                     if ($this->instancesKeeper->hasInstance($element->getClass(), $identity) ){ // if element is already instanciated
                         $childInstance = $this->instancesKeeper->getInstance($element->getClass(), $identity);
                         $instance->faceSetter($element,$childInstance);
@@ -102,36 +112,29 @@ class QueryArrayReader {
                         throw new Exception("TODO : precedence");
                     }   
                 }else{
-                    
+
                     $related = \Face\Core\FacePool::getFace( $element->getClass() )->getDirectElement($element->getRelatedBy());
 
                     if( $related ){
-                        
+
 
                         if($element->getRelation()=="belongsTo"){
                             $relatedBasePath=substr($basePath, 0, strrpos( $basePath, '.'));
                         }else
                             $relatedBasePath=$basePath;
-                                                
+
                         $identity = $this->getIdentityOfArray($related->getParentFace(),$array,$relatedBasePath); 
-                        
+
                         if($this->instancesKeeper->hasInstance($element->getClass(), $identity))
                             $instance->faceSetter($element->getName(), $this->instancesKeeper->getInstance($element->getClass(), $identity) );
                         else
                             $this->unfoundPrecedence[]=["instance"=>$instance,"elementToSet"=>$element,"identityOfElement"=>$identity];
 
                     }
-                    
+
                 }
-                
-                    // TODO reverse instances setter
-                    // TODO forward instances not set
-                    // TODO array of value
-                    // TODO array of instances
             }
         }
-        
-        return $instance;
     }
   
     

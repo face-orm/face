@@ -32,11 +32,12 @@ class queryTest extends PHPUnit_Framework_TestCase
         $trees=$reader->read($j)->getInstance("Tree");
         
         foreach ($lemons as $lemon){
-            echo $lemon->getId() . "=>" . $lemon->getTree()->getId().PHP_EOL;
+            echo $lemon->faceGetidentity() . "=>" . $lemon->getTree()->faceGetidentity().PHP_EOL;
         }
-        
+        echo PHP_EOL."Tress have following lemons : ".PHP_EOL;
         foreach ($trees as $tree){
-            echo $tree->getId() . "=>" . $tree->getLemons()->getId().PHP_EOL;
+            foreach ($tree->getLemons() as $lemon)
+                echo $tree->faceGetidentity() . "=>" . $lemon->faceGetidentity().PHP_EOL;
         }
         
         

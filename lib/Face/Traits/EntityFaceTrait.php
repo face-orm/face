@@ -7,6 +7,8 @@ use Face\Core\Navigator;
 
 trait EntityFaceTrait {
     
+    protected $___faceAlreadySetMany;
+    
     /**
      * use the given element and use the right way for getting the value on this instance
      * @param \Face\Core\EntityFaceElement $element the element to get
@@ -88,9 +90,9 @@ trait EntityFaceTrait {
             /*  if is already a face element, dont need anymore work */
             $element=$path;
         }else
-            throw new Exception("Variable of type '".gettype($path)."' is not a valide type for faceSetter");
+            throw new Exception("Variable of type '".gettype($path)."' is not a valide type for path of faceSetter");
         
-        /* @var $lastElement \Face\Core\EntityFaceElement */
+        /* @var $element \Face\Core\EntityFaceElement */
         
         // if has a getter, it can be a custom callable anonymous function, or the name of the the method to call on this object
         if($element->hasSetter()){
@@ -108,14 +110,24 @@ trait EntityFaceTrait {
         }else{
             
             $property = $element->getPropertyName();
-            if(!empty($property))
-                $this->$property=$value;
-            else
+            if(!empty($property)){
+
+
+                if($element->hasManyRelationship()){
+                    if(!isset($this->___faceAlreadySetMany[$element->getName()][$value->faceGetidentity()])){
+                        array_push($this->$property,$value);
+                        $this->___faceAlreadySetMany[$element->getName()][$value->faceGetidentity()]=true;
+                    }
+                    
+                }else{
+                    $this->$property=$value;
+                }
+            }else
                 ; // TODO  exception or something else ?
             
         }
         // TODO chainSet in Navigator instead than in this trait
-        // TODO throw exception on "no way to get element"
+        // TODO throw exception on "no way to set element"
 
     }
     
@@ -134,6 +146,21 @@ trait EntityFaceTrait {
             $this->faceSetter($elmName,$data[$dataName]);
         }
     }
+    
+    
+    public function faceGetidentity(){
+        $array=self::getEntityFace()->getIdentifiers();
+        
+        
+        $identityString="";
+        
+        foreach($array as $element){
+            $identityString.=$this->faceGetter($element);
+        }
+        
+        return $identityString;
+        
+    } 
     
     /**
      * Takes the DefaultMap contained in this face to create a default map.
@@ -159,6 +186,7 @@ trait EntityFaceTrait {
 
         return $map;
     }
+    
     
     abstract public static function __getEntityFace();
     

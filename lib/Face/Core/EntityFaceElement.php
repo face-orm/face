@@ -206,6 +206,10 @@ class EntityFaceElement{
     public function setRelation($relation) {
         $this->relation = $relation;
     }
+    
+    public function hasManyRelationship(){
+        return $this->relation=="hasMany";
+    }
 
     public function getRelatedBy() {
         return $this->relatedBy;
