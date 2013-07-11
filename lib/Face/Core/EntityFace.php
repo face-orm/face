@@ -8,7 +8,12 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     private $elements;
     private $identifiers;
     
+    
     private $class;
+    
+    // SQL
+    protected $sqlTable;
+    private $primaries;
     
     /**
      * 
@@ -17,6 +22,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     function __construct($params) {
         $this->elements=array();
         $this->primaries=array();
+        $this->relatedTable=array();
         
 
         if(isset($params['elements'])){
@@ -25,6 +31,9 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
                 $this->addElement($element);
             }
         }
+        if(isset($params["sqlTable"]))
+            $this->sqlTable=$params["sqlTable"];
+        
     }
     
     public function getClass() {
@@ -38,9 +47,16 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     public function addElement(EntityFaceElement $element){
         $this->elements[$element->getName()]=$element;
         
+         if($element->isPrimary())
+            $this->primaries[]=$element;
         
         if($element->isIdentifier())
             $this->identifiers[]=$element;
+        
+      
+        
+        $element->setParentFace($this);
+        
     }
     
 
@@ -103,6 +119,13 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         $this->elements = $elements;
     }
 
+    public function getPrimaries() {
+        return $this->primaries;
+    }
+
+    public function setPrimaries($primaries) {
+        $this->primaries = $primaries;
+    }
 
     
     public function getIdentifiers(){
@@ -114,6 +137,25 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         return new \ArrayIterator($this->elements);
     }
 
+    public function getSqlTable() {
+        return $this->sqlTable;
+    }
+
+    public function setSqlTable($sqltable) {
+        $this->sqlTable = $sqltable;
+    }
+
+    /**
+     * @param string $node the elemtn we want to get
+     * @return EntityFaceElement
+     */
+    public function getDirectElement($node){
+        
+        if(isset($this->elements[$node]))
+            return $this->elements[$node];
+        
+        throw new Exception("Element ".$node." doesnt exist into ".$this->getClass());
+    }
    
 
 }

@@ -6,6 +6,13 @@ use Peek\Utils\ValuesUtils;
 
 class EntityFaceElement{
     
+    /**
+     *
+     * @var EntityFace
+     */
+    protected $parentFace;
+    
+    //entity properties
     protected $name;
     protected $propertyName;
     protected $setter;
@@ -18,25 +25,57 @@ class EntityFaceElement{
     protected $class;
     
     protected $isIdentifier;
+    
+    ////////////////////////////
+    // relation properties
+    /**
+     * @var string if it is an entity, it defines what kind of relation : hasOne|belongsTo|hasMany
+     */
+    protected $relation;
+    /**
+     * @var string name of the property referencing to this entity on the related entity (e.g helps to define how to set instance reference on the parent)
+     */
+    protected $relatedBy;
+    
+    
+    
+    ////////////////////////////
+    // SQL properties
+    protected $sqlColumnName;
+    protected $sqlIsPrimary;
+    protected $sqlJoin;
+    protected $sqlBridge;
+    
 
     /**
      * 
-     * @param array $params array to construct the faceElement is described here :  TODO array description
+     * @param array $params array to construct the faceElement as described here :  TODO array description
      */
     function __construct($name,$params) {
         $this->name         =  $name;
         
-        $this->propertyName =  ValuesUtils::getIfArrayKey($params, "propertyName");
+        $this->propertyName =  ValuesUtils::getIfArrayKey($params, "propertyName",$name);
         $this->setter       =  ValuesUtils::getIfArrayKey($params, "setter");
         $this->getter       =  ValuesUtils::getIfArrayKey($params, "getter");
         
         $this->defaultMap   =  ValuesUtils::getIfArrayKey($params, "defaultMap");
         
-        $this->type         =  ValuesUtils::getIfArrayKey($params, "type");
+        $this->type         =  ValuesUtils::getIfArrayKey($params, "type","value");
         $this->class        =  ValuesUtils::getIfArrayKey($params, "class");
-        $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier");
+        $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier",false);
         
-        
+        if($this->isEntity()){
+            $this->relation =  ValuesUtils::getIfArrayKey($params, "relation","hasOne");
+            $this->relatedBy = ValuesUtils::getIfArrayKey($params, "relatedBy");
+        }
+            
+        if( isset($params['sql']) ){
+            $this->sqlColumnName=  ValuesUtils::getIfArrayKey($params['sql'], "columnName",$name);
+            $this->sqlIsPrimary =  ValuesUtils::getIfArrayKey($params['sql'], "isPrimary");
+            $this->sqlJoin      =  ValuesUtils::getIfArrayKey($params['sql'], "join");
+            $this->sqlBridge    =  ValuesUtils::getIfArrayKey($params['sql'], "bridge");
+            
+        }
        
     }
     
@@ -124,7 +163,71 @@ class EntityFaceElement{
     }
 
     
+    public function getSqlColumnName() {
+        return $this->sqlColumnName;
+    }
+
+    public function setSqlColumnName($sqlColumnName) {
+        $this->sqlColumnName = $sqlColumnName;
+    }
+
+    public function getSqlIsPrimary() {
+        return $this->sqlIsPrimary;
+    }
+    
+    public function isPrimary(){
+        return $this->sqlIsPrimary;
+    }
+
+    public function setSqlIsPrimary($sqlIsPrimary) {
+        $this->sqlIsPrimary = $sqlIsPrimary;
+    }
+
+    public function getSqlJoin() {
+        return $this->sqlJoin;
+    }
+
+    public function setSqlJoin($sqlJoin) {
+        $this->sqlJoin = $sqlJoin;
+    }
+
+    public function getSqlBridge() {
+        return $this->sqlBridge;
+    }
+
+    public function setSqlBridge($sqlBridge) {
+        $this->sqlBridge = $sqlBridge;
+    }
+
+    public function getRelation() {
+        return $this->relation;
+    }
+
+    public function setRelation($relation) {
+        $this->relation = $relation;
+    }
+
+    public function getRelatedBy() {
+        return $this->relatedBy;
+    }
+
+    public function setRelatedBy($relatedBy) {
+        $this->relatedBy = $relatedBy;
+    }
+
+    public function hasRelationTo(){
         
+    }        
+    
+    public function getParentFace() {
+        return $this->parentFace;
+    }
+
+    public function setParentFace(EntityFace $parentFace) {
+        $this->parentFace = $parentFace;
+    }
+
+            
     /**
      * 
      * if this is a value type, it means it cant have a face

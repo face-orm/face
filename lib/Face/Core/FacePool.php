@@ -14,7 +14,12 @@ abstract class FacePool implements \IteratorAggregate{
     
     
 
-    
+    /**
+     * 
+     * @param type $className
+     * @return EntityFace
+     * @throws Exception
+     */
     public static function getFace($className){
         if(!isset(self::$faces[$className])){   // if the class is not in the pool then register it
             
