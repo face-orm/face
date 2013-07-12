@@ -13,10 +13,12 @@ class queryTest extends PHPUnit_Framework_TestCase
         
 
         
-        $fQuery=new Face\Sql\Query\FQuery(Tree::getEntityFace());
+        $fQuery=new Face\Sql\Query\FQuery(Lemon::getEntityFace());
         
-        $fQuery->join("lemons");
-               //->join("b.c")
+        $fQuery->join("tree")
+               ->join("seeds")
+               ->join("tree.leafs")
+                ;
                //->where("~a LIKE :name")
                //->bindValue(":name", "%A%");
 
@@ -27,17 +29,24 @@ class queryTest extends PHPUnit_Framework_TestCase
         
         var_dump($j->errorInfo());
         $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery);
-        var_dump($reader->read($j));
+//        var_dump($reader->read($j));
         $lemons=$reader->read($j)->getInstance("Lemon");
         $trees=$reader->read($j)->getInstance("Tree");
         
-        foreach ($lemons as $lemon){
-            echo $lemon->faceGetidentity() . "=>" . $lemon->getTree()->faceGetidentity().PHP_EOL;
-        }
-        echo PHP_EOL."Tress have following lemons : ".PHP_EOL;
+
+
         foreach ($trees as $tree){
-            foreach ($tree->getLemons() as $lemon)
-                echo $tree->faceGetidentity() . "=>" . $lemon->faceGetidentity().PHP_EOL;
+            echo "tree ".$tree->faceGetidentity().PHP_EOL;
+            foreach ($tree->getLemons() as $lemon){
+                echo " | lemon ". $lemon->faceGetidentity().PHP_EOL;
+                foreach ($lemon->getSeeds() as $seed){
+                    echo "   - seed ".$seed->faceGetidentity().PHP_EOL; 
+                }
+            }
+            foreach ($tree->getLeafs() as $leaf){
+                echo " | leaf  ". $leaf->faceGetidentity().PHP_EOL;
+              
+            }
         }
         
         

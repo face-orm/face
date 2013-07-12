@@ -8,6 +8,7 @@ class Tree {
     public $id;
     public $age;
     public $lemons=array();
+    public $leafs=array();
     
     public function getId() {
         return $this->id;
@@ -37,7 +38,15 @@ class Tree {
         
     
 
-    
+    public function getLeafs() {
+        return $this->leafs;
+    }
+
+    public function setLeafs($leafs) {
+        $this->leafs = $leafs;
+    }
+
+        
     
     public static function __getEntityFace() {
         return [
@@ -66,6 +75,15 @@ class Tree {
                     "sql"   =>[
                         "join"  => ["id"=>"tree_id"]
                     ]
+                ],
+                "leafs"=>[
+                    "type"      => "entity",
+                    "class"     => "Leaf",
+                    "relation"  => "hasMany",
+                    "relatedBy" => "tree",
+                    "sql"   =>[
+                        "join"  => ["id"=>"tree_id"]
+                    ]
                 ]
               
             ]
@@ -84,6 +102,8 @@ class Lemon {
     public $mature;
  
     public $tree;
+    
+    public $seeds=array();
     
     public function getId() {
         return $this->id;
@@ -117,8 +137,18 @@ class Lemon {
     public function setTree($tree) {
         $this->tree = $tree;
     }
+    
+    public function getSeeds() {
+        return $this->seeds;
+    }
 
-        
+    public function setSeeds($seeds) {
+        $this->seeds = $seeds;
+    }
+
+
+
+
     public static function __getEntityFace() {
         return [
             "sqlTable"=>"lemon",
@@ -152,6 +182,15 @@ class Lemon {
                     "sql"   =>[
                         "join"  => ["tree_id"=>"id"]
                     ]
+                ],
+                "seeds"=>[
+                    "type"      => "entity",
+                    "class"     => "Seed",
+                    "relation"  => "hasMany",
+                    "relatedBy" => "lemon",
+                    "sql"   =>[
+                        "join"  => ["id"=>"lemon_id"]
+                    ]
                 ]
               
             ]
@@ -165,7 +204,7 @@ class Lemon {
 }
 
 
-class leaf {
+class Leaf {
 
     public $id;
     public $length;
@@ -194,12 +233,58 @@ class leaf {
     public function setTree_id($tree_id) {
         $this->tree_id = $tree_id;
     }
+    
+    use \Face\Traits\EntityFaceTrait;
+    
+    public static function __getEntityFace() {
+        return [
+            "sqlTable"=>"leaf",
+            
+            "elements"=>[
+                "id"=>[
+                    "type"=>"value",
+                    "identifier"=>true,
+                    "sql"=>[
+                        "columnName"=> "id",
+                        "isPrimary" => true
+                    ]
+                ],
+                "tree_id"=>[
+                    "type"      => "value",
+                    "sql"=>[
+                        "columnName" => "tree_id"
+                    ]
+                ],
+                "length"=>[
+                    "type"      => "value",
+                    "sql"=>[
+                        
+                    ]
+                ],
+                "tree"=>[
+                    "type"      => "entity",
+                    "class"     =>  "Tree",
+                    "relation"  => "belongsTo",
+                    "relatedBy" => "leafs",
+                    "sql"   =>[
+                        "join"  => ["tree_id"=>"id"]
+                    ]
+                ],
+                
+              
+            ]
+            
+        ];
+    }
+    
 }
 
-class seed{
+class Seed{
     public $id;
     public $lemon_id;
     public $fertil;
+    
+    public $lemon;
     
     public function getId() {
         return $this->id;
@@ -223,6 +308,57 @@ class seed{
 
     public function setFertil($fertil) {
         $this->fertil = $fertil;
+    }
+    
+    public function getLemon() {
+        return $this->lemon;
+    }
+
+    public function setLemon($lemon) {
+        $this->lemon = $lemon;
+    }
+
+
+    use \Face\Traits\EntityFaceTrait;
+
+    public static function __getEntityFace() {
+        return [
+            "sqlTable"=>"seed",
+            
+            "elements"=>[
+                "id"=>[
+                    "type"=>"value",
+                    "identifier"=>true,
+                    "sql"=>[
+
+                        "isPrimary" => true
+                    ]
+                ],
+                "lemon_id"=>[
+                    "type"      => "value",
+                    "sql"=>[
+
+                    ]
+                ],
+                "fertil"=>[
+                    "type"      => "value",
+                    "sql"=>[
+
+                    ]
+                ],
+                "lemon"=>[
+                    "type"      => "entity",
+                    "class"     =>  "Lemon",
+                    "relation"  => "belongsTo",
+                    "relatedBy" => "seeds",
+                    "sql"   =>[
+                        "join"  => ["lemon_id"=>"id"]
+                    ]
+                ]
+              
+            ]
+            
+        ];
     }
 
 

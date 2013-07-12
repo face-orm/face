@@ -96,43 +96,124 @@ class QueryArrayReader {
         return $instance;
     }
     
+    /**
+     * search to put children/parent instance as reference of the given entity
+     * @param type $instance
+     * @param \Face\Core\EntityFace $face
+     * @param type $array
+     * @param type $basePath
+     * @param type $faceList
+     * @throws \Exception
+     */
     protected function instanceHyndrateAndForwardEntities($instance,\Face\Core\EntityFace $face,$array,$basePath, $faceList){
         foreach($face as $element){
             if($element->isEntity()){
+                
+                echo ("ELM : ".$basePath."...".$element->getName());
+                echo (" => ".(isset($faceList[$basePath.".".$element->getName()])?"":"NOT ")."join").PHP_EOL;
                 if( isset($faceList[$basePath.".".$element->getName()])  ){ // if element is joined
+                    
                     $identity = $this->getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
 
-
-
-
-                    if ($this->instancesKeeper->hasInstance($element->getClass(), $identity) ){ // if element is already instanciated
-                        $childInstance = $this->instancesKeeper->getInstance($element->getClass(), $identity);
-                        $instance->faceSetter($element,$childInstance);
-                    }else{
-                        throw new Exception("TODO : precedence");
-                    }   
+                    if(!empty($identity)){
+                        if ($this->instancesKeeper->hasInstance($element->getClass(), $identity) ){ // if element is already instanciated
+                            $childInstance = $this->instancesKeeper->getInstance($element->getClass(), $identity);
+                            $instance->faceSetter($element,$childInstance);
+                        }else{
+                            var_dump($identity);
+                            var_dump($this->instancesKeeper);
+                            throw new \Exception("TODO : precedence");
+                        }
+                    }
                 }else{
 
                     $related = \Face\Core\FacePool::getFace( $element->getClass() )->getDirectElement($element->getRelatedBy());
-
+                    
                     if( $related ){
 
+                        
+                        /*
+                         * A . Look if the child was join by the parent
+                         *     
+                         *      YES => EASY ! works done... go to the next
+                         * 
+                         *      NO  => Then it can only work with the parent. Let's check if the parent matches :
+                         * 
+                         *     
+                         * 
+                         *          B . $basePath is made of at least 3 element (because we want to check for the parent of the parent
+                         *     
+                         *          C . Take the parent and look if it is the same class as the child 
+                         *              e.g :
+                         *                  assuming that "this" is a Lemon.
+                         *                  Assuming we have the following paths : 1 this.tree.lemons  and 2 this.tree.leafs
+                         *                      then in 1 "lemons" and "this" are both Lemon    
+                         *                      then in 2 "leafs" is Leaf but "this" is Lemon => ignore it
+                         * 
+                         *          D . If same class, we have to make sure that it is the same element. Let's use "related" property for that
+                         * 
+                         *              YES => Here is the match, fill it now
+                         * 
+                         *              NO  => Not totaly lost, maybe that there is an implied relation
+                         * 
+                         *                  E . Look for implied relation
+                         *  
+                         */
+                        
+                        
+                        
+                        // B
+                        // this.tree => bad
+                        // this.tree.lemon => good
+                        if(substr_count($basePath,".")<1){
+                            echo "  XX basePath too short, go to the next".PHP_EOL;
+                        }else{
+                            
+                            $relatedBasePath=  \Peek\Utils\StringUtils::subStringBefore($basePath, ".");
+                            
+                            echo "  Parent path is :$relatedBasePath".PHP_EOL;
+                            
+                            $parentFace=$faceList[$relatedBasePath];
 
-                        if($element->getRelation()=="belongsTo"){
-                            $relatedBasePath=substr($basePath, 0, strrpos( $basePath, '.'));
-                        }else
-                            $relatedBasePath=$basePath;
+                            // C
+                            // Same class ?
+                            echo '    '.$parentFace->getClass()." VS ".$element->getClass();
+                            if( $parentFace->getClass() != $element->getClass() ){
+                                echo "-".PHP_EOL;
+                            }else{
+                                echo "+".PHP_EOL;
+                                /* @var $parentFace \Face\Core\EntityFace */
+                                // D
+                                // Look if parent and child refer to the same one
+                                if( $parentFace->getDirectElement( $element->getRelatedBy() )->getRelatedBy() == $element->getName() ){
+                                
+                                    $relatedBasePath=substr($basePath, 0, strrpos( $basePath, '.'));
 
-                        $identity = $this->getIdentityOfArray($related->getParentFace(),$array,$relatedBasePath); 
+                                    // if $related is not in $facelist, then it means that $related is not a part of the query, ignore it..
+                                    if(isset($faceList[$relatedBasePath.".".$related->getName()])){
 
-                        if($this->instancesKeeper->hasInstance($element->getClass(), $identity))
-                            $instance->faceSetter($element->getName(), $this->instancesKeeper->getInstance($element->getClass(), $identity) );
-                        else
-                            $this->unfoundPrecedence[]=["instance"=>$instance,"elementToSet"=>$element,"identityOfElement"=>$identity];
+                                        $identity = $this->getIdentityOfArray($related->getParentFace(),$array,$relatedBasePath); 
 
+
+                                        if( $this->instancesKeeper->hasInstance($element->getClass(), $identity) )
+                                            $instance->faceSetter($element->getName(), $this->instancesKeeper->getInstance($element->getClass(), $identity) );
+                                        else
+                                            $this->unfoundPrecedence[]=["instance"=>$instance,"elementToSet"=>$element,"identityOfElement"=>$identity];
+                                    }
+                                }else{
+                                    throw new Exception("TODO ::: LOOK FOR IMPLIED");
+                                }
+                            }
+                            
+                        
+                            
+                        }
+                            
                     }
 
                 }
+                echo "--".PHP_EOL;
+                echo PHP_EOL;
             }
         }
     }

@@ -115,6 +115,10 @@ trait EntityFaceTrait {
 
                 if($element->hasManyRelationship()){
                     if(!isset($this->___faceAlreadySetMany[$element->getName()][$value->faceGetidentity()])){
+                        
+                        if($this->$property ==null)
+                            $this->$property=array();
+                        
                         array_push($this->$property,$value);
                         $this->___faceAlreadySetMany[$element->getName()][$value->faceGetidentity()]=true;
                     }
