@@ -103,9 +103,9 @@ class FQuery {
     public function getSqlString(){
         
         $sqlQ=$this->prepareSelectClause();
-        $sqlQ.=PHP_EOL." ".$this->prepareFromClause();
-        $sqlQ.=PHP_EOL." ".$this->prepareJoinClause();
-        $sqlQ.=PHP_EOL." ".$this->prepareWhereClause();
+        $sqlQ.=" ".$this->prepareFromClause();
+        $sqlQ.=" ".$this->prepareJoinClause();
+        $sqlQ.=" ".$this->prepareWhereClause();
         
        
         return $sqlQ;
@@ -163,18 +163,31 @@ class FQuery {
             $childElement=$parentFace->getElement($pieceOfPath[1]);
             
             
+            // Begining of the join clause
+            // JOIN something AS alias ON 
+            $joinSql="LEFT JOIN ".$face->getSqlTable()." AS ".$this->_doFQLTableName($path)." ON ";
+            
+            
             $joinArray=$childElement->getSqlJoin();
-            reset($joinArray);
-            $parentJoinElementName=key($joinArray);
-            $childJoinElementName=$joinArray[$parentJoinElementName];
             
-            $joinSql="LEFT JOIN ".$face->getSqlTable()." AS ".$this->_doFQLTableName($path)." ";
+            //end of the join clause
+            // alias.one = parent.one AND alias.two = parent.two
+            $i=0;
+            foreach($joinArray as $parentJoinElementName=>$childJoinElementName){
+                $parentJoin=$this->_doFQLTableName($pieceOfPath[0]).".".$parentFace->getElement($parentJoinElementName)->getSqlColumnName();
+                $childJoin=$this->_doFQLTableName($path).".".$childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName();
+                
+                if($i>0)
+                    $joinSql.=" AND ";
+                else
+                    $i++;
+                
+                $joinSql.=" ".$parentJoin."=".$childJoin." ";
+                
+            }
             
-            $parentJoin=$this->_doFQLTableName($pieceOfPath[0]).".".$parentFace->getElement($parentJoinElementName)->getSqlColumnName();
-            $childJoin=$this->_doFQLTableName($path).".".$childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName();
-
             
-            $joinSql.="ON ".$parentJoin."=".$childJoin." ";
+            
             $sql.=$joinSql;
         }
 
