@@ -199,7 +199,9 @@ trait EntityFaceTrait {
         return new \Face\Sql\Query\FQuery(self::getEntityFace());
     }
     
-    public static function __getEntityFace();
+    public static function __getEntityFace(){
+        throw new \Exception("__getEntityFace Method must be overwritten");
+    }
     
 }
 
