@@ -54,7 +54,6 @@ class Tree {
             
             "elements"=>[
                 "id"=>[
-                    "type"=>"value",
                     "identifier"=>true,
                     "sql"=>[
                         "columnName"=> "id",
@@ -62,13 +61,9 @@ class Tree {
                     ]
                 ],
                 "age"=>[
-                    "type"      => "value",
-                    "sql"=>[
-                        "columnName" => "age"
-                    ]
+                  
                 ],
                 "lemons"=>[
-                    "type"      => "entity",
                     "class"     => "Lemon",
                     "relation"  => "hasMany",
                     "relatedBy" => "tree",
@@ -77,7 +72,6 @@ class Tree {
                     ]
                 ],
                 "leafs"=>[
-                    "type"      => "entity",
                     "class"     => "Leaf",
                     "relation"  => "hasMany",
                     "relatedBy" => "tree",
@@ -175,16 +169,13 @@ class Lemon {
                     ]
                 ],
                 "tree"=>[
-                    "type"      => "entity",
                     "class"     =>  "Tree",
-                    "relation"  => "belongsTo",
                     "relatedBy" => "lemons",
                     "sql"   =>[
                         "join"  => ["tree_id"=>"id"]
                     ]
                 ],
                 "seeds"=>[
-                    "type"      => "entity",
                     "class"     => "Seed",
                     "relation"  => "hasMany",
                     "relatedBy" => "lemon",
@@ -262,7 +253,6 @@ class Leaf {
                     ]
                 ],
                 "tree"=>[
-                    "type"      => "entity",
                     "class"     =>  "Tree",
                     "relation"  => "belongsTo",
                     "relatedBy" => "leafs",
@@ -327,29 +317,17 @@ class Seed{
             
             "elements"=>[
                 "id"=>[
-                    "type"=>"value",
                     "identifier"=>true,
                     "sql"=>[
-
                         "isPrimary" => true
                     ]
                 ],
                 "lemon_id"=>[
-                    "type"      => "value",
-                    "sql"=>[
-
-                    ]
                 ],
                 "fertil"=>[
-                    "type"      => "value",
-                    "sql"=>[
-
-                    ]
                 ],
                 "lemon"=>[
-                    "type"      => "entity",
                     "class"     =>  "Lemon",
-                    "relation"  => "belongsTo",
                     "relatedBy" => "seeds",
                     "sql"   =>[
                         "join"  => ["lemon_id"=>"id"]

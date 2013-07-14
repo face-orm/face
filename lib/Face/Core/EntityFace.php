@@ -19,11 +19,12 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
      * 
      * @param array $params array to construct the face is described here :  TODO array description
      */
-    function __construct($params) {
+    function __construct($params,$class) {
         $this->elements=array();
         $this->primaries=array();
         $this->relatedTable=array();
         
+        $this->class=$class;
 
         if(isset($params['elements'])){
             foreach($params['elements'] as $k=>$elmParams){
@@ -33,6 +34,8 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         }
         if(isset($params["sqlTable"]))
             $this->sqlTable=$params["sqlTable"];
+        else
+            $this->sqlTable= strtolower($this->getClass());
         
     }
     

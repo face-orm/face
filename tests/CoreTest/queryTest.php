@@ -8,37 +8,26 @@ class queryTest extends PHPUnit_Framework_TestCase
     
     public function testGetter()
     {
-        
+        echo PHP_EOL;
         $pdo = new PDO('mysql:host=localhost;dbname=lemon-test', 'root', 'root');
         
 
         
-        $fQuery=new Face\Sql\Query\FQuery(Lemon::getEntityFace());
+        $fQuery= Tree::faceQueryBuilder();
         
-        $fQuery->join("tree")
-               ->join("seeds")
-               ->join("tree.leafs")
+        $fQuery->join("lemons")->join("lemons.seeds")->join("leafs")
                 ;
-               //->where("~a LIKE :name")
                //->bindValue(":name", "%A%");
 
 
+        $trees=  Face\ORM::execute($fQuery, $pdo);
+   
         
-        $j=$fQuery->execute($pdo);
-        
-        
-        var_dump($j->errorInfo());
-        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery);
-//        var_dump($reader->read($j));
-        $lemons=$reader->read($j)->getInstance("Lemon");
-        $trees=$reader->read($j)->getInstance("Tree");
-        
-
 
         foreach ($trees as $tree){
-            echo "tree ".$tree->faceGetidentity().PHP_EOL;
+            echo "tree #".$tree->faceGetidentity()." - age : ".$tree->getAge().PHP_EOL;
             foreach ($tree->getLemons() as $lemon){
-                echo " | lemon ". $lemon->faceGetidentity().PHP_EOL;
+                echo " | lemon #". $lemon->faceGetidentity().PHP_EOL;
                 foreach ($lemon->getSeeds() as $seed){
                     echo "   - seed ".$seed->faceGetidentity().PHP_EOL; 
                 }

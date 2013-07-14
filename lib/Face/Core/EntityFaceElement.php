@@ -60,7 +60,7 @@ class EntityFaceElement{
         
         $this->defaultMap   =  ValuesUtils::getIfArrayKey($params, "defaultMap");
         
-        $this->type         =  ValuesUtils::getIfArrayKey($params, "type","value");
+        $this->type         =  isset($params["class"])?"entity":"value";
         $this->class        =  ValuesUtils::getIfArrayKey($params, "class");
         $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier",false);
         
@@ -69,13 +69,11 @@ class EntityFaceElement{
             $this->relatedBy = ValuesUtils::getIfArrayKey($params, "relatedBy");
         }
             
-        if( isset($params['sql']) ){
-            $this->sqlColumnName=  ValuesUtils::getIfArrayKey($params['sql'], "columnName",$name);
-            $this->sqlIsPrimary =  ValuesUtils::getIfArrayKey($params['sql'], "isPrimary");
-            $this->sqlJoin      =  ValuesUtils::getIfArrayKey($params['sql'], "join");
-            $this->sqlBridge    =  ValuesUtils::getIfArrayKey($params['sql'], "bridge");
-            
-        }
+        $this->sqlColumnName=  ValuesUtils::getIfArrayKey($params['sql'], "columnName",$name);
+        $this->sqlIsPrimary =  ValuesUtils::getIfArrayKey($params['sql'], "isPrimary");
+        $this->sqlJoin      =  ValuesUtils::getIfArrayKey($params['sql'], "join");
+        $this->sqlBridge    =  ValuesUtils::getIfArrayKey($params['sql'], "bridge");
+
        
     }
     

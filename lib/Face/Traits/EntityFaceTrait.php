@@ -191,6 +191,13 @@ trait EntityFaceTrait {
         return $map;
     }
     
+    /**
+     * Shortcut to construct a FQuery
+     * @return \Face\Traits\Sql\Query\FQuery
+     */
+    public static function faceQueryBuilder(){
+        return new \Face\Sql\Query\FQuery(self::getEntityFace());
+    }
     
     abstract public static function __getEntityFace();
     

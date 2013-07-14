@@ -10,9 +10,9 @@ namespace Face\Core;
  */
 class FaceFactory {
     
-    public static function buildFace($params){
+    public static function buildFace($params,$className=null){
         if(is_array($params))
-            return new EntityFace($params);
+            return new EntityFace($params,$className);
         else if(is_a($params, "Face\Core\FaceInterface"))
             return $params;
         else

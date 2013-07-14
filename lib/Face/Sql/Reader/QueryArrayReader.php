@@ -3,7 +3,7 @@
 namespace Face\Sql\Reader;
 
 use \Face\Sql\Query\FQuery;
-use Face\Sql\Reader\InstancesKeeper;
+use Face\Core\InstancesKeeper;
 
 /**
  * Description of QueryArrayReader
@@ -19,15 +19,23 @@ class QueryArrayReader {
     protected $FQuery;
     /**
      *
-     * @var InstancesKeeper
+     * @var \Face\Core\InstancesKeeper
      */
     protected $instancesKeeper;
     
+    /**
+     *
+     * @var \Face\Sql\Result\ResultSet
+     */
+    protected $resultSet;
+
+
     protected $unfoundPrecedence;
             
     function __construct(\Face\Sql\Query\FQuery $FQuery) {
         $this->FQuery = $FQuery;
         $this->instancesKeeper=new InstancesKeeper();
+        $this->resultSet=new \Face\Sql\Result\ResultSet($this->instancesKeeper);
     }
 
     
@@ -50,6 +58,8 @@ class QueryArrayReader {
                 }else{
                     $instance = $this->createInstance($face, $row, $basePath, $faceList);
                     $this->instancesKeeper->addInstance($instance, $identity);
+                    $this->resultSet->addInstanceByPath($basePath, $instance);
+
                 }
                 
                 $this->instanceHyndrateAndForwardEntities($instance, $face, $row, $basePath, $faceList);
@@ -66,7 +76,7 @@ class QueryArrayReader {
             $unfound['instance']->faceSetter($unfound['elementToSet']->getName(),$unfoundInstance);
         }
         
-        return $this->instancesKeeper;
+        return $this->resultSet;
         
     }
     
@@ -109,8 +119,7 @@ class QueryArrayReader {
         foreach($face as $element){
             if($element->isEntity()){
                 
-                echo ("ELM : ".$basePath."...".$element->getName());
-                echo (" => ".(isset($faceList[$basePath.".".$element->getName()])?"":"NOT ")."join").PHP_EOL;
+ 
                 if( isset($faceList[$basePath.".".$element->getName()])  ){ // if element is joined
                     
                     $identity = $this->getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
@@ -166,22 +175,19 @@ class QueryArrayReader {
                         // this.tree => bad
                         // this.tree.lemon => good
                         if(substr_count($basePath,".")<1){
-                            echo "  XX basePath too short, go to the next".PHP_EOL;
+                            // pass
                         }else{
                             
                             $relatedBasePath=  \Peek\Utils\StringUtils::subStringBefore($basePath, ".");
                             
-                            echo "  Parent path is :$relatedBasePath".PHP_EOL;
+                            
                             
                             $parentFace=$faceList[$relatedBasePath];
 
                             // C
                             // Same class ?
-                            echo '    '.$parentFace->getClass()." VS ".$element->getClass();
                             if( $parentFace->getClass() != $element->getClass() ){
-                                echo "-".PHP_EOL;
                             }else{
-                                echo "+".PHP_EOL;
                                 /* @var $parentFace \Face\Core\EntityFace */
                                 // D
                                 // Look if parent and child refer to the same one
@@ -212,8 +218,7 @@ class QueryArrayReader {
                     }
 
                 }
-                echo "--".PHP_EOL;
-                echo PHP_EOL;
+
             }
         }
     }

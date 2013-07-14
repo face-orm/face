@@ -91,7 +91,7 @@ class FQuery {
             return $stmt;
             
         }else{
-            
+            echo "TODO : ".__FILE__.":".__LINE__;
             var_dump($stmt->errorInfo());
             return false;
             
@@ -107,6 +107,7 @@ class FQuery {
         $sqlQ.=PHP_EOL." ".$this->prepareJoinClause();
         $sqlQ.=PHP_EOL." ".$this->prepareWhereClause();
         
+       
         return $sqlQ;
         
     }

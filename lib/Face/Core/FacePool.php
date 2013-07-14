@@ -24,8 +24,7 @@ abstract class FacePool implements \IteratorAggregate{
         if(!isset(self::$faces[$className])){   // if the class is not in the pool then register it
             
             if(OOPUtils::UsesTrait($className, "Face\Traits\EntityFaceTrait")){    // using the trait is needed. If no let's throw an exception.
-                self::$faces[$className]= FaceFactory::buildFace(call_user_func($className."::__getEntityFace"));
-                self::$faces[$className]->setClass($className);
+                self::$faces[$className]= FaceFactory::buildFace(call_user_func($className."::__getEntityFace") , $className );
             }else
                 throw new Exception("The class ".$className." doesn't use the trait Face\Traits\EntityFaceTrait");
         }
