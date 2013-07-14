@@ -1,7 +1,7 @@
 {
     "name": "face/face",
     "type": "library",
-    "version": "0.1.0-BETA1",
+    "version": "0.1.1-BETA1",
     "description": "Modern & Friendly ORM for php5.4",
     "keywords": ["ORM"],
     "homepage": "https://github.com/SneakyBobito/face",
