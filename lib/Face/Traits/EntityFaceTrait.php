@@ -199,7 +199,7 @@ trait EntityFaceTrait {
         return new \Face\Sql\Query\FQuery(self::getEntityFace());
     }
     
-    abstract public static function __getEntityFace();
+    public static function __getEntityFace();
     
 }
 

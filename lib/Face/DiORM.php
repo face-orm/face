@@ -33,8 +33,8 @@ class DiORM {
      * @param \PDO $pdo
      * @return Sql\Result\ResultSet
      */
-    public static function execute(Sql\Query\FQuery $fQuery){
-        ORM::execute($fQuery, $this->pdo);
+    public function execute(Sql\Query\FQuery $fQuery){
+        return ORM::execute($fQuery, $this->pdo);
     }
     
 }
