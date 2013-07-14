@@ -6,7 +6,7 @@ namespace Face;
  * Face\DiORM is a class usable in a DI that make it easyer to use in a framework
  * @author sghzal
  */
-abstract class DiORM {
+class DiORM {
     
     /**
      *
