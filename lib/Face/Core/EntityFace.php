@@ -157,7 +157,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         if(isset($this->elements[$node]))
             return $this->elements[$node];
         
-        throw new Exception("Element ".$node." doesnt exist into ".$this->getClass());
+        throw new \Exception("Element ".$node." doesnt exist into ".$this->getClass());
     }
    
 
