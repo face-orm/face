@@ -193,7 +193,7 @@ trait EntityFaceTrait {
     
     /**
      * Shortcut to construct a FQuery
-     * @return \Face\Traits\Sql\Query\FQuery
+     * @return \Face\Sql\Query\FQuery
      */
     public static function faceQueryBuilder(){
         return new \Face\Sql\Query\FQuery(self::getEntityFace());
