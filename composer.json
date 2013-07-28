@@ -15,12 +15,12 @@
     "require": {
         "php": ">=5.4",
         "phpunit/PHPUnit": "3.7.*",
-        "phpunit/dbunit" : "1.2.*@dev"
+        "phpunit/dbunit" : "1.2.*@dev",
+        "peek/peek"      : "dev-master"
     },
     "autoload": {
         "psr-0" : {
             "Face" : "lib/",
-            "Peek" : "../peek/lib/"
         }
     }
 }
