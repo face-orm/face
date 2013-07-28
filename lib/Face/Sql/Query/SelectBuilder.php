@@ -171,7 +171,9 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
             
             $path=ltrim($match,"~");
             
-            $replace=$this->_doFQLTableName(substr($match,1, strrpos($match,".")))
+            $tablePath = rtrim(substr($match,1, strrpos($match,".")),".");
+            
+            $replace=$this->_doFQLTableName( $tablePath )
                         .".".$this->baseFace->getElement($path)->getSqlColumnName();
             
             $newString=str_replace($match, $replace, $newString);
