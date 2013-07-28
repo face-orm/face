@@ -45,7 +45,9 @@ class EntityFaceElement{
     protected $sqlIsPrimary;
     protected $sqlJoin;
     protected $sqlBridge;
-    
+    protected $sqlAutoIncrement;
+
+
 
     /**
      * 
@@ -65,15 +67,17 @@ class EntityFaceElement{
         $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier",false);
         
         if($this->isEntity()){
-            $this->relation =  ValuesUtils::getIfArrayKey($params, "relation","hasOne");
+            $this->relation  =  ValuesUtils::getIfArrayKey($params, "relation","hasOne");
             $this->relatedBy = ValuesUtils::getIfArrayKey($params, "relatedBy");
         }
             
-        $this->sqlColumnName=  ValuesUtils::getIfArrayKey($params['sql'], "columnName",$name);
-        $this->sqlIsPrimary =  ValuesUtils::getIfArrayKey($params['sql'], "isPrimary");
-        $this->sqlJoin      =  ValuesUtils::getIfArrayKey($params['sql'], "join");
-        $this->sqlBridge    =  ValuesUtils::getIfArrayKey($params['sql'], "bridge");
-
+        $this->sqlColumnName =   ValuesUtils::getIfArrayKey($params['sql'], "columnName",$name);
+        $this->sqlIsPrimary  =   ValuesUtils::getIfArrayKey($params['sql'], "isPrimary");
+        $this->sqlJoin       =   ValuesUtils::getIfArrayKey($params['sql'], "join");
+        $this->sqlBridge     =   ValuesUtils::getIfArrayKey($params['sql'], "bridge");
+        $this->sqlAutoIncrement= ValuesUtils::getIfArrayKey($params['sql'], "autoIncrement",$this->isPrimary());
+        
+        
        
     }
     
@@ -196,7 +200,16 @@ class EntityFaceElement{
     public function setSqlBridge($sqlBridge) {
         $this->sqlBridge = $sqlBridge;
     }
+    
+    public function getSqlAutoIncrement() {
+        return $this->sqlAutoIncrement;
+    }
 
+    public function setSqlAutoIncrement($sqlAutoIncrement) {
+        $this->sqlAutoIncrement = $sqlAutoIncrement;
+    }
+
+    
     public function getRelation() {
         return $this->relation;
     }

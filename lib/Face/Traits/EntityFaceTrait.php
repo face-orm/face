@@ -196,7 +196,7 @@ trait EntityFaceTrait {
      * @return \Face\Sql\Query\FQuery
      */
     public static function faceQueryBuilder(){
-        return new \Face\Sql\Query\FQuery(self::getEntityFace());
+        return new \Face\Sql\Query\SelectBuilder(self::getEntityFace());
     }
     
     public static function __getEntityFace(){

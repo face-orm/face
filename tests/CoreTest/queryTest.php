@@ -8,7 +8,7 @@ class queryTest extends PHPUnit_Framework_TestCase
     
     public function testGetter()
     {
-        echo PHP_EOL;
+        echo "PHP_EOL";
         $pdo = new PDO('mysql:host=localhost;dbname=lemon-test', 'root', 'root');
         
 
@@ -22,7 +22,6 @@ class queryTest extends PHPUnit_Framework_TestCase
 
         $trees=  Face\ORM::execute($fQuery, $pdo);
    
-        
 
         foreach ($trees as $tree){
             echo "tree #".$tree->faceGetidentity()." - age : ".$tree->getAge().PHP_EOL;
@@ -40,6 +39,21 @@ class queryTest extends PHPUnit_Framework_TestCase
         
         
 //        var_dump($j);
+        
+    }
+    
+    public function testInsert(){
+        
+        $pdo = new PDO('mysql:host=localhost;dbname=lemon-test', 'root', 'root');
+        
+        $a = new Tree();
+        $a->setId(200);
+        $a->setAge(300);
+        
+        $insert = new Face\Sql\Query\SimpleInsert($a);
+        
+        $insert->execute($pdo);
+        
         
     }
     

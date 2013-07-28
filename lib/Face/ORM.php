@@ -30,7 +30,7 @@ abstract class ORM {
             throw new Exception\FacelessException("You asked a query for something that has no face");
         }
         
-        return new Sql\Query\FQuery($baseFace);
+        return new Sql\Query\SelectBuilder($baseFace);
     }
     
     /**

@@ -14,13 +14,13 @@
     ],
     "require": {
         "php": ">=5.4",
+        "peek/peek": "1.0.*",
         "phpunit/PHPUnit": "3.7.*",
         "phpunit/dbunit" : "1.2.*@dev"
     },
     "autoload": {
         "psr-0" : {
-            "Face" : "lib/",
-            "Peek" : "../peek/lib/"
+            "Face" : "lib/"
         }
     }
 }

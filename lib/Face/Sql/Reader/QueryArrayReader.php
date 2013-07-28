@@ -10,7 +10,7 @@ use Face\Core\InstancesKeeper;
  *
  * @author bobito
  */
-class QueryArrayReader {
+class QueryArrayReader implements QueryReaderInterface{
     
     /**
      *
@@ -144,7 +144,7 @@ class QueryArrayReader {
                         /*
                          * A . Look if the child was join by the parent
                          *     
-                         *      YES => EASY ! works done... go to the next
+                         *      YES => EASY ! work's done... go to the next
                          * 
                          *      NO  => Then it can only work with the parent. Let's check if the parent matches :
                          * 
@@ -169,9 +169,9 @@ class QueryArrayReader {
                          *  
                          */
                         
+                        // A is the previous step
                         
-                        
-                        // B
+                        // BS
                         // this.tree => bad
                         // this.tree.lemon => good
                         if(substr_count($basePath,".")<1){
@@ -224,7 +224,7 @@ class QueryArrayReader {
     }
   
     
-    public function getIdentityOfArray(\Face\Core\EntityFace $face,$array,$basePath){
+    protected function getIdentityOfArray(\Face\Core\EntityFace $face,$array,$basePath){
         $primaries=$face->getPrimaries();
         $identity="";
 

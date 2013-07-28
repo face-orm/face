@@ -4,4 +4,10 @@
             <directory>./CoreTest</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <var name="DB_DSN" value="mysql:dbname=lemon-test;host=localhost" />
+        <var name="DB_USER" value="root" />
+        <var name="DB_PASSWD" value="root" />
+        <var name="DB_DBNAME" value="lemon-test" />
+    </php>
 </phpunit>
