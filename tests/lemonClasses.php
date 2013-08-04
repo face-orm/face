@@ -60,9 +60,7 @@ class Tree {
                         "isPrimary" => true
                     ]
                 ],
-                "age"=>[
-                  
-                ],
+                "age",
                 "lemons"=>[
                     "class"     => "Lemon",
                     "relation"  => "hasMany",

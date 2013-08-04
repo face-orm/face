@@ -28,7 +28,12 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
 
         if(isset($params['elements'])){
             foreach($params['elements'] as $k=>$elmParams){
-                $element=new EntityFaceElement($k,$elmParams);
+
+                if(is_numeric($k)){
+                    $element=new EntityFaceElement($elmParams,[]);
+                }else{
+                    $element=new EntityFaceElement($k,$elmParams);
+                }
                 $this->addElement($element);
             }
         }
