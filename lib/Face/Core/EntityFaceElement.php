@@ -67,7 +67,7 @@ class EntityFaceElement{
         $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier",false);
         
         if($this->isEntity()){
-            $this->relation  =  ValuesUtils::getIfArrayKey($params, "relation","hasOne");
+            $this->relation  =  ValuesUtils::getIfArrayKey($params, "relation","hasMany");
             $this->relatedBy = ValuesUtils::getIfArrayKey($params, "relatedBy");
         }
             

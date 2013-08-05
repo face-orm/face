@@ -90,13 +90,14 @@ class A{
                 "a"=>[
                     "propertyName"  =>  "a",
                     "type"          =>  "value",
-                    "defaultMap"    =>  "a_column"
+                    "defaultMap"    =>  "a_column",
+                    "relation"      =>  "hasOne"
                 ],
                 "b"=>[
                     "propertyName"  =>  "b",
                     "type"          =>  "entity",
                     "class"         =>  "B",
-                    
+                    "relation"      =>  "hasOne"
                 ]
             ]
             
@@ -138,6 +139,7 @@ class B{
                 "c"=>[
                     "type"          =>  "entity",
                     "class"         =>  "C",
+                    "relation"      =>  "hasOne"
                 ]
             ]
             

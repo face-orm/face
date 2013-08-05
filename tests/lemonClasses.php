@@ -169,6 +169,7 @@ class Lemon {
                 "tree"=>[
                     "class"     =>  "Tree",
                     "relatedBy" => "lemons",
+                    "relation"  => "belongsTo",
                     "sql"   =>[
                         "join"  => ["tree_id"=>"id"]
                     ]
@@ -327,6 +328,7 @@ class Seed{
                 "lemon"=>[
                     "class"     =>  "Lemon",
                     "relatedBy" => "seeds",
+                    "relation"  => "belongsTo",
                     "sql"   =>[
                         "join"  => ["lemon_id"=>"id"]
                     ]
