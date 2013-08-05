@@ -203,7 +203,7 @@ class QueryArrayReader implements QueryReaderInterface{
                             // this.tree.lemon => good
                             if(substr_count($basePath,".")<1){
 
-                                $this->operationsList[$pathToElement]=new Operation(Self::OPERATION_PASS);
+                                $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
 
                             }else{
 
@@ -215,7 +215,7 @@ class QueryArrayReader implements QueryReaderInterface{
                                 // Same class ?
                                 if( $parentFace->getClass() != $element->getClass() ){
 
-                                    $this->operationsList[$pathToElement]=new Operation(Self::OPERATION_PASS);
+                                    $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
 
                                 }else{
 
