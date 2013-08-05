@@ -14,10 +14,8 @@ use Face\Util\Operation;
 class QueryArrayReader implements QueryReaderInterface{
 
     const OPERATION_PASS=0;
-    const OPERATION_VALUE=1;
-    const OPERATION_JOINED=2;
-    const OPERATION_FORWARD_JOIN=3;
-    const OPERATION_IMPLIED=4;
+    const OPERATION_FORWARD_JOIN=1;
+    const OPERATION_IMPLIED=2;
 
     /**
      *
@@ -67,19 +65,19 @@ class QueryArrayReader implements QueryReaderInterface{
                 // get identity of the current face on the current db row
                 $identity=$this->getIdentityOfArray($face, $row, $basePath);
 
-                // if already instantiated then get it from ikeeper
+                // if already instantiated then get it from ikeeper and try the forwards
                 if($this->instancesKeeper->hasInstance($face->getClass(), $identity)){
                     $instance = $this->instancesKeeper->getInstance($face->getClass(), $identity);
+                    $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
 
-                // else create the instance and hydrate it
+                    // else create the instance and hydrate it
                 }else{
                     $instance = $this->createInstance($face, $row, $basePath, $faceList);
                     $this->instancesKeeper->addInstance($instance, $identity);
                     $this->resultSet->addInstanceByPath($basePath, $instance);
-
+                    $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
                 }
 
-                $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList);
 
 
 
@@ -113,15 +111,6 @@ class QueryArrayReader implements QueryReaderInterface{
         $className = $face->getClass();
         $instance  = new $className();
 
-        foreach($face as $element){
-            /* @var $element \Face\Core\EntityFaceElement */
-
-            if($element->isValue()){
-                $value=$array[$this->FQuery->_doFQLTableName($basePath.".".$element->getName())];
-                $instance->faceSetter($element,$value);
-            }
-        }
-
         return $instance;
     }
 
@@ -134,7 +123,7 @@ class QueryArrayReader implements QueryReaderInterface{
      * @param type $faceList
      * @throws \Exception
      */
-    protected function instanceHydrateAndForwardEntities($instance,\Face\Core\EntityFace $face,$array,$basePath, $faceList){
+    protected function instanceHydrateAndForwardEntities($instance,\Face\Core\EntityFace $face,$array,$basePath, $faceList,$doValues=false){
         foreach($face as $element){
             if($element->isEntity()){
 
@@ -194,6 +183,8 @@ class QueryArrayReader implements QueryReaderInterface{
                     // in this way next time we come back to this element, we don't need calculate action again
                     // this is perfect for performances
                     if(!isset($this->operationsList[$pathToElement])){
+
+
                         $related = \Face\Core\FacePool::getFace( $element->getClass() )->getDirectElement($element->getRelatedBy());
                         if( $related ){
 
@@ -278,6 +269,9 @@ class QueryArrayReader implements QueryReaderInterface{
 
                 }
 
+            }else if($doValues){
+                $value=$array[$this->FQuery->_doFQLTableName($basePath.".".$element->getName())];
+                $instance->faceSetter($element,$value);
             }
         }
     }
