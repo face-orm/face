@@ -47,8 +47,8 @@ abstract class FQuery {
         $stmt = $pdo->prepare($this->getSqlString());
         
         
-        foreach($this->valueBinds as $bind){
-            $stmt->bindValue($bind[0], $bind[1], $bind[2]);
+        foreach($this->valueBinds as $name=>$bind){
+            $stmt->bindValue($name, $bind[0], $bind[1]);
         }
         
         
@@ -66,9 +66,17 @@ abstract class FQuery {
     }
     
     public function bindValue($parameter, $value,  $data_type = \PDO::PARAM_STR  ){
-        $this->valueBinds[]=[$parameter,$value,$data_type];
+        $this->valueBinds[$parameter]=[$value,$data_type];
         
         return $this;
+    }
+
+    /**
+     * @param $name
+     * @return array
+     */
+    public function getBoundValue($name){
+        return $this->valueBinds[$name];
     }
     
     /**

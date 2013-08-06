@@ -14,8 +14,6 @@
     ],
     "require": {
         "php": ">=5.4",
-        "phpunit/PHPUnit": "3.7.*",
-        "phpunit/dbunit" : "1.2.*@dev",
         "peek/peek"      : "1.0.*"
     },
     "autoload": {

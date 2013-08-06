@@ -20,7 +20,8 @@
     },
     "autoload": {
         "psr-0" : {
-            "Face" : "lib/"
+            "Face" : "../lib/",
+            "Test" : "./"
         }
     }
 }

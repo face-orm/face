@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="lemon-test">
+
+
+
+    <table_data name="tree">
+        <row>
+            <field name="id">1</field>
+            <field name="age">8</field>
+        </row>
+        <row>
+            <field name="id">2</field>
+            <field name="age">2</field>
+        </row>
+        <row>
+            <field name="id">3</field>
+            <field name="age">5</field>
+        </row>
+        <row>
+            <field name="id">4</field>
+            <field name="age">300</field>
+        </row>
+
+    </table_data>
+
+
+
+	<table_data name="leaf">
+	<row>
+		<field name="id">1</field>
+		<field name="length">10</field>
+		<field name="tree_id">1</field>
+	</row>
+	<row>
+		<field name="id">2</field>
+		<field name="length">5</field>
+		<field name="tree_id">1</field>
+	</row>
+	<row>
+		<field name="id">3</field>
+		<field name="length">8</field>
+		<field name="tree_id">1</field>
+	</row>
+	<row>
+		<field name="id">4</field>
+		<field name="length">2</field>
+		<field name="tree_id">2</field>
+	</row>
+	<row>
+		<field name="id">5</field>
+		<field name="length">3</field>
+		<field name="tree_id">2</field>
+	</row>
+	<row>
+		<field name="id">6</field>
+		<field name="length">1</field>
+		<field name="tree_id">2</field>
+	</row>
+	<row>
+		<field name="id">7</field>
+		<field name="length">5</field>
+		<field name="tree_id">2</field>
+	</row>
+	<row>
+		<field name="id">8</field>
+		<field name="length">6</field>
+		<field name="tree_id">1</field>
+	</row>
+	<row>
+		<field name="id">9</field>
+		<field name="length">2</field>
+		<field name="tree_id">3</field>
+	</row>
+	<row>
+		<field name="id">10</field>
+		<field name="length">6</field>
+		<field name="tree_id">3</field>
+	</row>
+	<row>
+		<field name="id">11</field>
+		<field name="length">8</field>
+		<field name="tree_id">3</field>
+	</row>
+	<row>
+		<field name="id">12</field>
+		<field name="length">8</field>
+		<field name="tree_id">3</field>
+	</row>
+	</table_data>
+
+
+
+
+	<table_data name="seed">
+	<row>
+		<field name="id">1</field>
+		<field name="lemon_id">1</field>
+		<field name="fertil">0</field>
+	</row>
+	<row>
+		<field name="id">2</field>
+		<field name="lemon_id">1</field>
+		<field name="fertil">0</field>
+	</row>
+	<row>
+		<field name="id">3</field>
+		<field name="lemon_id">1</field>
+		<field name="fertil">1</field>
+	</row>
+	<row>
+		<field name="id">4</field>
+		<field name="lemon_id">2</field>
+		<field name="fertil">0</field>
+	</row>
+	<row>
+		<field name="id">5</field>
+		<field name="lemon_id">6</field>
+		<field name="fertil">1</field>
+	</row>
+	<row>
+		<field name="id">6</field>
+		<field name="lemon_id">8</field>
+		<field name="fertil">1</field>
+	</row>
+	<row>
+		<field name="id">7</field>
+		<field name="lemon_id">8</field>
+		<field name="fertil">0</field>
+	</row>
+	<row>
+		<field name="id">8</field>
+		<field name="lemon_id">11</field>
+		<field name="fertil">1</field>
+	</row>
+	</table_data>
+
+
+    <table_data name="lemon">
+        <row>
+            <field name="id">1</field>
+            <field name="tree_id">1</field>
+            <field name="mature">1</field>
+        </row>
+        <row>
+            <field name="id">2</field>
+            <field name="tree_id">1</field>
+            <field name="mature">1</field>
+        </row>
+        <row>
+            <field name="id">3</field>
+            <field name="tree_id">1</field>
+            <field name="mature">0</field>
+        </row>
+        <row>
+            <field name="id">4</field>
+            <field name="tree_id">1</field>
+            <field name="mature">1</field>
+        </row>
+        <row>
+            <field name="id">5</field>
+            <field name="tree_id">1</field>
+            <field name="mature">0</field>
+        </row>
+        <row>
+            <field name="id">6</field>
+            <field name="tree_id">1</field>
+            <field name="mature">1</field>
+        </row>
+        <row>
+            <field name="id">7</field>
+            <field name="tree_id">2</field>
+            <field name="mature">0</field>
+        </row>
+        <row>
+            <field name="id">8</field>
+            <field name="tree_id">3</field>
+            <field name="mature">1</field>
+        </row>
+        <row>
+            <field name="id">9</field>
+            <field name="tree_id">3</field>
+            <field name="mature">0</field>
+        </row>
+        <row>
+            <field name="id">10</field>
+            <field name="tree_id">3</field>
+            <field name="mature">0</field>
+        </row>
+        <row>
+            <field name="id">11</field>
+            <field name="tree_id">3</field>
+            <field name="mature">1</field>
+        </row>
+        <row>
+            <field name="id">12</field>
+            <field name="tree_id">3</field>
+            <field name="mature">0</field>
+        </row>
+    </table_data>
+</database>
+</mysqldump>

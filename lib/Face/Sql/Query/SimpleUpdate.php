@@ -7,7 +7,7 @@ namespace Face\Sql\Query;
  *
  * @author sghzal
  */
-class SimpleInsert extends FQuery {
+class SimpleUpdate extends FQuery {
  
     protected $entity;
 
@@ -28,27 +28,33 @@ class SimpleInsert extends FQuery {
         $baseFace = $this->getBaseFace();
         
         
-        $fields="";
-        $values="";
+        $sets="";
+        $where="";
         $i=0;
         foreach ($baseFace as $elm){
-            /* @var $elm \Face\Core\EntityFaceElement */
-            if($elm->isValue() && !$elm->getSqlAutoIncrement() ){
-                if($i>0){
-                    $fields.=",";
-                    $values.=",";
+
+            if($elm->isValue()){
+                /* @var $elm \Face\Core\EntityFaceElement */
+                if($elm->isValue() && !$elm->isPrimary() ){
+                    $sets.=",";
+                    $sets.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
                 }else{
-                    $i++;
+                    if($i>0){
+                        $where.=" AND ";
+                    }else{
+                        $i++;
+                    }
+                    $where.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
                 }
-                $fields.=$elm->getSqlColumnName();
-                $values.=":".$elm->getSqlColumnName();
-                
+
                 $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm->getName()));
             }
+
+
         }
         
-        $queryStr= "INSERT INTO ".$baseFace->getSqlTable()."($fields) VALUES($values)";
-        
+        $queryStr= "UPDATE ".$baseFace->getSqlTable()." SET ".ltrim($sets,",")." WHERE ".$where." LIMIT 1";
+
         return $queryStr;
         
     }

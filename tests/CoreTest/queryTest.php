@@ -47,9 +47,9 @@ class queryTest extends PHPUnit_Framework_TestCase
         $pdo = new PDO('mysql:host=localhost;dbname=lemon-test', 'root', 'root');
         
         $a = new Tree();
-        $a->setId(200);
-        $a->setAge(300);
-        
+        $a->setId(51);
+        $a->setAge(301);
+
         $insert = new Face\Sql\Query\SimpleInsert($a);
         
         $insert->execute($pdo);
