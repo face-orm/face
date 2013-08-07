@@ -20,6 +20,6 @@ Then we are very confident about this point.
 places
 --------
 
-Site and docs are available at : http://face-orm.org
+Site and docs are available at : http://face-orm.org (documentation is still being written)
 
 simple benchmark is available at : https://github.com/laemons/ORM-benchmark
