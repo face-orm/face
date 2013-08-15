@@ -31,6 +31,14 @@ class FaceQLTest extends Test\PHPUnitTestDb
 
         $this->assertEquals(Tree::getEntityFace(),$fql->getBaseFace());
 
+
+        $q=
+            "SELECT::* FROM::Tree".
+            " JOIN::lemon".
+            " JOIN::lemon.seeds";
+
+        $fql=new \Face\Sql\Query\FaceQL($q);
+
     }
 
 
