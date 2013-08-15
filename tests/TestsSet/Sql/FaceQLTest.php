@@ -25,7 +25,7 @@ class FaceQLTest extends Test\PHPUnitTestDb
 
         $q=
             "SELECT::* FROM::Tree".
-            " JOIN::lemon";
+            " JOIN::lemons";
 
         $fql=new \Face\Sql\Query\FaceQL($q);
 
@@ -34,8 +34,8 @@ class FaceQLTest extends Test\PHPUnitTestDb
 
         $q=
             "SELECT::* FROM::Tree".
-            " JOIN::lemon".
-            " JOIN::lemon.seeds";
+            " JOIN::lemons".
+            " JOIN::lemons.seeds";
 
         $fql=new \Face\Sql\Query\FaceQL($q);
 
