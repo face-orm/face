@@ -37,20 +37,14 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
     /**
      * add a join clause to the query
      * @param string $path the face path to the join
-     * @return \FaceSql\Query\FQuery  will return $this (fluent method)
+     * @return \Face\Sql\Query\FQuery  will return $this (fluent method)
      */
     public function join($path){
         $this->joins[$this->_doFQLTableName($path, ".")]=$this->baseFace->getElement($path)->getFace();
         
         return $this;
     }
-    
-    public function bindValue($parameter, $value,  $data_type = \PDO::PARAM_STR  ){
-        $this->valueBinds[]=[$parameter,$value,$data_type];
-        
-        return $this;
-    }
-    
+
     
     
     /**
@@ -66,7 +60,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
     /**
      * set the where clause 
      * @param string $whereString the FQuery formated  where clause
-     * @return \FaceSql\Query\FQuery  will return $this (fluent method)
+     * @return \Face\Sql\Query\FQuery  will return $this (fluent method)
      */
     public function where($whereString){
         $this->where=$whereString;

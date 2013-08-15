@@ -10,7 +10,7 @@ use Face\Core\Navigator;
  *
  * @author Soufiane Ghzal
  */
-abstract class FQuery {
+abstract class  FQuery {
 
     protected $dotToken="__dot__"; // we have to reaplce the face navigation token "." by an other. indeed "." is not compatible with alias in sql and we want to avoid conflicts with user table / column names
     // then __dot__ is safe enough
@@ -23,11 +23,15 @@ abstract class FQuery {
     protected $baseFace;
     
     /**
-     *
+     * list of face joined to the query
      * @var array
      */
     protected $joins;
-    
+
+    /**
+     * list of binds to pass to pdo object
+     * @var array
+     */
     protected $valueBinds;
     
     function __construct(EntityFace $baseFace) {
@@ -35,7 +39,7 @@ abstract class FQuery {
         $this->joins=[];
         $this->valueBinds=[];
     }
-    
+
     
     public abstract function getSqlString();
 
