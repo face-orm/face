@@ -1,6 +1,7 @@
 <?php
 
 namespace Face;
+use Face\Core\InstancesKeeper;
 
 /**
  * Face\DiORM is a class usable in a DI that make it easyer to use in a framework
@@ -13,9 +14,19 @@ class DiORM {
      * @var \PDO
      */
     protected $pdo;
-    
-    function __construct(\PDO $pdo) {
+
+    /**
+     * @var InstancesKeeper
+     */
+    protected $ik;
+
+    /**
+     * @param \PDO $pdo pdo instance for db connections
+     * @param InstancesKeeper $instancesKeeper instance keeper to manage instances
+     */
+    function __construct(\PDO $pdo,InstancesKeeper $instancesKeeper) {
         $this->pdo = $pdo;
+        $this->ik=$instancesKeeper;
     }
     
     public function getPdo() {
@@ -28,13 +39,18 @@ class DiORM {
 
     
     /**
-     * 
+     * Execute a select query, parse the result and returns a resultSet
      * @param \Face\Sql\Query\FQuery $fQuery
-     * @param \PDO $pdo
      * @return Sql\Result\ResultSet
      */
     public function execute(Sql\Query\FQuery $fQuery){
-        return ORM::execute($fQuery, $this->pdo);
+        $j=$fQuery->execute($this->pdo);
+
+        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery,$this->ik);
+
+        $rs=$reader->read($j);
+
+        return $rs;
     }
     
 }

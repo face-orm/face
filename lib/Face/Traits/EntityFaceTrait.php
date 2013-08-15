@@ -4,6 +4,7 @@ namespace Face\Traits;
 
 use \Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
+use Face\Sql\Query\SelectBuilder;
 
 trait EntityFaceTrait {
     
@@ -193,10 +194,10 @@ trait EntityFaceTrait {
     
     /**
      * Shortcut to construct a FQuery
-     * @return \Face\Sql\Query\FQuery
+     * @return SelectBuilder
      */
     public static function faceQueryBuilder(){
-        return new \Face\Sql\Query\SelectBuilder(self::getEntityFace());
+        return new SelectBuilder(self::getEntityFace());
     }
     
     public static function __getEntityFace(){

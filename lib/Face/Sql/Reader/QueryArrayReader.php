@@ -19,7 +19,7 @@ class QueryArrayReader implements QueryReaderInterface{
 
     /**
      *
-     * @var \FaceSql\Query\FQuery
+     * @var \Face\Sql\Query\FQuery
      */
     protected $FQuery;
     /**
@@ -39,10 +39,17 @@ class QueryArrayReader implements QueryReaderInterface{
 
     protected $unfoundPrecedence;
 
-    function __construct(\Face\Sql\Query\FQuery $FQuery) {
+    function __construct(\Face\Sql\Query\FQuery $FQuery, InstancesKeeper $instancesKeeper=null) {
+
         $this->FQuery = $FQuery;
-        $this->instancesKeeper=new InstancesKeeper();
+
+        if(!$instancesKeeper)
+            $this->instancesKeeper=new InstancesKeeper();
+        else
+            $this->instancesKeeper=$instancesKeeper;
+
         $this->resultSet=new \Face\Sql\Result\ResultSet($this->instancesKeeper);
+        
     }
 
 
