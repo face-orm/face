@@ -1,14 +1,12 @@
 <?php
 
-require_once __DIR__.'/../lemonClasses.php';
-
 class queryTest extends PHPUnit_Framework_TestCase
 {
 
     
     public function testGetter()
     {
-        echo "PHP_EOL";
+
         $pdo = new PDO('mysql:host=localhost;dbname=lemon-test', 'root', 'root');
         
 
@@ -23,19 +21,19 @@ class queryTest extends PHPUnit_Framework_TestCase
         $trees=  Face\ORM::execute($fQuery, $pdo);
    
 
-        foreach ($trees as $tree){
-            echo "tree #".$tree->faceGetidentity()." - age : ".$tree->getAge().PHP_EOL;
-            foreach ($tree->getLemons() as $lemon){
-                echo " | lemon #". $lemon->faceGetidentity().PHP_EOL;
-                foreach ($lemon->getSeeds() as $seed){
-                    echo "   - seed ".$seed->faceGetidentity().PHP_EOL; 
-                }
-            }
-            foreach ($tree->getLeafs() as $leaf){
-                echo " | leaf  ". $leaf->faceGetidentity().PHP_EOL;
-              
-            }
-        }
+//        foreach ($trees as $tree){
+//            echo "tree #".$tree->faceGetidentity()." - age : ".$tree->getAge().PHP_EOL;
+//            foreach ($tree->getLemons() as $lemon){
+//                echo " | lemon #". $lemon->faceGetidentity().PHP_EOL;
+//                foreach ($lemon->getSeeds() as $seed){
+//                    echo "   - seed ".$seed->faceGetidentity().PHP_EOL;
+//                }
+//            }
+//            foreach ($tree->getLeafs() as $leaf){
+//                echo " | leaf  ". $leaf->faceGetidentity().PHP_EOL;
+//
+//            }
+//        }
         
         
 //        var_dump($j);

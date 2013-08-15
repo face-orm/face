@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__.'/../lemonClasses.php';
 
 class queryBuilderTest extends Test\PHPUnitTestDb
 {
@@ -41,7 +40,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
         $update = new Face\Sql\Query\SimpleUpdate($a);
 
-        echo $update->getSqlString();
         $this->assertEquals("UPDATE tree SET age=:age WHERE id=:id LIMIT 1" , $update->getSqlString() );
         $this->assertEquals(300 , $update->getBoundValue(":age")[0] );
         $this->assertEquals(200 , $update->getBoundValue(":id")[0] );
