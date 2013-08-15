@@ -113,9 +113,21 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
             return $firstChildFace->getElement(trim(strstr($name, "."),"."));
         }
         
-        if(!isset($this->elements[$name]))
-            throw new \Exception("Face has no element called '".$name."'");
-        
+        if(!isset($this->elements[$name])){
+            $names=$this->debugGetRelatedName($name);
+
+
+            if(count($names)>0){
+                $relatedStr = "Did you mean '";
+                $relatedStr .= implode("' , '",$names);
+                $relatedStr .= "' ?";
+            }else{
+                $relatedStr ="";
+            }
+
+            throw new \Exception("Face '" . $this->getClass() . "' has no element called '$name'. $relatedStr");
+        }
+
         return $this->elements[$name];
     }
     
@@ -164,7 +176,29 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         
         throw new \Exception("Element ".$node." doesnt exist into ".$this->getClass());
     }
-   
+
+    /**
+     * Allows to debug typos etc..
+     *
+     * For instance if someone writes 'lemon' instead of 'lemons' we will say "hey ! did you means 'lemons' ? "
+     *
+     * @param $e
+     * @return array
+     */
+    protected function debugGetRelatedName($e){
+
+        $names=[];
+
+        foreach($this as $elm){
+            if(StringUtils::beginsWith($e,$elm->getName())){
+                $names[]=$elm->getName();
+            }
+
+            // TODO ends with
+        }
+
+        return $names;
+    }
 
 }
 
