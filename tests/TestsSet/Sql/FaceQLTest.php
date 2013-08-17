@@ -12,34 +12,55 @@ class FaceQLTest extends Test\PHPUnitTestDb
         return $this->createMySQLXMLDataSet('dataset.xml');
     }
 
+    public function testA(){
 
-    public function testParseBaseFace(){
+        \Face\Sql\Query\FaceQL::parse(
 
-        $fql=new \Face\Sql\Query\FaceQL("SELECT::* FROM::Tree");
-
-        $this->assertEquals(Tree::getEntityFace(),$fql->getBaseFace());
-
-    }
-
-    public function testParseJoinFace(){
-
-        $q=
             "SELECT::* FROM::Tree".
-            " JOIN::lemons";
+            " JOIN::lemons"
 
-        $fql=new \Face\Sql\Query\FaceQL($q);
+        );
 
-        $this->assertEquals(Tree::getEntityFace(),$fql->getBaseFace());
+        \Face\Sql\Query\FaceQL::parse(
 
-
-        $q=
             "SELECT::* FROM::Tree".
             " JOIN::lemons".
-            " JOIN::lemons.seeds";
+            " JOIN::lemons.seeds"
 
-        $fql=new \Face\Sql\Query\FaceQL($q);
+        );
 
     }
+
+
+//
+//
+//    public function testParseBaseFace(){
+//
+//        $fql=new \Face\Sql\Query\FaceQL("SELECT::* FROM::Tree");
+//
+//        $this->assertEquals(Tree::getEntityFace(),$fql->getBaseFace());
+//
+//    }
+//
+//    public function testParseJoinFace(){
+//
+//        $q=
+//            "SELECT::* FROM::Tree".
+//            " JOIN::lemons";
+//
+//        $fql=new \Face\Sql\Query\FaceQL($q);
+//
+//        $this->assertEquals(Tree::getEntityFace(),$fql->getBaseFace());
+//
+//
+//        $q=
+//            "SELECT::* FROM::Tree".
+//            " JOIN::lemons".
+//            " JOIN::lemons.seeds";
+//
+//        $fql=new \Face\Sql\Query\FaceQL($q);
+//
+//    }
 
 
 
