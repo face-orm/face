@@ -3,6 +3,8 @@
 /composer.phar
 /vendor/
 
+/nbproject/
+
 /tests/vendor/
 
 /.idea/
