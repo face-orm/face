@@ -3,6 +3,7 @@
 namespace Face\Sql\Query;
 
 use Face\Core\EntityFace;
+use Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
 
 /**
@@ -12,7 +13,9 @@ use Face\Core\Navigator;
  */
 abstract class  FQuery {
 
-    protected $dotToken="__dot__"; // we have to reaplce the face navigation token "." by an other. indeed "." is not compatible with alias in sql and we want to avoid conflicts with user table / column names
+    const DOT_TOKEN="__dot__";
+
+    protected $dotToken=self::DOT_TOKEN; // we have to replace the face navigation token "." by an other. indeed "." is not compatible with alias in sql and we want to avoid conflicts with user table / column names
     // then __dot__ is safe enough
     
     
@@ -43,18 +46,18 @@ abstract class  FQuery {
     
     public abstract function getSqlString();
 
+
+
+
+
+
     /**
-     * 
+     * Executes the query from the given pdo object
      * @param \PDO $pdo
      */
     public function execute(\PDO $pdo){
-        $stmt = $pdo->prepare($this->getSqlString());
-        
-        
-        foreach($this->valueBinds as $name=>$bind){
-            $stmt->bindValue($name, $bind[0], $bind[1]);
-        }
-        
+
+        $stmt = $this->getPdoStatement($pdo);
         
         if($stmt->execute()){
             return $stmt;
@@ -65,8 +68,22 @@ abstract class  FQuery {
             return false;
             
         }
-        
-        
+
+    }
+
+    /**
+     * get a statement for the given pdo object, values are already bound
+     * @param \PDO $pdo
+     */
+    public function getPdoStatement(\PDO $pdo){
+        $stmt = $pdo->prepare($this->getSqlString());
+
+
+        foreach($this->valueBinds as $name=>$bind){
+            $stmt->bindValue($name, $bind[0], $bind[1]);
+        }
+
+        return $stmt;
     }
     
     public function bindValue($parameter, $value,  $data_type = \PDO::PARAM_STR  ){
@@ -94,15 +111,66 @@ abstract class  FQuery {
         if(null===$token )
             $token=$this->dotToken;
         
+        return self::__doFQLTableNameStatic($path,$token);
+    }
+
+    /**
+     * reserved for internal usage
+     * @param $path
+     * @param null $token
+     * @return mixed|string
+     */
+    public static function __doFQLTableNameStatic($path,$token=null){
+        if(null===$token )
+            $token=self::DOT_TOKEN;
+
         if("this"===$path || empty($path))
             return "this";
-        
-        if(0!==strncmp($path,"this.",5)) // if doens tbegin with "this." then we prepend "this."
-            $path="this.".$path;
-        
+
+        if(0!==strncmp($path,"this.",5)) // if doesn't begin with "this." then we prepend "this."
+        $path="this.".$path;
+
         return str_replace(".",$token,$path);
     }
-    
+
+    /**
+     * reserved for internal usage
+     * @param $path path to the element
+     * @param EntityFace $face the face that is joined
+     * @param EntityFace $parentFace the other joined face
+     * @param EntityFaceElement $childElement
+     * @param $basePath
+     * @param null $token
+     * @return string
+     */
+    public static function __doFQLJoinTable($path,EntityFace $face,EntityFace $parentFace,EntityFaceElement $childElement,$basePath,$token=null){
+
+        // Begining of the join clause
+        // JOIN something AS alias ON
+        $joinSql="LEFT JOIN ".$face->getSqlTable()." AS ".FQuery::__doFQLTableNameStatic($path,$token)." ON ";
+
+
+        $joinArray=$childElement->getSqlJoin();
+
+        //end of the join clause
+        // alias.one = parent.one AND alias.two = parent.two
+        $i=0;
+        foreach($joinArray as $parentJoinElementName=>$childJoinElementName){
+            $parentJoin=FQuery::__doFQLTableNameStatic($basePath,$token).".".$parentFace->getElement($parentJoinElementName)->getSqlColumnName();
+            $childJoin=FQuery::__doFQLTableNameStatic($path,$token).".".$childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName();
+
+            if($i>0)
+                $joinSql.=" AND ";
+            else
+                $i++;
+
+            $joinSql.=" ".$parentJoin."=".$childJoin." ";
+
+        }
+
+        return $joinSql;
+    }
+
     /**
      * 
      * @return EntityFace
@@ -110,8 +178,5 @@ abstract class  FQuery {
     public function getBaseFace() {
         return $this->baseFace;
     }
-
-
-    
     
 }

@@ -25,61 +25,104 @@ use Peek\Utils\StringUtils;
  *
  * @author sghzal
  */
-class FaceQL extends FQuery {
+abstract class FaceQL  {
 
     const PATTERN_FROM="#FROM::(\\\\?[A-Za-z_][0-9A-Za-z_]*(\\\\[A-Za-z_][0-9A-Za-z_]*)*)#";
     const PATTERN_SELECT="#SELECT::((\\[.+\\])|\\*)#";
     const PATTERN_JOIN="#JOIN::([a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*)#";
     const PATTERN_SUBQUERY="#SUB::#";
 
-    protected $baseString;
 
-    function __construct($string)
+    public static function parse($string)
     {
 
-        $this->baseString=$string;
+        $baseString=$string;
 
-        $baseFace=$this->_parseBaseFace();
+        /*
+         * FROM CLAUSE
+         */
+        $baseFace=self::_parseFromClause($string);
 
-        parent::__construct($baseFace);
+        $joinFaces=self::_parseJoinFace($string,$baseFace);
 
+        var_dump($string);
 
     }
 
 
-    protected function _parseBaseFace(){
+    private static function _parseFromClause(&$string){
         $match=[];
-        if(preg_match(self::PATTERN_FROM,$this->baseString,$match)!=1)
+        if(preg_match(self::PATTERN_FROM,$string,$match)!=1)
             throw new \Exception("Problem occurred while parsing the FROM clause");
 
         $classname=isset($match[1])?$match[1]:"";
+
         if(!class_exists($classname))
             throw new \Exception("Class '$classname' does not exist");
 
         if(!OOPUtils::UsesTrait($classname,'Face\Traits\EntityFaceTrait'))
             throw new FacelessException("Class '$classname' does not use EntityFaceTrait");
 
-        $face=call_user_func($classname .'::getEntityFace');
+        $face = call_user_func($classname .'::getEntityFace');
+
+        $string=str_replace(
+            $match[0]
+           ," FROM " . $face->getSqlTable() . " AS " . FQuery::__doFQLTableNameStatic("this")
+           ,$string
+        );
 
         return $face;
     }
 
-    protected function _parseJoinFace(){
+    private static function _parseJoinFace(&$string,EntityFace $baseFace){
         $matches=[];
-        $parseResult=preg_match_all(self::PATTERN_JOIN,$this->baseString,$matches);
+        $parseResult=preg_match_all(self::PATTERN_JOIN,$string,$matches);
 
         if($parseResult===false)
             throw new \Exception("Problem occurred while parsing the JOIN clauses");
 
-        $matches=$matches[1];
+        $matchesFaceIndex=1;
+        $matchesReplaceIndex=0;
 
-        if($parseResult===0 || count($matches)===0)
+        if($parseResult===0 || count($matches)==0)
             return [];
 
+
         $returns=[];
-        foreach($matches as $match){
+        foreach($matches[$matchesFaceIndex] as $k=>$match){
             try{
-                $returns[]=$this->getBaseFace()->getElement($match);
+
+
+
+                $path = $match;
+
+                $faceElement = $baseFace->getElement($path);
+                $face = $faceElement->getFace();
+
+                $returns[FQuery::__doFQLTableNameStatic($matches[$matchesFaceIndex][$k] , ".")]=$face;
+
+
+                try{
+                    $pieceOfPath;
+                    $parentFace=$baseFace->getElement($path,1,$pieceOfPath)->getFace();
+                } catch (\Face\Exception\RootFaceReachedException $e){
+                    $pieceOfPath[0]="";
+                    $pieceOfPath[1]=$path;
+                    $parentFace=$baseFace;
+                }
+
+                $childElement=$parentFace->getElement($pieceOfPath[1]);
+
+
+                $joinSql = FQuery::__doFQLJoinTable($path,$face,$parentFace,$childElement,$pieceOfPath[0]);
+
+
+                $string=str_replace(
+                    $matches[$matchesReplaceIndex][$k]
+                    ,$joinSql
+                    ,$string
+                );
+
             }catch (\Exception $e){
                 throw $e;
             }
@@ -88,10 +131,6 @@ class FaceQL extends FQuery {
         return $returns;
     }
 
-    public function getSqlString()
-    {
-
-    }
 
 
 }

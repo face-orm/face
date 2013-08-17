@@ -100,13 +100,13 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
     }
     
     public function prepareJoinClause(){
-        
+
         $sql="";
-        
+
         foreach ($this->joins as $path=>$face){
             /* @var $face EntityFace */
-            
-            
+
+
             try{
                 $pieceOfPath;
                 $parentFace=$this->baseFace->getElement($path,1,$pieceOfPath)->getFace();
@@ -115,35 +115,14 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
                 $pieceOfPath[1]=$path;
                 $parentFace=$this->baseFace;
             }
-            
+
             $childElement=$parentFace->getElement($pieceOfPath[1]);
-            
-            
-            // Begining of the join clause
-            // JOIN something AS alias ON 
-            $joinSql="LEFT JOIN ".$face->getSqlTable()." AS ".$this->_doFQLTableName($path)." ON ";
-            
-            
-            $joinArray=$childElement->getSqlJoin();
-            
-            //end of the join clause
-            // alias.one = parent.one AND alias.two = parent.two
-            $i=0;
-            foreach($joinArray as $parentJoinElementName=>$childJoinElementName){
-                $parentJoin=$this->_doFQLTableName($pieceOfPath[0]).".".$parentFace->getElement($parentJoinElementName)->getSqlColumnName();
-                $childJoin=$this->_doFQLTableName($path).".".$childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName();
-                
-                if($i>0)
-                    $joinSql.=" AND ";
-                else
-                    $i++;
-                
-                $joinSql.=" ".$parentJoin."=".$childJoin." ";
-                
-            }
-            
-            
-            
+
+
+            $joinSql = FQuery::__doFQLJoinTable($path,$face,$parentFace,$childElement,$pieceOfPath[0],$this->dotToken);
+
+
+
             $sql.=$joinSql;
         }
 
