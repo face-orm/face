@@ -71,8 +71,8 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     /**
      *  get the element in this element with the given name
      * @param string $name name of the element to get
-     * @param type $offset
-     * @param type $pieceOfPath
+     * @param int $offset allows to jumps some elements
+     * @param array $pieceOfPath if given will be filled with in [0] the base path and in [1] the last element
      * @return EntityFaceElement the EntityFaceElement with the given name
      * @throws \Exception
      * @throws \Face\Exception\RootFaceReachedException
@@ -84,7 +84,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
         
         if(null!==$offset){
             if($offset<0)
-                throw new \Exception("\$offset can't be negativ. ".$offset." given");
+                throw new \Exception("\$offset can't be negative. ".$offset." given");
 
             $lastPath="";
             while($offset>0){
