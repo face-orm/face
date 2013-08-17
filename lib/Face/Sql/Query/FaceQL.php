@@ -30,22 +30,110 @@ abstract class FaceQL  {
     const PATTERN_FROM="#FROM::(\\\\?[A-Za-z_][0-9A-Za-z_]*(\\\\[A-Za-z_][0-9A-Za-z_]*)*)#";
     const PATTERN_SELECT="#SELECT::((\\[.+\\])|\\*)#";
     const PATTERN_JOIN="#JOIN::([a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*)#";
+    const PATTERN_DYNCOLUMN="#~([a-zA-Z0-9_]\\.{0,1})+#";
     const PATTERN_SUBQUERY="#SUB::#";
 
 
+    /**
+     * parse an FaceQL statement and return an executable QueryString object
+     * @param $string
+     * @return QueryString
+     */
     public static function parse($string)
     {
 
         $baseString=$string;
 
         /*
-         * FROM CLAUSE
+         * FROM Clause
          */
         $baseFace=self::_parseFromClause($string);
 
+        /*
+         * JOIN Clauses
+         */
         $joinFaces=self::_parseJoinFace($string,$baseFace);
 
-        var_dump($string);
+        /*
+         * SELECT Clause
+         */
+        $selectedColumns=self::_parseSelectClause($string,$baseFace,$joinFaces);
+
+        /*
+         * Dynamic Columns
+         */
+        self::_parseDynColumns($string,$baseFace);
+
+
+        return new QueryString($baseFace,$string,$joinFaces,$selectedColumns);
+
+    }
+
+
+    private static function _parseDynColumns(&$string,EntityFace $baseFace){
+
+        preg_match_all(self::PATTERN_DYNCOLUMN, $string,$matchArray);
+        $matchArray = array_unique($matchArray[0]);
+
+        foreach ($matchArray as $match) {
+
+            $path=ltrim($match,"~");
+
+            $tablePath = rtrim(substr($match,1, strrpos($match,".")),".");
+
+            $replace=FQuery::__doFQLTableNameStatic( $tablePath )
+                .".".$baseFace->getElement($path)->getSqlColumnName();
+
+            $string=str_replace($match, $replace, $string);
+
+        }
+    }
+
+    private static function _parseSelectClause(&$string,EntityFace $baseFace,array $joins){
+
+        $match=[];
+        if(preg_match(self::PATTERN_SELECT,$string,$match)!=1)
+            throw new \Exception("Problem occurred while parsing the SELECT clause");
+
+        $matchString=$match[1];
+
+        // list of base face + join face
+        $facesToSelect["this"]=$baseFace;
+        $facesToSelect = array_merge($facesToSelect,$joins);
+
+        // the STAR [*] case : select all
+        // TODO : More flexible match
+        if($matchString == "*" || $matchString == "[*]"){
+
+            $selectFields=[];
+
+            foreach($facesToSelect as $path=>$face){
+                $truePath = FQuery::__doFQLTableNameStatic($path);
+                foreach($face as $elm){
+                    /* @var $elm \Face\Core\EntityFaceElement */
+                    if($elm->isValue())
+                        $selectFields[ $path . "." .  $elm->getName() ]
+                            = $truePath.FQuery::DOT_TOKEN.$elm->getName();
+                }
+            }
+
+        }else{
+            // TODO
+        }
+
+
+        $sqlSelect = FQuery::__doFQLSelectColumns($selectFields , $baseFace);
+
+
+
+        $string=str_replace(
+            $match[0]
+            ," SELECT " . $sqlSelect
+            ,$string
+        );
+
+        return $selectFields;
+
 
     }
 
@@ -103,7 +191,6 @@ abstract class FaceQL  {
 
 
                 try{
-                    $pieceOfPath;
                     $parentFace=$baseFace->getElement($path,1,$pieceOfPath)->getFace();
                 } catch (\Face\Exception\RootFaceReachedException $e){
                     $pieceOfPath[0]="";

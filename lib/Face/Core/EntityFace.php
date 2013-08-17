@@ -93,23 +93,22 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
                 $name=substr($name,0,$lastDot);
                 $offset--;
             }
-            
-            
-            
+
+            if(""===$name)
+                throw new \Face\Exception\RootFaceReachedException("Offset was too deep and reached root face");
+
+
             $lastPath=rtrim($lastPath,".");
             $pieceOfPath[0]=$name;
             $pieceOfPath[1]=$lastPath;
-            
-            if(""===$name){
-                throw new \Face\Exception\RootFaceReachedException("Offset was depthly enough to reach root face then it cant get element which references the root Face");
-            }
+
+
         }
         
         
         if(false!==strpos($name, ".")){
             
             $firstChildFace=$this->getElement(strstr($name, ".",true))->getFace();
-            
             return $firstChildFace->getElement(trim(strstr($name, "."),"."));
         }
         
@@ -128,9 +127,10 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
             throw new \Exception("Face '" . $this->getClass() . "' has no element called '$name'. $relatedStr");
         }
 
+
         return $this->elements[$name];
     }
-    
+
     public function getElements() {
         return $this->elements;
     }

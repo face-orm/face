@@ -47,15 +47,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
 
     
     
-    /**
-     * give all the entities which are part of the FQuery
-     * @return EntityFace[] list of the face
-     */
-    public function getAvailableFaces(){
-        $array['this']=$this->baseFace;
-        
-        return array_merge($array,$this->joins);
-    }
+
     
     /**
      * set the where clause 
@@ -69,9 +61,9 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
     }
     
     public function prepareSelectClause(){
-        
-        
-        $facesToSelect["this"]=$this->baseFace;  
+
+
+        $facesToSelect["this"]=$this->baseFace;
         $facesToSelect=  array_merge($facesToSelect,$this->joins);
         
         $selectFields=[];
@@ -108,7 +100,6 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
 
 
             try{
-                $pieceOfPath;
                 $parentFace=$this->baseFace->getElement($path,1,$pieceOfPath)->getFace();
             } catch (\Face\Exception\RootFaceReachedException $e){
                 $pieceOfPath[0]="";
@@ -135,9 +126,9 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
         
         
         $newString=$this->where;
-        
+
         $matchArray = [];
-        preg_match_all("#~([a-zA-Z0-9_]\.{0,1})+#", $newString,$matchArray);
+        preg_match_all("#~([a-zA-Z0-9_]\\.{0,1})+#", $newString,$matchArray);
         $matchArray = array_unique($matchArray[0]);
         
         foreach ($matchArray as $match) {

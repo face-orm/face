@@ -12,56 +12,94 @@ class FaceQLTest extends Test\PHPUnitTestDb
         return $this->createMySQLXMLDataSet('dataset.xml');
     }
 
-    public function testA(){
+    /**
+     * @group faceql
+     */
+    public function testFrom(){
 
-        \Face\Sql\Query\FaceQL::parse(
+        $pdo=$this->getConnection()->getConnection();
+
+        $fq=\Face\Sql\Query\FaceQL::parse(
+
+            "SELECT::* FROM::Tree"
+
+        );
+
+        $trees = Face\ORM::execute($fq, $pdo);
+
+        $this->assertEquals(4,count($trees));
+        $this->assertEquals(1,$trees[0]->getId());
+        $this->assertEquals(8,$trees[0]->getAge());
+
+
+    }
+
+    /**
+     * @group faceql
+     */
+    public function testJoin(){
+
+
+        $pdo=$this->getConnection()->getConnection();
+
+        $fq=\Face\Sql\Query\FaceQL::parse(
 
             "SELECT::* FROM::Tree".
             " JOIN::lemons"
 
         );
 
-        \Face\Sql\Query\FaceQL::parse(
+        $trees = Face\ORM::execute($fq, $pdo);
 
-            "SELECT::* FROM::Tree".
-            " JOIN::lemons".
-            " JOIN::lemons.seeds"
+        $this->assertEquals(4,count($trees));
+        $this->assertEquals(13,count($trees->getInstancesByPath("this.lemons")));
+        $this->assertEquals(1,$trees[0]->getId());
+        $this->assertEquals(8,$trees[0]->getAge());
 
-        );
 
     }
 
+    /**
+     * @group faceql
+     */
+    public function testWhere(){
 
-//
-//
-//    public function testParseBaseFace(){
-//
-//        $fql=new \Face\Sql\Query\FaceQL("SELECT::* FROM::Tree");
-//
-//        $this->assertEquals(Tree::getEntityFace(),$fql->getBaseFace());
-//
-//    }
-//
-//    public function testParseJoinFace(){
-//
-//        $q=
-//            "SELECT::* FROM::Tree".
-//            " JOIN::lemons";
-//
-//        $fql=new \Face\Sql\Query\FaceQL($q);
-//
-//        $this->assertEquals(Tree::getEntityFace(),$fql->getBaseFace());
-//
-//
-//        $q=
-//            "SELECT::* FROM::Tree".
-//            " JOIN::lemons".
-//            " JOIN::lemons.seeds";
-//
-//        $fql=new \Face\Sql\Query\FaceQL($q);
-//
-//    }
 
+        // TEST 1
+        $pdo=$this->getConnection()->getConnection();
+
+        $fq=\Face\Sql\Query\FaceQL::parse(
+
+            "SELECT::* FROM::Tree".
+            " JOIN::lemons".
+            " WHERE ~id=1"
+
+        );
+
+        $trees = Face\ORM::execute($fq, $pdo);
+
+        $this->assertEquals(1,count($trees));
+        $this->assertEquals(1,$trees[0]->getId());
+        $this->assertEquals(8,$trees[0]->getAge());
+
+
+        // TEST 2
+        $fq=\Face\Sql\Query\FaceQL::parse(
+
+            "SELECT::* FROM::Tree".
+            " JOIN::lemons".
+            " WHERE ~id=:id"
+
+        )->bindValue("id",1,PDO::PARAM_INT);
+
+
+        $trees = Face\ORM::execute($fq, $pdo);
+
+        $this->assertEquals(1,count($trees));
+        $this->assertEquals(1,$trees[0]->getId());
+        $this->assertEquals(8,$trees[0]->getAge());
+
+    }
 
 
 
