@@ -12,10 +12,10 @@ class queryTest extends PHPUnit_Framework_TestCase
 
         
         $fQuery= Tree::faceQueryBuilder();
-        
-        $fQuery->join("lemons")->join("lemons.seeds")->join("leafs")
-                ;
-               //->bindValue(":name", "%A%");
+
+        $fQuery->join("lemons")->join("lemons.seeds")->join("leafs");
+
+        //->bindValue(":name", "%A%");
 
 
         $trees=  Face\ORM::execute($fQuery, $pdo);

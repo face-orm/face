@@ -32,7 +32,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     }
 
-    public function testSimpleUpdatet(){
+    public function testSimpleUpdate(){
 
         $a = new Tree();
         $a->setId(200);

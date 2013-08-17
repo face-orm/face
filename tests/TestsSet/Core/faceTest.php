@@ -1,7 +1,7 @@
 <?php
 
 
-class LineTest extends PHPUnit_Framework_TestCase
+class FaceTest extends PHPUnit_Framework_TestCase
 {
 
     
