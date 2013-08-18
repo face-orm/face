@@ -181,7 +181,6 @@ abstract class FaceQL  {
             try{
 
 
-
                 $path = $match;
 
                 $faceElement = $baseFace->getElement($path);
@@ -201,14 +200,20 @@ abstract class FaceQL  {
                 $childElement=$parentFace->getElement($pieceOfPath[1]);
 
 
+
                 $joinSql = FQuery::__doFQLJoinTable($path,$face,$parentFace,$childElement,$pieceOfPath[0]);
 
 
-                $string=str_replace(
-                    $matches[$matchesReplaceIndex][$k]
-                    ,$joinSql
-                    ,$string
-                );
+                $pos = strpos($string,$matches[$matchesReplaceIndex][$k]);
+                $string = substr_replace($string,$joinSql,$pos,strlen($matches[$matchesReplaceIndex][$k]));
+
+//
+//                $string=str_replace(
+//                    $matches[$matchesReplaceIndex][$k]
+//                    ,$joinSql
+//                    ,$string
+//                );
+
 
             }catch (\Exception $e){
                 throw $e;

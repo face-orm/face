@@ -57,6 +57,22 @@ class FaceQLTest extends Test\PHPUnitTestDb
         $this->assertEquals(8,$trees[0]->getAge());
 
 
+        $fq=\Face\Sql\Query\FaceQL::parse(
+
+            "SELECT::* FROM::Tree".
+            " JOIN::lemons".
+            " JOIN::lemons.seeds"
+
+        );
+
+        $trees = Face\ORM::execute($fq, $pdo);
+
+        $this->assertEquals(4,count($trees));
+        $this->assertEquals(13,count($trees->getInstancesByPath("this.lemons")));
+        $this->assertEquals(1,$trees[0]->getId());
+        $this->assertEquals(8,$trees[0]->getAge());
+
+
     }
 
     /**
