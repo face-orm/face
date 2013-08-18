@@ -75,7 +75,7 @@ class Debugger {
 
                 if(!$arr)
                     echo str_repeat(" ",$depth*$spacesToIndent) . "::NULL::".$elm->getName();
-                if( is_array( $arr ) )
+                else if( is_array( $arr ) )
                     foreach($arr as $a)
                         self::_proccessDumpFaceData($a,$alreadyPrinted,$depth+1);
                 else
