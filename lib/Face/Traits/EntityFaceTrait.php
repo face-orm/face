@@ -155,7 +155,10 @@ trait EntityFaceTrait {
     
     public function faceGetidentity(){
         $array=self::getEntityFace()->getIdentifiers();
-        
+
+        if(!$array || 0==count($array))
+            throw new \Exception("The Class ".__CLASS__." has no face identifier.");
+
         
         $identityString="";
         
