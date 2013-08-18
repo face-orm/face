@@ -234,10 +234,10 @@ class QueryArrayReader implements QueryReaderInterface{
                                             $this->operationsList[$pathToElement]=$operation;
 
                                         }else{
-                                            $this->operationsList[$pathToElement]=new Operation(Self::OPERATION_PASS);
+                                            $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
                                         }
                                     }else{
-                                        $this->operationsList[$pathToElement]=new Operation(Self::OPERATION_IMPLIED);
+                                        $this->operationsList[$pathToElement]=new Operation(self::OPERATION_IMPLIED);
                                     }
 
                                 }
@@ -248,7 +248,7 @@ class QueryArrayReader implements QueryReaderInterface{
 
                         }else{
 
-                            $this->operationsList[$pathToElement]=new Operation(Self::OPERATION_PASS);
+                            $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
 
                         }
                     }
