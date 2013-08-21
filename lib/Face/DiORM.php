@@ -24,7 +24,7 @@ class DiORM {
      * @param \PDO $pdo pdo instance for db connections
      * @param InstancesKeeper $instancesKeeper instance keeper to manage instances
      */
-    function __construct(\PDO $pdo,InstancesKeeper $instancesKeeper) {
+    function __construct(\PDO $pdo,InstancesKeeper $instancesKeeper=null) {
         $this->pdo = $pdo;
         $this->ik=$instancesKeeper;
     }
