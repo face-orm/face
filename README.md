@@ -23,3 +23,29 @@ places
 Site and docs are available at : http://face-orm.org (documentation is still being written)
 
 simple benchmark is available at : https://github.com/laemons/ORM-benchmark
+
+
+
+Roadmap
+---------
+
+Important
+ * many to many seamless relationship
+ * implyed hydration
+ * cache model implementation
+ * performances updates on repetitive tasks
+ * chain update/insert/delete
+ * improve FaceQL
+ * support for subquery
+ * support for transactions
+ * support for debug optimisation
+ * fast queryall/queryone
+
+Later
+ * annotation models reader
+ * face admin - crud
+ * easy cache
+ * graphical generator/customizer/visualizer
+
+Future
+ * embryo for workbench

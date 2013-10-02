@@ -40,14 +40,14 @@ class SimpleInsert extends FQuery {
                 }else{
                     $i++;
                 }
-                $fields.=$elm->getSqlColumnName();
+                $fields.="`" . $elm->getSqlColumnName() . "`";
                 $values.=":".$elm->getSqlColumnName();
                 
                 $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm->getName()));
             }
         }
         
-        $queryStr= "INSERT INTO ".$baseFace->getSqlTable()."($fields) VALUES($values)";
+        $queryStr= "INSERT INTO `".$baseFace->getSqlTable()."`($fields) VALUES($values)";
         
         return $queryStr;
         

@@ -70,7 +70,7 @@ class QueryArrayReader implements QueryReaderInterface{
                 /* @var $face \Face\Core\EntityFace */
 
                 // get identity of the current face on the current db row
-                $identity=$this->getIdentityOfArray($face, $row, $basePath);
+                $identity=$this->_getIdentityOfArray($face, $row, $basePath);
 
                 // if already instantiated then get it from ikeeper and try the forwards
                 if($this->instancesKeeper->hasInstance($face->getClass(), $identity)){
@@ -138,7 +138,7 @@ class QueryArrayReader implements QueryReaderInterface{
 
                 if( isset($faceList[$pathToElement])  ){ // if element is joined
 
-                    $identity = $this->getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
+                    $identity = $this->_getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
 
                     if(!empty($identity)){
                         if ($this->instancesKeeper->hasInstance($element->getClass(), $identity) ){ // if element is already instanciated
@@ -259,7 +259,7 @@ class QueryArrayReader implements QueryReaderInterface{
                     switch($operation->getName()){
                         case self::OPERATION_FORWARD_JOIN :
 
-                            $identity = $this->getIdentityOfArray($operation->getOptions("related")->getParentFace(),$array,$operation->getOptions("relatedBasePath"));
+                            $identity = $this->_getIdentityOfArray($operation->getOptions("related")->getParentFace(),$array,$operation->getOptions("relatedBasePath"));
 
                             if( $this->instancesKeeper->hasInstance($element->getClass(), $identity) )
                                 $instance->faceSetter($element->getName(), $this->instancesKeeper->getInstance($element->getClass(), $identity) );
@@ -284,7 +284,7 @@ class QueryArrayReader implements QueryReaderInterface{
     }
 
 
-    protected function getIdentityOfArray(\Face\Core\EntityFace $face,$array,$basePath){
+    private function _getIdentityOfArray(\Face\Core\EntityFace $face,$array,$basePath){
         $primaries=$face->getPrimaries();
         $identity="";
 

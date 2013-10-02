@@ -27,7 +27,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $insert = new Face\Sql\Query\SimpleInsert($a);
 
 
-        $this->assertEquals("INSERT INTO tree(age) VALUES(:age)" , $insert->getSqlString() );
+        $this->assertEquals("INSERT INTO `tree`(`age`) VALUES(:age)" , $insert->getSqlString() );
         $this->assertEquals(300 , $insert->getBoundValue(":age")[0] );
 
     }
