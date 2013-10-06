@@ -118,5 +118,32 @@ class FaceQLTest extends Test\PHPUnitTestDb
     }
 
 
+    /**
+     * @group faceql
+     */
+    public function testBindIn(){
+
+
+        // TEST 1
+        $pdo=$this->getConnection()->getConnection();
+
+        $fq=\Face\Sql\Query\FaceQL::parse(
+
+            "SELECT::* FROM::Tree".
+            " JOIN::lemons".
+            " WHERE ~id IN (~:in:~)"
+
+        )->bindIn("~:in:~",array(1,2,3));
+
+        $trees = Face\ORM::execute($fq, $pdo);
+
+        $this->assertEquals(3,count($trees));
+        $this->assertEquals(array(1,8),array( $trees[0]->getId() , $trees[0]->getAge() ));
+        $this->assertEquals(array(2,2),array( $trees[1]->getId() , $trees[1]->getAge() ));
+        $this->assertEquals(array(3,5),array( $trees[2]->getId() , $trees[2]->getAge() ));
+
+    }
+
+
 
 }
