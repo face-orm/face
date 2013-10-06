@@ -1,6 +1,8 @@
 <?php
 
 namespace Face;
+use Face\Core\InstancesKeeper;
+use Face\Sql\Result\ResultSet;
 
 /**
  * Face\ORM is a class that interfaces comon calls of the Face API
@@ -22,9 +24,9 @@ abstract class ORM {
         
         if(is_string($what)){
             $baseFace=  Core\FacePool::getFace($what);
-        }else if(is_a("Face\Core\EntityFaceElement")){
+        }else if(is_a($what,'Face\Core\EntityFaceElement')){
             $baseFace=$what;
-        }else if(\Peek\Utils\OOPUtils::UsesTrait($what, "Face\Traits\EntityFaceTrait")){
+        }else if(\Peek\Utils\OOPUtils::UsesTrait($what, 'Face\Traits\EntityFaceTrait')){
             $baseFace=$what->getEntityFace();
         }else{
             throw new Exception\FacelessException("You asked a query for something that has no face");
@@ -41,6 +43,10 @@ abstract class ORM {
      */
     public static function execute(Sql\Query\FQuery $fQuery, \PDO $pdo){
         $j=$fQuery->execute($pdo);
+
+        if(!$j->rowCount()){
+            return new ResultSet(new InstancesKeeper());
+        }
 
         $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery);
 

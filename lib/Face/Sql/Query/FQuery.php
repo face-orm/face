@@ -67,7 +67,7 @@ abstract class  FQuery {
 
     /**
      * Executes the query from the given pdo object
-     * @param \PDO $pdo
+     * @param \PDOStatement $pdo
      */
     public function execute(\PDO $pdo){
 
