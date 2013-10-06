@@ -1,5 +1,6 @@
 face
 ====
+[![Build Status](https://drone.io/github.com/laemons/face/status.png)](https://drone.io/github.com/laemons/face/latest)
 
 Still under development and testing - Not ready for production.
 
