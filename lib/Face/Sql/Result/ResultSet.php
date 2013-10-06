@@ -85,7 +85,7 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
      *=============================*/
     
     public function count() {
-        return count($this->instancesByPath["this"]);
+        return isset($this->instancesByPath["this"]) ? count($this->instancesByPath["this"]) : 0;
     }
 
     
@@ -95,7 +95,7 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
      *======================================*/
     
     public function getIterator() {
-        return new \ArrayIterator($this->instancesByPath["this"]);
+        return isset($this->instancesByPath["this"]) ? new \ArrayIterator($this->instancesByPath["this"]) : new \ArrayIterator();
     }
 
   
