@@ -4,7 +4,7 @@ face
 
 Be aware that face is under active development.
 
-Face is an ORM built under performances a few purposes :
+Face is an ORM built under a few purposes :
  * Performances : unlike some ORM face tries to add as few layers as possible then performances are not impacted a lot.
  * Easy of use  : Face is an ORM. That means that it aims to speed up application development and
  makes developers experience more comfortable with database interactions.
@@ -13,6 +13,8 @@ Face is an ORM built under performances a few purposes :
  * Powerful : performances are something, but we still thing about strength. Face can join your data
  and you can  write complex queries thanks to a custom language close of SQL
 
+
+Face is tested and safe enough for production. Right know it is perfectly suited for little and medium projects.
 
 
 Quick Overview
@@ -62,6 +64,35 @@ $fql=FaceQL::parse(
     "GROUP BY ~Article.id ".
     "HAVING count(~Article.id)>3"
 );
+```
+
+### Insertions and Updates
+
+```php
+use \Face\Sql\Query\SimpleInsert;
+
+// prepare a tree
+$tree = new Tree();
+$tree->setAge(20);
+
+// Insert it
+$insert = new SimpleInsert($parsing);
+$insert->execute($pdo);
+// Get the generated id
+$insertId = $pdo->lastInsertId();
+```
+
+```php
+use \Face\Sql\Query\SimpleUpdate;
+
+// prepare an existing tree (assuming that tree with id 1 exists in the db)
+$tree = new Tree();
+$tree->setId(1);
+$tree->setAge(20);
+
+// update it
+$update = new SimpleUpdate($parsing);
+$update->execute($pdo);
 ```
 
 
