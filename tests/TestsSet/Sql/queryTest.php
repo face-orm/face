@@ -1,13 +1,13 @@
 <?php
 
-class queryTest extends PHPUnit_Framework_TestCase
+class queryTest extends Test\PHPUnitTestDb
 {
 
     
     public function testGetter()
     {
 
-        $pdo = new PDO('mysql:host=localhost;dbname=lemon-test', 'root', 'root');
+        $pdo = $this->getConnection()->getConnection();
         
 
         
@@ -48,8 +48,8 @@ class queryTest extends PHPUnit_Framework_TestCase
     public function testInsert(){
 
 
-        $pdo = new PDO('mysql:host=localhost;dbname=lemon-test', 'root', 'root');
-        
+        $pdo = $this->getConnection()->getConnection();
+
         $a = new Tree();
         $a->setAge(301);
 
