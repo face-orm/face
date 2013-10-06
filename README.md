@@ -31,11 +31,11 @@ Roadmap
 
 Important
  * many to many seamless relationship
- * implyed hydration
+ * implied hydration
  * cache model implementation
  * performances updates on repetitive tasks
  * chain update/insert/delete
- * improve FaceQL
+ * improving FaceQL
  * support for subquery
  * support for transactions
  * support for debug optimisation
@@ -46,6 +46,7 @@ Later
  * face admin - crud
  * easy cache
  * graphical generator/customizer/visualizer
+ * graphical grid editor api (e.g for jquery datatable)
 
 Future
- * embryo for workbench
+ * embryo for workbench .mwb files
