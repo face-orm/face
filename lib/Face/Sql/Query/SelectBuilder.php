@@ -16,6 +16,12 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @var string the base FaceQL formated where clause 
      */
     protected $where;
+
+    /**
+     * used to generate unique bound params for whereIn method
+     * @var int
+     */
+    private $whereInCount=0;
     
     function __construct(EntityFace $baseFace) {
         parent::__construct($baseFace);
@@ -37,7 +43,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
     /**
      * add a join clause to the query
      * @param string $path the face path to the join
-     * @return \Face\Sql\Query\FQuery  will return $this (fluent method)
+     * @return \Face\Sql\Query\SelectBuilder it returns itSelf
      */
     public function join($path){
         $this->joins[$this->_doFQLTableName($path, ".")]=$this->baseFace->getElement($path)->getFace();
@@ -52,14 +58,65 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
     /**
      * set the where clause 
      * @param string $whereString the FQuery formated  where clause
-     * @return \Face\Sql\Query\FQuery  will return $this (fluent method)
+     * @return \Face\Sql\Query\SelectBuilder   it returns itSelf
      */
     public function where($whereString){
         $this->where=$whereString;
         
         return $this;
     }
-    
+
+    /**
+     * appends an AND part to the current where clause
+     * @param string $whereString the FQuery formated  where clause
+     * @return \Face\Sql\Query\SelectBuilder   it returns itSelf
+     */
+    public function whereAND($whereString){
+        $this->where.=" AND " . $whereString;
+        return $this;
+    }
+
+    /**
+     * appends an OR part to the current where clause
+     * @param string $whereString the FQuery formated  where clause
+     * @return \Face\Sql\Query\SelectBuilder   it returns itSelf
+     */
+    public function whereOR($whereString){
+        $this->where.=" OR " . $whereString;
+        return $this;
+    }
+
+
+    /**
+     * creates Where $fieldName in (:$array[0],:$array[1],...)
+     * and generates some bindValue
+     * @param $fieldName string name of the column (can make use of dynamic creation with ~dynColName)
+     * @param $array array list of values to bind
+     * @return \Face\Sql\Query\SelectBuilder  it returns itSelf
+     */
+    public function whereIN($fieldName,$array,$logic=true){
+        $bindString = "";
+        foreach($array as $value){
+            $bindString.=',:fautoIn'.++$this->whereInCount;
+            $this->bindValue(':fautoIn'.$this->whereInCount,$value);
+        }
+
+        $phrase = $fieldName . " IN (" . ltrim($bindString,",") . ")";
+        if      ("AND" === $logic)  //user asked for AND
+            return $this->whereAND($phrase);
+        else if ("OR" === $logic)  //user asked for Or
+            return $this->whereOR($phrase);
+        else if (true == $logic){ // auto check whether logic is needed
+            if(null !== $this->where || strlen($this->where)>0)
+                return $this->whereAND($phrase);
+            else
+                return $this->where($phrase);
+        }else if(false == $logic) // user asked for no logic
+            return $this->where($phrase);
+        else
+            throw new \Exception("Unrecognized logic expression for third param. 'OR' or 'AND' or true or false is awaiting");
+    }
+
     public function prepareSelectClause(){
 
 

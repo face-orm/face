@@ -12,10 +12,37 @@ class queryBuilderTest extends Test\PHPUnitTestDb
     }
 
 
-    public function testSelect()
+    public function testSimpleSelect()
     {
 
-        
+        $pdo=$this->getConnection()->getConnection();
+
+        $q=Tree::faceQueryBuilder();
+        $trees=\Face\ORM::execute($q,$pdo);
+
+        $this->assertEquals(4,count($trees));
+
+        $this->assertEquals(array(1,8),array( $trees[0]->getId() , $trees[0]->getAge() ));
+        $this->assertEquals(array(2,2),array( $trees[1]->getId() , $trees[1]->getAge() ));
+        $this->assertEquals(array(3,5),array( $trees[2]->getId() , $trees[2]->getAge() ));
+        $this->assertEquals(array(4,300),array( $trees[3]->getId() , $trees[3]->getAge() ));
+
+
+
+        // test whereIn()
+        $q=Tree::faceQueryBuilder()->whereIN("~id",array(1,2));
+        $trees=\Face\ORM::execute($q,$pdo);
+        $this->assertEquals(2,count($trees));
+        $this->assertEquals(array(1,8),array( $trees[0]->getId() , $trees[0]->getAge() ));
+        $this->assertEquals(array(2,2),array( $trees[1]->getId() , $trees[1]->getAge() ));
+
+        $q=Tree::faceQueryBuilder()->whereIN("~age",array(300,2,5))->whereIN("~id",array(2,3));
+        $trees=\Face\ORM::execute($q,$pdo);
+        $this->assertEquals(2,count($trees));
+        $this->assertEquals(array(2,2),array( $trees[0]->getId() , $trees[0]->getAge() ));
+        $this->assertEquals(array(3,5),array( $trees[1]->getId() , $trees[1]->getAge() ));
+
+
     }
 
     public function testSimpleInsert(){
@@ -25,7 +52,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $a->setAge(300);
 
         $insert = new Face\Sql\Query\SimpleInsert($a);
-
 
         $this->assertEquals("INSERT INTO `tree`(`age`) VALUES(:age)" , $insert->getSqlString() );
         $this->assertEquals(300 , $insert->getBoundValue(":age")[0] );
