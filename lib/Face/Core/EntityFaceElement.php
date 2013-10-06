@@ -53,7 +53,7 @@ class EntityFaceElement{
      * 
      * @param array $params array to construct the faceElement as described here :  TODO array description
      */
-    function __construct($name=null,$params=array()) {
+    function __construct($name="",$params=array()) {
         $this->name         =  $name;
         
         $this->propertyName =  ValuesUtils::getIfArrayKey($params, "propertyName",$name);
