@@ -29,6 +29,19 @@ class QueryString extends FQuery{
         return $this->sqlString;
     }
 
+    /**
+     * binds an array of value.
+     * Intended to be used in such a case :
+     * <pre>
+     *  WHERE something IN (::in::)
+     * </pre>
+     *
+     * then ->bindIn("::in::",$arrayOfValues)
+     *
+     * @param $token string the bound token
+     * @param $array array list of values to bind
+     * @return $this QueryString
+     */
     public function bindIn($token,$array){
         $bindString = "";
         foreach($array as $value){
