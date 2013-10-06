@@ -2,23 +2,70 @@ face
 ====
 [![Build Status](https://drone.io/github.com/laemons/face/status.png)](https://drone.io/github.com/laemons/face/latest)
 
-Still under development and testing - Not ready for production.
+Be aware that face is under active development.
 
-why ?
---------
-
-Face is an ORM that was started from the need of having something easy to setup,
-easy to use and reasonable in performances. But that still do the job of an ORM. 
-The big needing was to be able to do join statement simplely while keeping all parent/children relations.
-
-The job is almost successful. The ORM does the job very well 
-and it does what we ask it to do, without any bad suprises.
-
-Performances have not been working in depth for the moment, but basically it does well.
-Then we are very confident about this point.
+Face is an ORM built under performances a few purposes :
+ * Performances : unlike some ORM face tries to add as few layers as possible then performances are not impacted a lot.
+ * Easy of use  : Face is an ORM. That means that it aims to speed up application development and
+ makes developers experience more comfortable with database interactions.
+ * Understandable : Face doesn't try to reinvent the wheel. It does what you ask him to do and you don't have to learn
+ or setup hundred of component for starting a new project. Moreover it wont make more than you ask it to do.
+ * Powerful : performances are something, but we still thing about strength. Face can join your data
+ and you can  write complex queries thanks to a custom language close of SQL
 
 
-places
+
+Quick Overview
+--------------
+
+### SelectBuilder
+
+An api is available to select datas from the db
+
+```php
+$fQuery = Tree::faceQueryBuilder();
+// execute the query through the pdo object
+$trees = Face\ORM::execute($fQuery, $pdo);
+// => $trees is an array of Tree from the DB
+```
+
+
+```php
+$fQuery = Tree::faceQueryBuilder();
+$fQuery->join("Lemon"); // now join some lemons
+$fQuery->where("~age >= 5 AND ~Lemon.mature = 1 "); // only mature lemons and trees aged of  5 years or more
+
+$trees = Face\ORM::execute($fQuery, $pdo);
+// => $trees is an array of Tree and each Tree contains the joined Lemon
+
+foreach($trees as $tree){
+    $lemons = $tree->getLemons();
+    echo "Tree aged of " $tree->getAge() . " years has " . count($lemons) . " mature lemons <br/>";
+}
+
+// Tree aged of 10 years has 20 lemons
+// Tree aged of 6 years has 7 lemons
+```
+
+
+### FaceQL
+
+FaceQL is an important feature of Face. That's a Query language close of SQL.
+It allows you to create complex queries that the Select Builder can't build.
+
+```php
+use \Face\Sql\Query\FaceQL;
+$fql=FaceQL::parse(
+    "SELECT::* FROM::Keyword ".
+    "JOIN::Article AND ~Article.lang=:lang ".
+    "WHERE (~Article.date < DATE(NOW()) OR ~Article.date IS NULL ) ".
+    "GROUP BY ~Article.id ".
+    "HAVING count(~Article.id)>3"
+);
+```
+
+
+See
 --------
 
 Site and docs are available at : http://face-orm.org (documentation is still being written)
