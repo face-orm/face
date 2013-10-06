@@ -19,7 +19,7 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
      * 
      * @param array $params array to construct the face is described here :  TODO array description
      */
-    function __construct($params,$class) {
+    function __construct($params=array(),$class=null) {
         $this->elements=array();
         $this->primaries=array();
         $this->relatedTable=array();
