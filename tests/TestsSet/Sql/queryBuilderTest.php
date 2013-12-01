@@ -43,6 +43,15 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(array(3,5),array( $trees[1]->getId() , $trees[1]->getAge() ));
 
 
+        $trees = Tree::faceQueryBy("id",1,$pdo);
+        $this->assertEquals(1,count($trees));
+        $this->assertEquals(array(1,8),array( $trees[0]->getId() , $trees[0]->getAge() ));
+
+        $trees = Tree::faceQueryBy("id",array("1,2"),$pdo);
+        $this->assertEquals(1,count($trees));
+        $this->assertEquals(array(1,8),array( $trees[0]->getId() , $trees[0]->getAge() ));
+
+
     }
 
     public function testSimpleInsert(){

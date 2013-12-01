@@ -4,6 +4,7 @@ namespace Face\Traits;
 
 use \Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
+use Face\ORM;
 use Face\Sql\Query\SelectBuilder;
 
 trait EntityFaceTrait {
@@ -201,6 +202,28 @@ trait EntityFaceTrait {
      */
     public static function faceQueryBuilder(){
         return new SelectBuilder(self::getEntityFace());
+    }
+
+    /**
+     * Fast querying by only specifying one field
+     * @param $item string name of the item (without the leading tild) e.g : "id"
+     * @param $itemValue string|array value to find. You may specify an array to use an WHERE item IN (...) instead of WHERE item = ...
+     * @param $pdo
+     * @return \Face\Sql\Result\ResultSet
+     */
+    public static function faceQueryBy($item,$itemValue,$pdo){
+            if(self::getEntityFace()->getDirectElement($item)){
+                $fQuery = self::faceQueryBuilder();
+
+                if(is_array($itemValue))
+                    $fQuery->whereIN("~$item",$itemValue);
+                else
+                    $fQuery->where("~$item=:itemValue")
+                           ->bindValue(":itemValue",$itemValue);
+
+                return ORM::execute($fQuery,$pdo);
+
+            }
     }
     
     public static function __getEntityFace(){
