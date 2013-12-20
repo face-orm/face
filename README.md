@@ -6,7 +6,7 @@ Be aware that face is under active development.
 
 Face is an ORM built under a few purposes :
  * Performances : unlike some ORM face tries to add as few layers as possible then performances are not impacted a lot.
- * Easy of use  : Face is an ORM. That means that it aims to speed up application development and
+ * Ease of use  : Face is an ORM. That means that it aims to speed up application development and
  makes developers experience more comfortable with database interactions.
  * Understandable : Face doesn't try to reinvent the wheel. It does what you ask him to do and you don't have to learn
  or setup hundred of component for starting a new project. Moreover it wont make more than you ask it to do.
@@ -94,6 +94,11 @@ $tree->setAge(20);
 $update = new SimpleUpdate($parsing);
 $update->execute($pdo);
 ```
+
+Support
+----------
+
+You may open an issue or tweet @Sneakybobito (that's me) for support
 
 
 See
