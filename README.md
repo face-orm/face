@@ -98,7 +98,7 @@ $update->execute($pdo);
 Support
 ----------
 
-You may open an issue or tweet @Sneakybobito (that's me) for support
+You may [open an issue](https://github.com/laemons/face/issues) or tweet [@Sneakybobito](https://twitter.com/SneakyBobito) (that's me) for support
 
 
 See
