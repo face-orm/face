@@ -5,7 +5,7 @@
     "description": "Modern & Friendly ORM for php5.4",
     "keywords": ["ORM"],
     "homepage": "https://github.com/SneakyBobito/face",
-    "license": "BSD-3",
+    "license": "MIT",
     "authors": [
         {
             "name": "Soufiane Ghzal",
