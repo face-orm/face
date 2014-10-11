@@ -135,7 +135,7 @@ class QueryArrayReader implements QueryReaderInterface{
             if($element->isEntity()){
 
                 $pathToElement=$basePath.".".$element->getName();
-
+                
                 if( isset($faceList[$pathToElement])  ){ // if element is joined
 
                     $identity = $this->_getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
@@ -277,7 +277,7 @@ class QueryArrayReader implements QueryReaderInterface{
                 }
 
             }else if($doValues){
-                $value=$array[$this->FQuery->_doFQLTableName($basePath.".".$element->getName())];
+                $value=$array[$this->_makeColumnName($element,$basePath)];
                 $instance->faceSetter($element,$value);
             }
         }
@@ -291,11 +291,26 @@ class QueryArrayReader implements QueryReaderInterface{
         foreach($primaries as $elm){
             /* @var $elm \Face\Core\EntityFaceElement */
 
-            $identity.=$array[$this->FQuery->_doFQLTableName($basePath.".".$elm->getName())];
+            $identity.=$array[$this->_makeColumnName($elm,$basePath)];
         }
 
         return $identity;
     }
 
 
+    private function _makeColumnName(\Face\Core\EntityFaceElement $elm,$basePath){
+        
+        $elmName = $elm->getName();
+        
+        $selectColumns = $this->FQuery->getSelectedColumns();
+        if(isset($selectColumns["$basePath.$elmName"])){
+            $name = $selectColumns["$basePath.$elmName"];
+        }else{
+            $name = $this->FQuery->_doFQLTableName($basePath.".".$elmName);
+        }
+        
+        return $name;
+        
+    }
+    
 }

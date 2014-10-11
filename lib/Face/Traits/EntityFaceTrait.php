@@ -230,6 +230,8 @@ trait EntityFaceTrait {
         throw new \Exception("__getEntityFace Method must be overwritten");
     }
     
+    public static function buildSetFromStmt(){
+        
+    }
+    
 }
-
-?>

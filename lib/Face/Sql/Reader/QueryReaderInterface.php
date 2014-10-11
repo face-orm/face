@@ -16,5 +16,3 @@ interface QueryReaderInterface {
     public function read(\PDOStatement $pdoStmt);
     
 }
-
-?>

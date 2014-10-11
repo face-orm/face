@@ -67,7 +67,8 @@ abstract class  FQuery {
 
     /**
      * Executes the query from the given pdo object
-     * @param \PDOStatement $pdo
+     * @param \PDO $pdo
+     * @return \PDOStatement the pdo statement ready to fetch
      */
     public function execute(\PDO $pdo){
 
@@ -105,7 +106,12 @@ abstract class  FQuery {
         
         return $this;
     }
+    
+    public function getSelectedColumns() {
+        return $this->selectedColumns;
+    }
 
+    
     /**
      * @param $name
      * @return array
