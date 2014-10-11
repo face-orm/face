@@ -229,8 +229,84 @@ trait EntityFaceTrait {
     public static function __getEntityFace(){
         throw new \Exception("__getEntityFace Method must be overwritten");
     }
+
+    /**
+     * 
+     * @param string $string the SQL query 
+     * @param type $options
+     */
+    public static function queryString($string,$options){
+        
+        $joins = [];
+        $selectedColumns = [];
+        
+        if(is_array($options)){
+            
+            if(isset($options["join"])){
+                
+                
+                
+                foreach ($options["join"] as $j){
+                    
+                    $joins["this.$j"] = self::getEntityFace()->getElement($j)->getFace();
+                }
+            }
+            
+            if(isset($options["select"])){
+                foreach ($options["select"] as $k=>$j){
+                    
+                    $basePath = is_numeric($k) ? $j : $k;
+                    
+                    if(!\Peek\Utils\StringUtils::beginsWith("this", $basePath)){
+                        $basePath = "this." . $basePath;
+                    }
+                    
+                    $basePath = substr($basePath,0, strrpos( $basePath, "."));
+                    
+                    self::__queryStringDoColumnRecursive($selectedColumns,$k,$j,$basePath);
+
+                    
+                }
+            }
+            
+        }        
+        $qS = new \Face\Sql\Query\QueryString(self::getEntityFace(), $string, $joins, $selectedColumns);
+        
+        return $qS;
+        
+    }
     
-    public static function buildSetFromStmt(){
+    private static function __queryStringDoColumnRecursive(&$selectedColumns,$k,$v,$basePath){
+       
+        
+        // case   "lemons.tree_id"
+        if(is_numeric($k)){
+                        
+            $pos = strrpos( $v, ".");
+            $columnName = false ===  $pos ? $v : substr($v, $pos+1);
+            $selectedColumns["$basePath.$columnName"] = $columnName;
+
+        }else{
+
+            // case  "lemons" => [ "tree_id" ]  
+            if(is_array($v)){
+
+                foreach ($v as $kk=>$vv ){
+                    $newBasePath = "$basePath.$k." . (is_numeric($kk) ? $vv : $kk);
+                    $newBasePath = substr($newBasePath,0, strrpos( $newBasePath, "."));
+                    self::__queryStringDoColumnRecursive($selectedColumns, $kk, $vv, $newBasePath );
+                    
+                }
+               
+            // case  "lemons.tree_id"=>"tree_id"
+            }else{
+                $pos = strrpos( $k, ".");
+                $nameEnd = false ===  $pos ? $k : substr($k, $pos+1);
+                $selectedColumns["$basePath.$nameEnd"] = $v;
+            }
+
+        }
+
         
     }
     

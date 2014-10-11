@@ -254,12 +254,10 @@ class EntityFaceElement{
         if($this->isEntity())
             return call_user_func($this->getClass()."::getEntityFace");
         else
-            throw new Exception("A value Element has no face. Only entity with an associed class can have a face");
+            throw new \Exception("A value Element has no face. Only entity with an associed class can have a face. Call on " . $this->getName());
     }
 
     
    
 
 }
-
-?>

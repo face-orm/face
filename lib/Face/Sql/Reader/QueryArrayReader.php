@@ -277,8 +277,14 @@ class QueryArrayReader implements QueryReaderInterface{
                 }
 
             }else if($doValues){
-                $value=$array[$this->_makeColumnName($element,$basePath)];
-                $instance->faceSetter($element,$value);
+                
+                $cName = $this->_makeColumnName($element,$basePath);
+                
+                
+                $value=isset($array[$cName]) ? $array[$cName] : null;
+                
+                if($value)
+                    $instance->faceSetter($element,$value);
             }
         }
     }
