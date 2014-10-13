@@ -61,14 +61,10 @@ class queryBuilderTest extends Test\PHPUnitTestDb
     {
 
         $pdo = $this->getConnection()->getConnection();
-        
 
-        
         $fQuery= Tree::faceQueryBuilder();
 
         $fQuery->join("childrenTrees");
-
-
 
         $trees=  Face\ORM::execute($fQuery, $pdo);
 
@@ -77,6 +73,17 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(1,$trees[0]->getId());
         $this->assertEquals(8,$trees[0]->getAge());
 
+        $this->assertEquals(3, count($trees[0]->childrenTrees));
+        $this->assertEquals(1, count($trees[2]->childrenTrees));
+        $this->assertEquals(0, count($trees[1]->childrenTrees));
+        $this->assertEquals(0, count($trees[3]->childrenTrees));
+        
+        $this->assertEquals(2, count($trees[3]->parentTrees));
+        $this->assertEquals(0, count($trees[0]->parentTrees));
+        $this->assertEquals(1, count($trees[1]->parentTrees));
+        $this->assertEquals(1, count($trees[2]->parentTrees));
+        
+        $this->assertEquals($trees[0], $trees[2]->parentTrees[0]);
 
     }
 
