@@ -175,27 +175,87 @@ abstract class  FQuery {
      */
     public static function __doFQLJoinTable($path,EntityFace $face,EntityFace $parentFace,EntityFaceElement $childElement,$basePath,$token=null){
 
-        // Begining of the join clause
-        // JOIN something AS alias ON
-        $joinSql="LEFT JOIN ".$face->getSqlTable()." AS ".FQuery::__doFQLTableNameStatic($path,$token)." ON ";
+        
 
 
-        $joinArray=$childElement->getSqlJoin();
+        $relation = $childElement->getRelation();
+        
+        
+        if($relation == "hasManyThrough"){
+            
+            // How it is going to look : 
+            // JOIN throughTable AS throughtAlias 
+            //      ON throughtAlias.one = parent.one AND throughtAlias.two = parent.two
+            // JOIN otherTable AS otherAlias
+            //      ON otherAlias.one = throughtAlias.one AND otherAlias.two = throughtAlias.two
+            
+            $throughTable = $childElement->getSqlThrough();
+            $throughAlias = FQuery::__doFQLTableNameStatic("$path.through",$token);
+            
+            $otherFace    = $face;
+            $otherTableElement = $otherFace->getDirectElement($childElement->getRelatedBy());
+            $otherTable        = $otherFace->getSqlTable();
+            $otherAlias        = FQuery::__doFQLTableNameStatic($path,$token);
+            
+            $joinSql1 = "LEFT JOIN $throughTable AS $throughAlias ON ";
+            $joinSql2 = "LEFT JOIN $otherTable AS $otherAlias ON ";
+            
+            $join = $childElement->getSqlJoin();
+            $i=0;
+            foreach ($join as $thisElementName=>$throughcolumn){
+                if($i>0)
+                    $joinSql.=" AND ";
+                else
+                    $i++;
+                
+                $parentOn  = FQuery::__doFQLTableNameStatic($basePath,$token).".".$parentFace->getElement($thisElementName)->getSqlColumnName();
+                $throughOn = "$throughAlias.$throughcolumn";
+                $joinSql1 .= " $parentOn = $throughOn" ;
+            }
+            
+            $join = $otherTableElement->getSqlJoin();
+            $i=0;
+            foreach ($join as $thisElementName=>$throughcolumn){
+                if($i>0)
+                    $joinSql.=" AND ";
+                else
+                    $i++;
+                
+                $otherOn  = "$otherAlias.".$otherFace->getElement($thisElementName)->getSqlColumnName();
+                $throughOn = "$throughAlias.$throughcolumn";
+                $joinSql2 .= " $otherOn = $throughOn" ;
+            }
+            
+            $joinSql = "$joinSql1 $joinSql2";
+            
+            
+        }else{
 
-        //end of the join clause
-        // alias.one = parent.one AND alias.two = parent.two
-        $i=0;
-        foreach($joinArray as $parentJoinElementName=>$childJoinElementName){
-            $parentJoin=FQuery::__doFQLTableNameStatic($basePath,$token).".".$parentFace->getElement($parentJoinElementName)->getSqlColumnName();
-            $childJoin=FQuery::__doFQLTableNameStatic($path,$token).".".$childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName();
+            $joinArray=$childElement->getSqlJoin();
+            
+            // How it is going to look : 
+            // JOIN something AS alias ON alias.one = parent.one AND alias.two = parent.two
+            
+            // Begining of the join clause
+            // JOIN something AS alias ON
+            $joinSql="LEFT JOIN ".$face->getSqlTable()." AS ".FQuery::__doFQLTableNameStatic($path,$token)." ON ";
+            
+            //end of the join clause
+            // alias.one = parent.one AND alias.two = parent.two
+            $i=0;
+            foreach($joinArray as $parentJoinElementName=>$childJoinElementName){
+                $parentJoin=FQuery::__doFQLTableNameStatic($basePath,$token).".".$parentFace->getElement($parentJoinElementName)->getSqlColumnName();
+                $childJoin=FQuery::__doFQLTableNameStatic($path,$token).".".$childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName();
 
-            if($i>0)
-                $joinSql.=" AND ";
-            else
-                $i++;
+                if($i>0)
+                    $joinSql.=" AND ";
+                else
+                    $i++;
 
-            $joinSql.=" ".$parentJoin."=".$childJoin." ";
+                $joinSql.=" ".$parentJoin."=".$childJoin." ";
 
+            }
+            
         }
 
         return $joinSql;

@@ -16,6 +16,7 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
     protected $instanceKeeper;
     
     protected $instancesByPath=array();
+    protected $instancesByPathIdentity=array();
     
     function __construct(\Face\Core\InstancesKeeper $instanceKeeper) {
         $this->instanceKeeper = $instanceKeeper;
@@ -37,11 +38,21 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
     }
     
 
-    public function addInstanceByPath($path,$instance) {
+    public function addInstanceByPath($path,$instance,$identity) {
         $this->instancesByPath[$path][] = $instance;
+        $this->instancesByPathIdentity[$path][$identity] = $instance;
     }
 
+    public function getIdentifiedInstancesByPath($path=null){
+        if($path)
+            return $this->instancesByPath[$path];
+        else
+            return $this->instancesByPath;
+    }
     
+    public function pathHasIdentity($path,$identity){
+        return isset($this->instancesByPathIdentity[$path][$identity]);
+    }
     
     public function getBaseInstances() {
         return $this->instancesByPath["this"];

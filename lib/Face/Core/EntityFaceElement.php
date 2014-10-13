@@ -46,6 +46,7 @@ class EntityFaceElement{
     protected $sqlJoin;
     protected $sqlBridge;
     protected $sqlAutoIncrement;
+    protected $sqlThrough;
 
 
 
@@ -68,7 +69,8 @@ class EntityFaceElement{
         
         if($this->isEntity()){
             $this->relation  =  ValuesUtils::getIfArrayKey($params, "relation","hasMany");
-            $this->relatedBy = ValuesUtils::getIfArrayKey($params, "relatedBy");
+            $this->relatedBy =  ValuesUtils::getIfArrayKey($params, "relatedBy");
+            $this->sqlThrough=  ValuesUtils::getIfArrayKey($params['sql'], "throughTable");
         }
             
         $this->sqlColumnName =   ValuesUtils::getIfArrayKey($params['sql'], "columnName",$name);
@@ -122,8 +124,15 @@ class EntityFaceElement{
         $this->getter = $getter;
     }
 
-   
+    public function getSqlThrough() {
+        return $this->sqlThrough;
+    }
 
+    public function setSqlThrough($sqlThrough) {
+        $this->sqlThrough = $sqlThrough;
+    }
+
+    
     public function getType() {
         return $this->type;
     }
@@ -221,6 +230,9 @@ class EntityFaceElement{
     public function hasManyRelationship(){
         return $this->relation=="hasMany";
     }
+    public function hasManyThroughRelationship(){
+        return $this->relation=="hasManyThrough";
+    }
 
     public function getRelatedBy() {
         return $this->relatedBy;
@@ -234,6 +246,10 @@ class EntityFaceElement{
         
     }        
     
+    /**
+     * 
+     * @return EntityFace the face this element belongs to
+     */
     public function getParentFace() {
         return $this->parentFace;
     }
@@ -258,6 +274,6 @@ class EntityFaceElement{
     }
 
     
-   
+    
 
 }

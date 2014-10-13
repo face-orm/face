@@ -8,7 +8,9 @@ class Tree {
     public $age;
     public $lemons=array();
     public $leafs=array();
-
+    public $childrenTrees=array();
+    public $parentTrees = array();
+    
     public function getId() {
         return $this->id;
     }
@@ -75,7 +77,28 @@ class Tree {
                     "sql"   =>[
                         "join"  => ["id"=>"tree_id"]
                     ]
+                ],
+                
+                "childrenTrees"=>[
+                    "class"     => "Tree",
+                    "relation"  => "hasManyThrough",
+                    "relatedBy" => "parentTrees",
+                    "sql"   =>[
+                        "join"  => ["id"=>"tree_parent_id"],
+                        "throughTable" => "tree_has_parent"
+                    ]
+                ],
+                
+                "parentTrees"=>[
+                    "class"     => "Tree",
+                    "relation"  => "hasManyThrough",
+                    "relatedBy" => "childrenTrees",
+                    "sql"   =>[
+                        "join"  => ["id"=>"tree_child_id"],
+                        "throughTable" => "tree_has_parent"
+                    ]
                 ]
+                
 
             ]
 

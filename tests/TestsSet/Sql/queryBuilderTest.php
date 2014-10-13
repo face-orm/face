@@ -53,6 +53,32 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
 
     }
+    
+    /**
+     * @group hasManyThrough
+     */
+    public function testHasManyThrough()
+    {
+
+        $pdo = $this->getConnection()->getConnection();
+        
+
+        
+        $fQuery= Tree::faceQueryBuilder();
+
+        $fQuery->join("childrenTrees");
+
+
+
+        $trees=  Face\ORM::execute($fQuery, $pdo);
+
+
+        $this->assertEquals(4,count($trees));
+        $this->assertEquals(1,$trees[0]->getId());
+        $this->assertEquals(8,$trees[0]->getAge());
+
+
+    }
 
     public function testSimpleInsert(){
 

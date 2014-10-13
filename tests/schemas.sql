@@ -18,6 +18,19 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `lemon-test`.`tree_has_parent`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `lemon-test`.`tree_has_parent` ;
+
+CREATE  TABLE IF NOT EXISTS `lemon-test`.`tree_has_parent` (
+  `tree_parent_id` INT NOT NULL  ,
+  `tree_child_id` INT NOT NULL  ,
+  `age` INT NULL ,
+  PRIMARY KEY (`tree_parent_id`,`tree_child_id`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `lemon-test`.`lemon`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `lemon-test`.`lemon` ;

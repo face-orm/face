@@ -25,8 +25,28 @@
     </table_data>
 
 
+    <table_data name="tree_has_parent">
+        <row>
+            <field name="tree_parent_id">1</field>
+            <field name="tree_child_id">2</field>
+        </row>
+        <row>
+            <field name="tree_parent_id">1</field>
+            <field name="tree_child_id">3</field>
+        </row>
+        <row>
+            <field name="tree_parent_id">3</field>
+            <field name="tree_child_id">4</field>
+        </row>
+        <row>
+            <field name="tree_parent_id">1</field>
+            <field name="tree_child_id">4</field>
+        </row>
+    </table_data>
 
-	<table_data name="leaf">
+
+
+    <table_data name="leaf">
 	<row>
 		<field name="id">1</field>
 		<field name="length">10</field>

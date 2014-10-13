@@ -115,7 +115,7 @@ trait EntityFaceTrait {
             if(!empty($property)){
 
 
-                if($element->hasManyRelationship()){
+                if($element->hasManyRelationship() || $element->hasManyThroughRelationship() ){
                     if(!isset($this->___faceAlreadySetMany[$element->getName()][$value->faceGetidentity()])){
                         
                         if($this->$property ==null)

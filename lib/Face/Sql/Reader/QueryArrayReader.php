@@ -68,20 +68,29 @@ class QueryArrayReader implements QueryReaderInterface{
             // loop over joined faces
             foreach($faceList as $basePath=>$face){
                 /* @var $face \Face\Core\EntityFace */
-
+                
+                
+                
                 // get identity of the current face on the current db row
                 $identity=$this->_getIdentityOfArray($face, $row, $basePath);
+
+                
+
 
                 // if already instantiated then get it from ikeeper and try the forwards
                 if($this->instancesKeeper->hasInstance($face->getClass(), $identity)){
                     $instance = $this->instancesKeeper->getInstance($face->getClass(), $identity);
                     $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
 
+                    if(!$this->resultSet->pathHasIdentity($basePath, $identity)){
+                        $this->resultSet->addInstanceByPath($basePath, $instance, $identity);
+                    }
+                    
                     // else create the instance and hydrate it
                 }else{
                     $instance = $this->createInstance($face, $row, $basePath, $faceList);
                     $this->instancesKeeper->addInstance($instance, $identity);
-                    $this->resultSet->addInstanceByPath($basePath, $instance);
+                    $this->resultSet->addInstanceByPath($basePath, $instance, $identity);
                     $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
                 }
 
@@ -136,7 +145,7 @@ class QueryArrayReader implements QueryReaderInterface{
 
                 $pathToElement=$basePath.".".$element->getName();
                 
-                if( isset($faceList[$pathToElement])  ){ // if element is joined
+                if( isset($faceList[$pathToElement])  ){ // if element is joined we know what to do
 
                     $identity = $this->_getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
 
@@ -145,9 +154,9 @@ class QueryArrayReader implements QueryReaderInterface{
                             $childInstance = $this->instancesKeeper->getInstance($element->getClass(), $identity);
                             $instance->faceSetter($element,$childInstance);
                         }else{
-                            var_dump($identity);
-                            var_dump($this->instancesKeeper);
-                            throw new \Exception("TODO : precedence");
+//                            var_dump($identity);
+//                            var_dump($this->instancesKeeper);
+//                            throw new \Exception("TODO : precedence");
                         }
                     }
                 }else{
