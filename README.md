@@ -2,19 +2,18 @@ face
 ====
 [![Build Status](https://drone.io/github.com/laemons/face/status.png)](https://drone.io/github.com/laemons/face/latest)
 
-Be aware that face is under active development.
+Be aware that face is under beta testing. Though some cases may not be
 
 Face is an ORM built under a few purposes :
- * Performances : unlike some ORM face tries to add as few layers as possible then performances are not impacted a lot.
+ * Performances : unlike some ORM, it tries to add as few layers as possible and doesn't impact performances.
  * Ease of use  : Face is an ORM. That means that it aims to speed up application development and
  makes developers experience more comfortable with database interactions.
- * Understandable : Face doesn't try to reinvent the wheel. It does what you ask him to do and you don't have to learn
- or setup hundred of component for starting a new project. Moreover it wont make more than you ask it to do.
- * Powerful : performances are something, but we still thing about strength. Face can join your data
- and you can  write complex queries thanks to a custom language close of SQL
+ * Understandable : It doesn't try to reinvent the wheel. It does the job in an usual and easy to understand way.
+ * Feature Rich : performances are something, but it still thinks about strength and functionalities. 
+Face includes powerful workflow to deal with relation and complex request. 
 
 
-Face is tested and safe enough for production. Right know it is perfectly suited for little and medium projects.
+Face is tested and safe enough for production. Right know it is perfectly suited for little and medium projects but it mays lack of maturity for biggest projects.
 
 
 Quick Overview
@@ -52,8 +51,11 @@ foreach($trees as $tree){
 
 ### FaceQL
 
-FaceQL is an important feature of Face. That's a Query language close of SQL.
-It allows you to create complex queries that the Select Builder can't build.
+FaceQL is an important feature of Face. That's a Query language that is a mix between SQL and Face notation. 
+
+It allows you to create complex queries that the Select Builder can't build. 
+Actually everything that you can do with SQL is possible with FaceQL.
+
 
 ```php
 use \Face\Sql\Query\FaceQL;
@@ -98,39 +100,32 @@ $update->execute($pdo);
 Support
 ----------
 
-You may [open an issue](https://github.com/laemons/face/issues) or tweet [@Sneakybobito](https://twitter.com/SneakyBobito) (that's me) for support
+You may [open an issue](https://github.com/laemons/face/issues) for support
 
 
-See
---------
+Documentation
+-------------
 
-Site and docs are available at : http://face-orm.org (documentation is still being written)
+Documentation is under renovation. 
+
+
+Benchmarking
+------------
 
 simple benchmark is available at : https://github.com/laemons/ORM-benchmark
-
 
 
 Roadmap
 ---------
 
 Important
- * many to many seamless relationship
  * implied hydration
  * cache model implementation
- * performances updates on repetitive tasks
  * chain update/insert/delete
  * improving FaceQL
  * support for subquery
  * support for transactions
- * support for debug optimisation
- * fast queryall/queryone
-
-Later
- * annotation models reader
- * face admin - crud
- * easy cache
- * graphical generator/customizer/visualizer
- * graphical grid editor api (e.g for jquery datatable)
-
-Future
- * embryo for workbench .mwb files
+ * support for debuging
+ * fast queryall/queryone/query n
+ * limit on something
+ * datatable extension

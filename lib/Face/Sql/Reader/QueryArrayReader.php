@@ -154,9 +154,9 @@ class QueryArrayReader implements QueryReaderInterface{
                             $childInstance = $this->instancesKeeper->getInstance($element->getClass(), $identity);
                             $instance->faceSetter($element,$childInstance);
                         }else{
-//                            var_dump($identity);
-//                            var_dump($this->instancesKeeper);
-//                            throw new \Exception("TODO : precedence");
+                            var_dump($identity);
+                            var_dump($this->instancesKeeper);
+                            throw new \Exception("TODO : precedence");
                         }
                     }
                 }else{
@@ -167,10 +167,12 @@ class QueryArrayReader implements QueryReaderInterface{
                      *
                      *      YES => EASY ! work's done... go to the next
                      *
-                     *      NO  => Then it can only work with the parent. Let's check if the parent matches :
-                     *
-                     *
-                     *
+                     *      NO  => Then it can only work with the parent 
+                     *              
+                     *              matching case : if current element is this.lemon.tree (where this is the tree) then it works because it refers to this
+                     *              no matching case : if current element is this.lemon.seed (where this is the tree) seed doesnt refers to this (tree)
+                     * 
+                     * 
                      *          B . $basePath is made of at least 3 element (because we want to check for the parent of the parent
                      *
                      *          C . Take the parent and look if it is the same class as the child
