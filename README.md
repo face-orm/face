@@ -68,6 +68,18 @@ $fql=FaceQL::parse(
 );
 ```
 
+That is equivalent to the following request ( + hydration) : 
+
+
+```sql
+SELECT * FROM keyword 
+  JOIN article on article.id = keyword.article_id AND article.lang=:lang
+  WHERE article.data < DATE(NOW()) OR article.data IS NULL
+  GROUP BY article.id
+  HAVING COUNT(article.id)>3
+```
+
+
 ### Insertions and Updates
 
 ```php
@@ -106,7 +118,7 @@ You may [open an issue](https://github.com/laemons/face/issues) for support
 Documentation
 -------------
 
-Documentation is under renovation. 
+Documentation is under renovation. It is coming back very soon.
 
 
 Benchmarking
@@ -129,3 +141,4 @@ Important
  * fast queryall/queryone/query n
  * limit on something
  * datatable extension
+ * Better exception messages 
