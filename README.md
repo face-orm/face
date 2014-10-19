@@ -131,6 +131,8 @@ Roadmap
 ---------
 
 Important
+ * Literals selectors
+ * Limited queries
  * implied hydration
  * cache model implementation
  * chain update/insert/delete
