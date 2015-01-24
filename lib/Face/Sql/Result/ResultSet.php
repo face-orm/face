@@ -55,7 +55,11 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
     }
     
     public function getBaseInstances() {
-        return $this->instancesByPath["this"];
+        if (isset($this->instancesByPath["this"])) {
+            return $this->instancesByPath["this"];
+        } else {
+            return [];
+        }
     }
 
  
