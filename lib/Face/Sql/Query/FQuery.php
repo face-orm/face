@@ -5,6 +5,7 @@ namespace Face\Sql\Query;
 use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
+use Face\Util\StringUtils;
 
 /**
  * Description of Query
@@ -63,25 +64,6 @@ abstract class  FQuery {
     
     public abstract function getSqlString();
 
-
-    public function addAlias($aliasName,$realName){
-        $this->aliases[$aliasName] = $realName;
-    }
-
-    /**
-     * return the unaliased path
-     * @param $name
-     * @return mixed
-     */
-    public function unalias($name){
-
-        if(isset($this->aliases[$name])){
-            return $this->aliases[$name];
-        }
-
-        return $name;
-
-    }
 
 
     /**

@@ -48,7 +48,7 @@ class Debugger {
         $face=$data->getEntityFace();
 
 
-        echo str_repeat(" ",$depth*$spacesToIndent) . $face->getClass() . "::" . $data->faceGetidentity();
+        echo str_repeat(" ",$depth*$spacesToIndent) . $face->getClass() . "::" . $data->faceGetIdentity();
 
         if(in_array($data,$alreadyPrinted)){
             echo "::RECURSION::" . $nlStr;

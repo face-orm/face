@@ -117,13 +117,13 @@ trait EntityFaceTrait {
 
 
                 if($element->hasManyRelationship() || $element->hasManyThroughRelationship() ){
-                    if(!isset($this->___faceAlreadySetMany[$element->getName()][$value->faceGetidentity()])){
+                    if(!isset($this->___faceAlreadySetMany[$element->getName()][$value->faceGetIdentity()])){
                         
                         if($this->$property ==null)
                             $this->$property=array();
                         
                         array_push($this->$property,$value);
-                        $this->___faceAlreadySetMany[$element->getName()][$value->faceGetidentity()]=true;
+                        $this->___faceAlreadySetMany[$element->getName()][$value->faceGetIdentity()]=true;
                     }
                     
                 }else{
@@ -155,7 +155,7 @@ trait EntityFaceTrait {
     }
     
     
-    public function faceGetidentity(){
+    public function faceGetIdentity(){
         $array=self::getEntityFace()->getIdentifiers();
 
         if(!$array || 0==count($array))
