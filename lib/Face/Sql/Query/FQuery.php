@@ -50,7 +50,10 @@ abstract class  FQuery {
      * @var array
      */
     protected $valueBinds;
-    
+
+
+    protected $aliases;
+
     function __construct(EntityFace $baseFace) {
         $this->baseFace = $baseFace;
         $this->joins=[];
@@ -61,8 +64,24 @@ abstract class  FQuery {
     public abstract function getSqlString();
 
 
+    public function addAlias($aliasName,$realName){
+        $this->aliases[$aliasName] = $realName;
+    }
 
+    /**
+     * return the unaliased path
+     * @param $name
+     * @return mixed
+     */
+    public function unalias($name){
 
+        if(isset($this->aliases[$name])){
+            return $this->aliases[$name];
+        }
+
+        return $name;
+
+    }
 
 
     /**
@@ -78,10 +97,9 @@ abstract class  FQuery {
             return $stmt;
             
         }else{
-            echo "TODO  in file : ".__FILE__.":".__LINE__;
+            echo "TODO : handle errors ".__FILE__.":".__LINE__;
             var_dump($stmt->errorInfo());
             return false;
-            
         }
 
     }

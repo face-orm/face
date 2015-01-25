@@ -5,6 +5,7 @@ namespace Face\Sql\Reader;
 use \Face\Sql\Query\FQuery;
 use Face\Core\InstancesKeeper;
 use Face\Util\Operation;
+use Face\Util\StringUtils;
 
 /**
  * Description of QueryArrayReader
@@ -217,7 +218,7 @@ class QueryArrayReader implements QueryReaderInterface{
                             }else{
 
                                 // find the related base path and take its face
-                                $relatedBasePath=  \Peek\Utils\StringUtils::subStringBefore($basePath, ".");
+                                $relatedBasePath=  StringUtils::subStringBefore($basePath, ".");
                                 $parentFace=$faceList[$relatedBasePath];
 
                                 // C

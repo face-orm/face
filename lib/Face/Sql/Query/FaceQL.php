@@ -5,8 +5,7 @@ namespace Face\Sql\Query;
 use Face\Core\EntityFace;
 use Face\Core\Navigator;
 use Face\Exception\FacelessException;
-use Peek\Utils\OOPUtils;
-use Peek\Utils\StringUtils;
+use Face\Util\OOPUtils;
 
 /**
  * FaceQL is a SQL like language made for Face

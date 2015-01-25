@@ -2,6 +2,8 @@
 
 namespace Face\Sql\Query;
 
+use Face\Util\OOPUtils;
+
 /**
  * Provide a way for face to do inserts ignoring join. 
  *
@@ -14,7 +16,7 @@ class SimpleInsert extends FQuery {
 
     public function __construct($entity) {
        
-        if(!\Peek\Utils\OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait' )){
+        if(!OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait' )){
             throw new \Exception("Class ".get_class($entity)." doesnt use the trait \Face\Traits\EntityFaceTrait");
         }
         

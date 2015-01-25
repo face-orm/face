@@ -31,6 +31,7 @@ class QueryString extends FQuery{
 
     /**
      * binds an array of value.
+     *
      * Intended to be used in such a case :
      * <pre>
      *  WHERE something IN (::in::)
@@ -55,7 +56,4 @@ class QueryString extends FQuery{
         return $this;
 
     }
-
-
-
 }

@@ -86,7 +86,4 @@ class Keys {
      public function setEncoding($encoding) {
          $this->encoding = $encoding;
      }
-
-
-     
 }

@@ -2,7 +2,7 @@
 
 namespace Face\Core;
 
-use Peek\Utils\ValuesUtils;
+use Face\Util\ArrayUtils;
 
 class EntityFaceElement{
     
@@ -57,27 +57,27 @@ class EntityFaceElement{
     function __construct($name="",$params=array()) {
         $this->name         =  $name;
         
-        $this->propertyName =  ValuesUtils::getIfArrayKey($params, "propertyName",$name);
-        $this->setter       =  ValuesUtils::getIfArrayKey($params, "setter");
-        $this->getter       =  ValuesUtils::getIfArrayKey($params, "getter");
+        $this->propertyName =  ArrayUtils::getIfArrayKey($params, "propertyName",$name);
+        $this->setter       =  ArrayUtils::getIfArrayKey($params, "setter");
+        $this->getter       =  ArrayUtils::getIfArrayKey($params, "getter");
         
-        $this->defaultMap   =  ValuesUtils::getIfArrayKey($params, "defaultMap");
+        $this->defaultMap   =  ArrayUtils::getIfArrayKey($params, "defaultMap");
         
         $this->type         =  isset($params["class"])?"entity":"value";
-        $this->class        =  ValuesUtils::getIfArrayKey($params, "class");
-        $this->isIdentifier =  ValuesUtils::getIfArrayKey($params, "identifier",false);
+        $this->class        =  ArrayUtils::getIfArrayKey($params, "class");
+        $this->isIdentifier =  ArrayUtils::getIfArrayKey($params, "identifier",false);
         
         if($this->isEntity()){
-            $this->relation  =  ValuesUtils::getIfArrayKey($params, "relation","hasMany");
-            $this->relatedBy =  ValuesUtils::getIfArrayKey($params, "relatedBy");
-            $this->sqlThrough=  ValuesUtils::getIfArrayKey($params['sql'], "throughTable");
+            $this->relation  =  ArrayUtils::getIfArrayKey($params, "relation","hasMany");
+            $this->relatedBy =  ArrayUtils::getIfArrayKey($params, "relatedBy");
+            $this->sqlThrough=  ArrayUtils::getIfArrayKey($params['sql'], "throughTable");
         }
             
-        $this->sqlColumnName =   ValuesUtils::getIfArrayKey($params['sql'], "columnName",$name);
-        $this->sqlIsPrimary  =   ValuesUtils::getIfArrayKey($params['sql'], "isPrimary");
-        $this->sqlJoin       =   ValuesUtils::getIfArrayKey($params['sql'], "join");
-        $this->sqlBridge     =   ValuesUtils::getIfArrayKey($params['sql'], "bridge");
-        $this->sqlAutoIncrement= ValuesUtils::getIfArrayKey($params['sql'], "autoIncrement",$this->isPrimary());
+        $this->sqlColumnName =   ArrayUtils::getIfArrayKey($params['sql'], "columnName",$name);
+        $this->sqlIsPrimary  =   ArrayUtils::getIfArrayKey($params['sql'], "isPrimary");
+        $this->sqlJoin       =   ArrayUtils::getIfArrayKey($params['sql'], "join");
+        $this->sqlBridge     =   ArrayUtils::getIfArrayKey($params['sql'], "bridge");
+        $this->sqlAutoIncrement= ArrayUtils::getIfArrayKey($params['sql'], "autoIncrement",$this->isPrimary());
         
         
        

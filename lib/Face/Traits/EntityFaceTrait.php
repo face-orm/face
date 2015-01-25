@@ -6,6 +6,7 @@ use \Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
 use Face\ORM;
 use Face\Sql\Query\SelectBuilder;
+use Face\Util\StringUtils;
 
 trait EntityFaceTrait {
     
@@ -257,7 +258,7 @@ trait EntityFaceTrait {
                     
                     $basePath = is_numeric($k) ? $j : $k;
                     
-                    if(!\Peek\Utils\StringUtils::beginsWith("this", $basePath)){
+                    if(!StringUtils::beginsWith("this", $basePath)){
                         $basePath = "this." . $basePath;
                     }
                     

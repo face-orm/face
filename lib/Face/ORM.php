@@ -3,6 +3,7 @@
 namespace Face;
 use Face\Core\InstancesKeeper;
 use Face\Sql\Result\ResultSet;
+use Face\Util\OOPUtils;
 
 /**
  * Face\ORM is a class that interfaces comon calls of the Face API
@@ -26,7 +27,7 @@ abstract class ORM {
             $baseFace=  Core\FacePool::getFace($what);
         }else if(is_a($what,'Face\Core\EntityFaceElement')){
             $baseFace=$what;
-        }else if(\Peek\Utils\OOPUtils::UsesTrait($what, 'Face\Traits\EntityFaceTrait')){
+        }else if(OOPUtils::UsesTrait($what, 'Face\Traits\EntityFaceTrait')){
             $baseFace=$what->getEntityFace();
         }else{
             throw new Exception\FacelessException("You asked a query for something that has no face");

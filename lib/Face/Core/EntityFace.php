@@ -2,7 +2,7 @@
 
 namespace Face\Core;
 
-use Peek\Utils\StringUtils;
+use Face\Util\StringUtils;
 
 class EntityFace implements \IteratorAggregate, FaceInterface{
     private $elements;
