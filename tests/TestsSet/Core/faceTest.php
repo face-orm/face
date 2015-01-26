@@ -49,7 +49,7 @@ class FaceTest extends PHPUnit_Framework_TestCase
         
         $this->assertEquals($AFace->getElement("b.c")->getFace(), $CFace);
         
-        $pieces;
+        $pieces=[];
         $this->assertEquals($AFace->getElement("b.c",1,$pieces)->getFace(), $BFace);
         $this->assertEquals("c", $pieces[1]);
         $this->assertEquals("b", $pieces[0]);

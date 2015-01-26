@@ -38,6 +38,9 @@ abstract class  FQuery {
      */
     protected $joins;
 
+
+
+
     /**
      * Only for select queries.
      * Contains the list of the selected columns formatted as follows :
@@ -173,7 +176,7 @@ abstract class  FQuery {
      * @param null $token
      * @return string
      */
-    public static function __doFQLJoinTable($path,EntityFace $face,EntityFace $parentFace,EntityFaceElement $childElement,$basePath,$token=null){
+    public static function __doFQLJoinTable($path,EntityFace $face,EntityFace $parentFace,EntityFaceElement $childElement,$basePath,$token,$isSoftJoin = false){
 
         
 
@@ -191,39 +194,50 @@ abstract class  FQuery {
             
             $throughTable = $childElement->getSqlThrough();
             $throughAlias = FQuery::__doFQLTableNameStatic("$path.through",$token);
-            
-            $otherFace    = $face;
-            $otherTableElement = $otherFace->getDirectElement($childElement->getRelatedBy());
-            $otherTable        = $otherFace->getSqlTable();
-            $otherAlias        = FQuery::__doFQLTableNameStatic($path,$token);
-            
+
             $joinSql1 = "LEFT JOIN $throughTable AS $throughAlias ON ";
-            $joinSql2 = "LEFT JOIN $otherTable AS $otherAlias ON ";
-            
+
             $join = $childElement->getSqlJoin();
             $i=0;
+
             foreach ($join as $thisElementName=>$throughcolumn){
                 if($i>0)
-                    $joinSql.=" AND ";
+                    $joinSql1.=" AND ";
                 else
                     $i++;
-                
+
                 $parentOn  = FQuery::__doFQLTableNameStatic($basePath,$token).".".$parentFace->getElement($thisElementName)->getSqlColumnName();
                 $throughOn = "$throughAlias.$throughcolumn";
                 $joinSql1 .= " $parentOn = $throughOn" ;
             }
-            
-            $join = $otherTableElement->getSqlJoin();
-            $i=0;
-            foreach ($join as $thisElementName=>$throughcolumn){
-                if($i>0)
-                    $joinSql.=" AND ";
-                else
-                    $i++;
-                
-                $otherOn  = "$otherAlias.".$otherFace->getElement($thisElementName)->getSqlColumnName();
-                $throughOn = "$throughAlias.$throughcolumn";
-                $joinSql2 .= " $otherOn = $throughOn" ;
+
+            // In a soft join we dont join the other table, only the through table
+            if(false === $isSoftJoin) {
+
+                $otherFace    = $face;
+                $otherTableElement = $otherFace->getDirectElement($childElement->getRelatedBy());
+
+                $otherTable        = $otherFace->getSqlTable();
+                $otherAlias        = FQuery::__doFQLTableNameStatic($path,$token);
+
+                $joinSql2 = "LEFT JOIN $otherTable AS $otherAlias ON ";
+                $join = $otherTableElement->getSqlJoin();
+                $i = 0;
+                foreach ($join as $thisElementName => $throughcolumn) {
+                    if ($i > 0)
+                        $joinSql2 .= " AND ";
+                    else
+                        $i++;
+
+                    $otherOn = "$otherAlias." . $otherFace->getElement($thisElementName)->getSqlColumnName();
+                    $throughOn = "$throughAlias.$throughcolumn";
+                    $joinSql2 .= " $otherOn = $throughOn";
+                }
+
+            }else{
+
+                $joinSql2 = "";
+
             }
             
             $joinSql = "$joinSql1 $joinSql2";

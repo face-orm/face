@@ -5,7 +5,12 @@ namespace Face\Core;
 use Face\Util\ArrayUtils;
 
 class EntityFaceElement{
-    
+
+    const RELATION_BELONGS_TO = "belongsTo";
+    const RELATION_HAS_ONE = "hasOne";
+    const RELATION_HAS_MANY = "hasMany";
+    const RELATION_HAS_MANY_THROUGH = "hasManyThrough";
+
     /**
      *
      * @var EntityFace
@@ -60,19 +65,19 @@ class EntityFaceElement{
         $this->propertyName =  ArrayUtils::getIfArrayKey($params, "propertyName",$name);
         $this->setter       =  ArrayUtils::getIfArrayKey($params, "setter");
         $this->getter       =  ArrayUtils::getIfArrayKey($params, "getter");
-        
+
         $this->defaultMap   =  ArrayUtils::getIfArrayKey($params, "defaultMap");
-        
+
         $this->type         =  isset($params["class"])?"entity":"value";
         $this->class        =  ArrayUtils::getIfArrayKey($params, "class");
         $this->isIdentifier =  ArrayUtils::getIfArrayKey($params, "identifier",false);
-        
+
         if($this->isEntity()){
             $this->relation  =  ArrayUtils::getIfArrayKey($params, "relation","hasMany");
             $this->relatedBy =  ArrayUtils::getIfArrayKey($params, "relatedBy");
             $this->sqlThrough=  ArrayUtils::getIfArrayKey($params['sql'], "throughTable");
         }
-            
+
         $this->sqlColumnName =   ArrayUtils::getIfArrayKey($params['sql'], "columnName",$name);
         $this->sqlIsPrimary  =   ArrayUtils::getIfArrayKey($params['sql'], "isPrimary");
         $this->sqlJoin       =   ArrayUtils::getIfArrayKey($params['sql'], "join");
@@ -234,6 +239,14 @@ class EntityFaceElement{
         return $this->relation=="hasManyThrough";
     }
 
+    public function relationIsBelongsTo(){
+        return self::RELATION_BELONGS_TO == $this->relation;
+    }
+
+    public function relationIsHas___(){
+        return self::RELATION_HAS_MANY == $this->relation || self::RELATION_HAS_ONE == $this->relation || self::RELATION_HAS_MANY_THROUGH == $this->relation;
+    }
+
     public function getRelatedBy() {
         return $this->relatedBy;
     }
@@ -243,7 +256,7 @@ class EntityFaceElement{
     }
 
     public function hasRelationTo(){
-        
+        // TODO
     }        
     
     /**

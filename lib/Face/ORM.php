@@ -46,7 +46,7 @@ abstract class ORM {
         $j=$fQuery->execute($pdo);
 
         if(!$j->rowCount()){
-            return new ResultSet(new InstancesKeeper());
+            return new ResultSet($fQuery->getBaseFace(), new InstancesKeeper());
         }
 
         $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery);

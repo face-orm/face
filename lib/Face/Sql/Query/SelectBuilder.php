@@ -3,6 +3,9 @@
 namespace Face\Sql\Query;
 
 use Face\Core\EntityFace;
+use Face\Core\EntityFaceElement;
+use Face\Debugger;
+use Face\Traits\EntityFaceTrait;
 
 /**
  * Description of QueryBuilder
@@ -10,12 +13,25 @@ use Face\Core\EntityFace;
  * @author bobito
  */
 class SelectBuilder extends \Face\Sql\Query\FQuery{
-       
+
+
+    const RELATION_JOIN = 0;
+    const RELATION_JOIN_USE_DATA = 1;
+    const RELATION_USE_DATA = 2;
+
+
     /** 
      *
      * @var string the base FaceQL formated where clause 
      */
     protected $where;
+
+    /**
+     * used by whereINRelation() to add join to the final query without parsing them
+     * @var array
+     */
+    protected $softThroughJoin;
+
 
     /**
      * used to generate unique bound params for whereIn method
@@ -51,9 +67,14 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
         return $this;
     }
 
-    
-    
-
+    /**
+     * check is a face is joined to the query
+     * @param string $path the face path to check
+     * @return bool
+     */
+    public function isJoined($path){
+        return isset($this->joins[$this->_doFQLTableName($path, ".")]);
+    }
     
     /**
      * set the where clause 
@@ -114,7 +135,82 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
         }else if(false == $logic) // user asked for no logic
             return $this->where($phrase);
         else
-            throw new \Exception("Unrecognized logic expression for third param. 'OR' or 'AND' or true or false is awaiting");
+            throw new \Exception("Unrecognized logic expression for third param. 'OR', 'AND', true or false is expected");
+    }
+
+    /**
+     * @param string $relation the related element with the leading tilde
+     * @param EntityFaceTrait[] $entities
+     * @throws \Exception
+     */
+    public function whereINRelation($relation, $entities, $logic = true){
+
+        $relatedElement = $this->baseFace->getDirectElement($relation);
+        $join = $relatedElement->getSqlJoin();
+
+        if(count($join) > 1){
+
+            // todo
+            throw new \Exception("WhereINRelation with many join columns not implemented yet");
+
+        }else if(!empty($join)){
+
+
+
+            if($relatedElement->hasManyThroughRelationship() ){
+
+                $itsColumn = current($relatedElement->getFace()->getDirectElement($relatedElement->getRelatedBy())->getSqlJoin());
+
+                $this->softThroughJoin[$this->_doFQLTableName($relation, ".")] = $relatedElement->getFace();
+
+                $values = $this->__whereINRelationOneIdentifierGetValues($entities, null, $relatedElement);
+
+
+                $this->whereIN($this->_doFQLTableName("$relation.through") . ".$itsColumn" ,$values);
+
+            }else{
+                $myColumn  = key($join);
+                $itsColumn = $join[$myColumn];
+
+                $values = $this->__whereINRelationOneIdentifierGetValues($entities, $itsColumn, $relatedElement);
+                $this->whereIN($myColumn,$values,$logic);
+
+            }
+
+
+
+        }else{
+
+            throw new \Exception("There is no sql join for : " . $this->baseFace->getClass() . "." . $relation);
+
+        }
+    }
+
+
+
+    protected function __whereINRelationOneIdentifierGetValues($entities,$itsColumn,EntityFaceElement $relatedElement){
+
+        $values = array();
+
+        if($relatedElement->hasManyThroughRelationship()){
+            foreach($entities as $e){
+                $values[] = $e->faceGetIdentity();
+            }
+        }else if($relatedElement->relationIsBelongsTo()){
+            foreach($entities as $e){
+                $values[] = $e->faceGetter($itsColumn);
+            }
+        }else if($relatedElement->relationIsHas___()){
+            foreach($entities as $e){
+                $v = $e->faceGetter($itsColumn);
+                $values[$v] = $v;
+            }
+            $values = array_values($values);
+        }else{
+            throw new \Exception("unknown relation : " . $relatedElement->getRelation());
+        }
+
+        return $values;
     }
 
     public function prepareSelectClause(){
@@ -149,34 +245,41 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
     }
     
     public function prepareJoinClause(){
-
         $sql="";
-
         foreach ($this->joins as $path=>$face){
-            /* @var $face EntityFace */
+            $sql.=$this->__prepareJoinClauseFor($path,$face,false);
+        }
 
-
-            try{
-                $parentFace=$this->baseFace->getElement($path,1,$pieceOfPath)->getFace();
-            } catch (\Face\Exception\RootFaceReachedException $e){
-                $pieceOfPath[0]="";
-                $pieceOfPath[1]=$path;
-                $parentFace=$this->baseFace;
+        // Soft join
+        if(is_array($this->softThroughJoin)){
+            foreach($this->softThroughJoin as $path=>$face){
+                if(!$this->isJoined($path)){
+                    $sql.=$this->__prepareJoinClauseFor($path,$face,true);
+                }
             }
-
-            $childElement=$parentFace->getElement($pieceOfPath[1]);
-
-
-            $joinSql = FQuery::__doFQLJoinTable($path,$face,$parentFace,$childElement,$pieceOfPath[0],$this->dotToken);
-
-
-
-            $sql.=$joinSql;
         }
 
         return $sql;
     }
-    
+
+    private function __prepareJoinClauseFor($path,EntityFace $face,$isSoft){
+
+        $joinSql = "";
+        try{
+            $parentFace=$this->baseFace->getElement($path,1,$pieceOfPath)->getFace();
+        } catch (\Face\Exception\RootFaceReachedException $e){
+            $pieceOfPath[0]="";
+            $pieceOfPath[1]=$path;
+            $parentFace=$this->baseFace;
+        }
+
+        $childElement=$parentFace->getElement($pieceOfPath[1]);
+
+        $joinSql = FQuery::__doFQLJoinTable($path, $face, $parentFace, $childElement, $pieceOfPath[0], $this->dotToken, $isSoft);
+
+        return $joinSql;
+    }
+
     public function prepareWhereClause(){
         if(null===$this->where || empty($this->where))
             return "";

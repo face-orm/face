@@ -1,6 +1,11 @@
 <?php
 
 namespace Face\Sql\Result;
+use Face\Core\FacePool;
+use Face\Exception\RootFaceReachedException;
+use Face\Sql\Query\SelectBuilder;
+use Face\Core\EntityFace;
+use Face\Core\InstancesKeeper;
 
 /**
  * A result set is a list of results returned by a FaceQuery
@@ -14,12 +19,18 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
      * @var \Face\Core\InstancesKeeper
      */
     protected $instanceKeeper;
+
+    /**
+     * @var EntityFace
+     */
+    protected $baseFace;
     
     protected $instancesByPath=array();
     protected $instancesByPathIdentity=array();
     
-    function __construct(\Face\Core\InstancesKeeper $instanceKeeper) {
+    function __construct(EntityFace $baseFace , InstancesKeeper $instanceKeeper) {
         $this->instanceKeeper = $instanceKeeper;
+        $this->baseFace = $baseFace;
     }
 
     public function getInstanceKeeper() {
@@ -28,7 +39,7 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
 
     public function getInstancesByPath($path=null) {
         if($path)
-            return $this->instancesByPath[$path];
+            return isset($this->instancesByPath[$path]) ? $this->instancesByPath[$path] : [];
         else
             return $this->instancesByPath;
     }
@@ -62,7 +73,41 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
         }
     }
 
- 
+
+    /**
+     * @param EntityFace $join
+     * @param EntityFace $from
+     * @param \PDO $PDO
+     */
+    public function queryJoin($what, \PDO $PDO){
+
+
+        // TODO
+
+        $join = $this->baseFace->getElement($what);
+
+        try {
+            $from = $this->baseFace->getElement($what, 1, $pieces);
+            $joinPath = $pieces[1];
+        } catch (RootFaceReachedException $e) {
+            $from = $this->baseFace;
+            $joinPath = $what;
+        }
+
+        $instances = $this->getInstancesByClass($from->getClass());
+
+        if(!$instances){
+            return;
+        }else{
+            $query = new SelectBuilder($from->getFace());
+            $query->join($joinPath);
+
+            $from->getFace()->getIdentifiers();
+        }
+
+
+
+    }
     
     
     

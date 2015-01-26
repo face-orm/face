@@ -49,7 +49,7 @@ class QueryArrayReader implements QueryReaderInterface{
         else
             $this->instancesKeeper=$instancesKeeper;
 
-        $this->resultSet=new \Face\Sql\Result\ResultSet($this->instancesKeeper);
+        $this->resultSet=new \Face\Sql\Result\ResultSet($FQuery->getBaseFace(), $this->instancesKeeper);
         
     }
 
@@ -75,29 +75,26 @@ class QueryArrayReader implements QueryReaderInterface{
                 // get identity of the current face on the current db row
                 $identity=$this->_getIdentityOfArray($face, $row, $basePath);
 
-                
 
+                if($identity) {
+                    // if already instantiated then get it from ikeeper and try the forwards
+                    if ($this->instancesKeeper->hasInstance($face->getClass(), $identity)) {
+                        $instance = $this->instancesKeeper->getInstance($face->getClass(), $identity);
+                        $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
 
-                // if already instantiated then get it from ikeeper and try the forwards
-                if($this->instancesKeeper->hasInstance($face->getClass(), $identity)){
-                    $instance = $this->instancesKeeper->getInstance($face->getClass(), $identity);
-                    $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
+                        if (!$this->resultSet->pathHasIdentity($basePath, $identity)) {
+                            $this->resultSet->addInstanceByPath($basePath, $instance, $identity);
+                        }
 
-                    if(!$this->resultSet->pathHasIdentity($basePath, $identity)){
+                        // else create the instance and hydrate it
+                    } else {
+                        $instance = $this->createInstance($face, $row, $basePath, $faceList);
+                        $this->instancesKeeper->addInstance($instance, $identity);
                         $this->resultSet->addInstanceByPath($basePath, $instance, $identity);
+
+                        $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
                     }
-                    
-                    // else create the instance and hydrate it
-                }else{
-                    $instance = $this->createInstance($face, $row, $basePath, $faceList);
-                    $this->instancesKeeper->addInstance($instance, $identity);
-                    $this->resultSet->addInstanceByPath($basePath, $instance, $identity);
-                    $this->instanceHydrateAndForwardEntities($instance, $face, $row, $basePath, $faceList, true);
                 }
-
-
-
-
 
             }
 
@@ -265,8 +262,8 @@ class QueryArrayReader implements QueryReaderInterface{
                         }
                     }
 
-                    $operation = $this->operationsList[$pathToElement];
                     /* @var $operation Operation */
+                    $operation = $this->operationsList[$pathToElement];
 
                     switch($operation->getName()){
                         case self::OPERATION_FORWARD_JOIN :

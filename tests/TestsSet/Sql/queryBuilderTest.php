@@ -53,6 +53,159 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
 
     }
+
+    /**
+     * test the WhereINRelation with a belongsTo element as base
+     *
+     * @throws Exception
+     */
+    public function testWhereINRelationBelongsTo(){
+
+        $pdo = $this->getConnection()->getConnection();
+
+        // expected data
+        $fQuery = Tree::faceQueryBuilder();
+        $fQuery->join("leafs")->whereIN("~id",[1,2]);
+        $res = Face\ORM::execute($fQuery, $pdo);
+        $expected = $res->getInstancesByPath("this.leafs");
+        $trees = $res->getInstancesByPath("this");
+
+
+        $a = 0;
+
+        $fQuery = new \Test\MockSelectBuilder(Leaf::getEntityFace());
+        $fQuery->whereINRelation([
+                function ($values) use(&$a){
+                    $a++; // to test if it was executed
+                    $this->assertEquals([1,2],$values); // we test that the values passed to IN are the one we want
+                }
+            ],
+            "tree",$trees
+        );
+
+        $this->assertEquals(1,$a);
+
+        $resActual = Face\ORM::execute($fQuery, $pdo);
+
+        $this->assertEquals(count($expected), $resActual->count());
+
+        foreach($expected as $e){
+            $this->assertTrue($resActual->pathHasIdentity("this",$e->faceGetIdentity()));
+        }
+
+    }
+
+
+    /**
+     * test the WhereINRelation with a hasMany/hasOne element as base
+     *
+     * @throws Exception
+     */
+    public function testWhereINRelationHas___(){
+
+        $pdo = $this->getConnection()->getConnection();
+
+        // expected data
+        $fQuery = Tree::faceQueryBuilder();
+        $fQuery->join("leafs")->whereIN("~id",[1,2]);
+        $res = Face\ORM::execute($fQuery, $pdo);
+        $expected = $res->getInstancesByPath("this");
+        $leafs = $res->getInstancesByPath("this.leafs");
+
+        $a = 0;
+
+        $fQuery = new \Test\MockSelectBuilder(Tree::getEntityFace());
+        $fQuery->whereINRelation([
+                function ($values) use(&$a){
+                    $a++; // to test if it was executed
+                    $this->assertEquals([1,2],$values); // we test that the values passed to IN are the one we want
+                }
+            ],
+            "leafs",$leafs
+        );
+
+
+
+        $resActual = Face\ORM::execute($fQuery, $pdo);
+
+        $this->assertEquals(count($expected), $resActual->count());
+        $this->assertEquals(1,$a);
+
+        foreach($expected as $e){
+            $this->assertTrue($resActual->pathHasIdentity("this",$e->faceGetIdentity()));
+        }
+
+    }
+
+    public function testWhereINRelationHasManyThoughNotJoined(){
+
+        $pdo = $this->getConnection()->getConnection();
+
+        // expected data
+        $fQuery = Tree::faceQueryBuilder();
+        $fQuery->join("childrenTrees")->whereIN("~id",[1,2]);
+        $res = Face\ORM::execute($fQuery, $pdo);
+        $expected = $res->getInstancesByPath("this");
+        $childrenTrees = $res->getInstancesByPath("this.childrenTrees");
+
+        $a = 0;
+        $fQuery = new \Test\MockSelectBuilder(Tree::getEntityFace());
+        $fQuery->whereINRelation([
+            function ($values) use(&$a){
+                $a++; // to test if it was executed
+                $this->assertEquals([2,3,4],$values); // we test that the values passed to IN are the one we want
+            }
+        ],
+            "childrenTrees",$childrenTrees
+        );
+
+        $this->assertEquals(1,$a);
+
+        $resActual = Face\ORM::execute($fQuery, $pdo);
+
+        $this->assertEquals(2, $resActual->count());
+
+        $this->assertEquals(1,$resActual[0]->getId());
+        $this->assertEquals(3,$resActual[1]->getId());
+
+        return ;
+    }
+
+    public function testWhereINRelationHasManyThoughAlreadyJoined(){
+
+        $pdo = $this->getConnection()->getConnection();
+
+        // expected data
+        $fQuery = Tree::faceQueryBuilder();
+        $fQuery->join("childrenTrees")->whereIN("~id",[1,2]);
+        $res = Face\ORM::execute($fQuery, $pdo);
+        $expected = $res->getInstancesByPath("this");
+        $childrenTrees = $res->getInstancesByPath("this.childrenTrees");
+
+        $a = 0;
+        $fQuery = new \Test\MockSelectBuilder(Tree::getEntityFace());
+        $fQuery->join("childrenTrees");
+        $fQuery->whereINRelation([
+            function ($values) use(&$a){
+                $a++; // to test if it was executed
+                $this->assertEquals([2,3,4],$values); // we test that the values passed to IN are the one we want
+            }
+        ],
+            "childrenTrees",$childrenTrees
+        );
+
+        $this->assertEquals(1,$a);
+
+        $resActual = Face\ORM::execute($fQuery, $pdo);
+
+        $this->assertEquals(2, $resActual->count());
+
+        $this->assertEquals(1,$resActual[0]->getId());
+        $this->assertEquals(3,$resActual[1]->getId());
+
+        return ;
+    }
+
     
     /**
      * @group hasManyThrough
@@ -67,6 +220,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $fQuery->join("childrenTrees");
 
         $trees=  Face\ORM::execute($fQuery, $pdo);
+        $children = $trees->getInstancesByPath("this.childrenTrees");
 
 
         $this->assertEquals(4,count($trees));
@@ -84,6 +238,12 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(1, count($trees[2]->parentTrees));
         
         $this->assertEquals($trees[0], $trees[2]->parentTrees[0]);
+
+
+        $this->assertEquals(2,$trees[1]->getId());
+
+
+
 
     }
 

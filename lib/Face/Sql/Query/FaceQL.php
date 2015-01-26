@@ -200,7 +200,7 @@ abstract class FaceQL  {
 
 
 
-                $joinSql = FQuery::__doFQLJoinTable($path,$face,$parentFace,$childElement,$pieceOfPath[0]);
+                $joinSql = FQuery::__doFQLJoinTable($path,$face,$parentFace,$childElement,$pieceOfPath[0],null);
 
 
                 $pos = strpos($string,$matches[$matchesReplaceIndex][$k]);

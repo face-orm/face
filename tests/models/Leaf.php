@@ -6,6 +6,8 @@ class Leaf {
     public $length;
     public $tree_id;
 
+    use \Face\Traits\EntityFaceTrait;
+
     public function getId() {
         return $this->id;
     }
@@ -29,8 +31,6 @@ class Leaf {
     public function setTree_id($tree_id) {
         $this->tree_id = $tree_id;
     }
-
-    use \Face\Traits\EntityFaceTrait;
 
     public static function __getEntityFace() {
         return [

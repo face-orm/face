@@ -22,7 +22,7 @@ class queryTest extends Test\PHPUnitTestDb
 
 
         $this->assertEquals(4,count($trees));
-        $this->assertEquals(13,count($trees->getInstancesByPath("this.lemons")));
+        $this->assertEquals(12,count($trees->getInstancesByPath("this.lemons")));
         $this->assertEquals(1,$trees[0]->getId());
         $this->assertEquals(8,$trees[0]->getAge());
 

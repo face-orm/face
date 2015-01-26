@@ -174,9 +174,9 @@ trait EntityFaceTrait {
     
     /**
      * Takes the DefaultMap contained in this face to create a default map.
-     * The given array (the map) maps the element name (the key) to a string (which most of time represnts the sql column name).
+     * The given array (the map) maps the element name (the key) to a string (which most of time represents the sql column name).
      * Each line of the array has this form : ElementName => Wished name
-     * @param array $exclude Elements to exclude. e.g. : if you want to exlucde elements "id" and "name" just use ["id","name"]
+     * @param array $exclude Elements to exclude. e.g. : if you want to exclude elements "id" and "name" just use ["id","name"]
      * @param array $include Elements to include or replace. e.g : if "name" has not default it wont be included if you dont specify it in the map. Just use ["name"=>"name"]
      * @return array The map with the form [ElementName => Wished name]
      */
