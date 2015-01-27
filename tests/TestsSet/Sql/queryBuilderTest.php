@@ -12,6 +12,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
     }
 
 
+
     public function testSimpleSelect()
     {
 
@@ -70,7 +71,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $expected = $res->getInstancesByPath("this.leafs");
         $trees = $res->getInstancesByPath("this");
 
-
         $a = 0;
 
         $fQuery = new \Test\MockSelectBuilder(Leaf::getEntityFace());
@@ -82,6 +82,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
             ],
             "tree",$trees
         );
+
 
         $this->assertEquals(1,$a);
 

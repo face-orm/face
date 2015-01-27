@@ -140,10 +140,10 @@ abstract class  FQuery {
      * @return string
      */
     public function _doFQLTableName($path,$token=null){
-        
+
         if(null===$token )
             $token=$this->dotToken;
-        
+
         return self::__doFQLTableNameStatic($path,$token);
     }
 
