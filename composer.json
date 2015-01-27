@@ -4,7 +4,7 @@
     "version": "0.1.1-BETA1",
     "description": "Modern & Friendly ORM for php5.4",
     "keywords": ["ORM"],
-    "homepage": "https://github.com/SneakyBobito/face",
+    "homepage": "https://github.com/face-orm/face",
     "license": "MIT",
     "authors": [
         {
