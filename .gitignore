@@ -8,3 +8,5 @@
 /tests/vendor/
 
 /.idea/
+
+./phpunit.xml

@@ -19,5 +19,19 @@
         "psr-0" : {
             "Face" : "lib/"
         }
+    },
+    "require-dev": {
+        "php": ">=5.4",
+        "phpunit/PHPUnit": "4.4.5",
+        "phpunit/dbunit" : "1.2.*@dev",
+        "codeclimate/php-test-reporter": "dev-master"
+    },
+
+    "autoload-dev": {
+        "psr-0" : {
+
+            "Test" : "./tests"
+        },
+        "classmap" : ["./tests/models"]
     }
 }

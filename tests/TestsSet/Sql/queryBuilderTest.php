@@ -6,13 +6,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
 
 
-    protected function getDataSet()
-    {
-        return $this->createMySQLXMLDataSet('dataset.xml');
-    }
-
-
-
     public function testSimpleSelect()
     {
 

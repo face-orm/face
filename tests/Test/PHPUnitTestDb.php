@@ -25,7 +25,7 @@ abstract class PHPUnitTestDb extends \PHPUnit_Extensions_Database_TestCase
 
     protected function getDataSet()
     {
-        return $this->createMySQLXMLDataSet('dataset.xml');
+        return $this->createMySQLXMLDataSet( __DIR__ . '/../dataset.xml');
     }
 
     protected function setUp() {

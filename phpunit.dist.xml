@@ -1,7 +1,7 @@
-<phpunit bootstrap="bootstrap.php">
+<phpunit bootstrap="tests/bootstrap.php">
     <testsuites>
         <testsuite name="TestsSet">
-            <directory>./TestsSet</directory>
+            <directory>tests/TestsSet</directory>
         </testsuite>
     </testsuites>
     <php>

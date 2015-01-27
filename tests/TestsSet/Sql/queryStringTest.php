@@ -6,11 +6,6 @@ class QueryStringTest extends Test\PHPUnitTestDb
 {
 
 
-
-    protected function getDataSet()
-    {
-        return $this->createMySQLXMLDataSet('dataset.xml');
-    }
     
     
     
