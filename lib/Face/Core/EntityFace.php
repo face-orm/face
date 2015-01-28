@@ -4,7 +4,7 @@ namespace Face\Core;
 
 use Face\Util\StringUtils;
 
-class EntityFace implements \IteratorAggregate, FaceInterface{
+class EntityFace implements \IteratorAggregate{
     private $elements;
     private $identifiers;
     
