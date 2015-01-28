@@ -16,7 +16,7 @@ class FaceFactory {
         else if(is_a($params, "Face\Core\FaceInterface"))
             return $params;
         else
-            throw new Exception("Invalid type for building a face");
+            throw new \Exception("Invalid type for building a face");
             
     }
     
