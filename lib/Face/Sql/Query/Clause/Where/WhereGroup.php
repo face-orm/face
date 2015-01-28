@@ -6,25 +6,27 @@ use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\Clause\WhereInterface;
 use Face\Sql\Query\FQuery;
 
-class WhereGroup implements  WhereInterface {
+class WhereGroup implements WhereInterface
+{
 
     /**
      * @var WhereInterface[]
      */
     protected $whereList = [];
 
-    public function getSqlString(FQuery $q){
+    public function getSqlString(FQuery $q)
+    {
 
-        if(count($this->whereList) == 0 ){
+        if (count($this->whereList) == 0) {
             return "";
         }
 
         $str = "(";
-        foreach ($this->whereList as $k=>$w) {
+        foreach ($this->whereList as $k => $w) {
             $where = $w[0];
             $logic = $w[1] === "OR" ? "OR" : "AND";
 
-            if($k !== 0){
+            if ($k !== 0) {
                 $str .= " " . $logic . " ";
             }
 
@@ -35,7 +37,8 @@ class WhereGroup implements  WhereInterface {
         return $str . ")";
     }
 
-    public function addWhere(WhereInterface $where,$logic=null){
+    public function addWhere(WhereInterface $where, $logic = null)
+    {
         $this->whereList[] = [$where,$logic];
     }
 }

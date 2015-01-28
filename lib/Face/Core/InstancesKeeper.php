@@ -7,27 +7,32 @@ namespace Face\Core;
  *
  * @author sghzal
  */
-class InstancesKeeper {
+class InstancesKeeper
+{
     
     protected $instances;
     
-    public function __construct() {
+    public function __construct()
+    {
         $this->instances=array();
     }
     
-    public function addInstance($instance,$identity){
+    public function addInstance($instance, $identity)
+    {
         $this->instances[get_class($instance)][$identity]=$instance;
     }
     
-    public function hasInstance($className,$identity){
+    public function hasInstance($className, $identity)
+    {
         return isset($this->instances[$className][$identity]);
     }
     
-    public function getInstance($className,$identity=null){
-        if(null !== $identity)
+    public function getInstance($className, $identity = null)
+    {
+        if (null !== $identity) {
             return $this->instances[$className][$identity];
-        else
+        } else {
             return $this->instances[$className];
+        }
     }
-    
 }

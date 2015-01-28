@@ -4,7 +4,8 @@ namespace Face\Core;
 
 use Face\Util\ArrayUtils;
 
-class EntityFaceElement{
+class EntityFaceElement
+{
 
     const RELATION_BELONGS_TO = "belongsTo";
     const RELATION_HAS_ONE = "hasOne";
@@ -56,13 +57,14 @@ class EntityFaceElement{
 
 
     /**
-     * 
+     *
      * @param array $params array to construct the faceElement as described here :  TODO array description
      */
-    function __construct($name="",$params=array()) {
+    function __construct($name = "", $params = array())
+    {
         $this->name         =  $name;
         
-        $this->propertyName =  ArrayUtils::getIfArrayKey($params, "propertyName",$name);
+        $this->propertyName =  ArrayUtils::getIfArrayKey($params, "propertyName", $name);
         $this->setter       =  ArrayUtils::getIfArrayKey($params, "setter");
         $this->getter       =  ArrayUtils::getIfArrayKey($params, "getter");
 
@@ -70,223 +72,265 @@ class EntityFaceElement{
 
         $this->type         =  isset($params["class"])?"entity":"value";
         $this->class        =  ArrayUtils::getIfArrayKey($params, "class");
-        $this->isIdentifier =  ArrayUtils::getIfArrayKey($params, "identifier",false);
+        $this->isIdentifier =  ArrayUtils::getIfArrayKey($params, "identifier", false);
 
-        if($this->isEntity()){
-            $this->relation  =  ArrayUtils::getIfArrayKey($params, "relation","hasMany");
+        if ($this->isEntity()) {
+            $this->relation  =  ArrayUtils::getIfArrayKey($params, "relation", "hasMany");
             $this->relatedBy =  ArrayUtils::getIfArrayKey($params, "relatedBy");
             $this->sqlThrough=  ArrayUtils::getIfArrayKey($params['sql'], "throughTable");
         }
 
-        $this->sqlColumnName =   ArrayUtils::getIfArrayKey($params['sql'], "columnName",$name);
+        $this->sqlColumnName =   ArrayUtils::getIfArrayKey($params['sql'], "columnName", $name);
         $this->sqlIsPrimary  =   ArrayUtils::getIfArrayKey($params['sql'], "isPrimary");
         $this->sqlJoin       =   ArrayUtils::getIfArrayKey($params['sql'], "join");
         $this->sqlBridge     =   ArrayUtils::getIfArrayKey($params['sql'], "bridge");
-        $this->sqlAutoIncrement= ArrayUtils::getIfArrayKey($params['sql'], "autoIncrement",$this->isPrimary());
+        $this->sqlAutoIncrement= ArrayUtils::getIfArrayKey($params['sql'], "autoIncrement", $this->isPrimary());
         
         
        
     }
     
     
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getPropertyName() {
+    public function getPropertyName()
+    {
         return $this->propertyName;
     }
 
-    public function setPropertyName($propertyName) {
+    public function setPropertyName($propertyName)
+    {
         $this->propertyName = $propertyName;
     }
 
-    public function getSetter() {
+    public function getSetter()
+    {
         return $this->setter;
     }
     
-    public function hasSetter(){
+    public function hasSetter()
+    {
         return null !== $this->setter;
     }
 
-    public function setSetter($setter) {
+    public function setSetter($setter)
+    {
         $this->setter = $setter;
     }
 
-    public function getGetter() {
+    public function getGetter()
+    {
         return $this->getter;
     }
     
-    public function hasGetter(){
+    public function hasGetter()
+    {
         return null !== $this->getter;
     }
 
-    public function setGetter($getter) {
+    public function setGetter($getter)
+    {
         $this->getter = $getter;
     }
 
-    public function getSqlThrough() {
+    public function getSqlThrough()
+    {
         return $this->sqlThrough;
     }
 
-    public function setSqlThrough($sqlThrough) {
+    public function setSqlThrough($sqlThrough)
+    {
         $this->sqlThrough = $sqlThrough;
     }
 
     
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
     }
 
-    public function getClass() {
+    public function getClass()
+    {
         return $this->class;
     }
 
-    public function setClass($class) {
+    public function setClass($class)
+    {
         $this->class = $class;
     }
     
-    public function isEntity(){
+    public function isEntity()
+    {
         return "entity"===$this->getType();
     }
     
-    public function isValue(){
+    public function isValue()
+    {
         return "value"===$this->getType();
     }
     
-    public function getIsIdentifier() {
+    public function getIsIdentifier()
+    {
         return $this->isIdentifier;
     }
     
-    public function isIdentifier() {
+    public function isIdentifier()
+    {
         return true===$this->isIdentifier;
     }
 
-    public function setIsIdentifier($isIdentifier) {
+    public function setIsIdentifier($isIdentifier)
+    {
         $this->isIdentifier = $isIdentifier;
     }
     
-    public function getDefaultMap() {
+    public function getDefaultMap()
+    {
         return $this->defaultMap;
     }
 
     
-    public function getSqlColumnName() {
+    public function getSqlColumnName()
+    {
         return $this->sqlColumnName;
     }
 
-    public function setSqlColumnName($sqlColumnName) {
+    public function setSqlColumnName($sqlColumnName)
+    {
         $this->sqlColumnName = $sqlColumnName;
     }
 
-    public function getSqlIsPrimary() {
+    public function getSqlIsPrimary()
+    {
         return $this->sqlIsPrimary;
     }
     
-    public function isPrimary(){
+    public function isPrimary()
+    {
         return $this->sqlIsPrimary;
     }
 
-    public function setSqlIsPrimary($sqlIsPrimary) {
+    public function setSqlIsPrimary($sqlIsPrimary)
+    {
         $this->sqlIsPrimary = $sqlIsPrimary;
     }
 
-    public function getSqlJoin() {
+    public function getSqlJoin()
+    {
         return $this->sqlJoin;
     }
 
-    public function setSqlJoin($sqlJoin) {
+    public function setSqlJoin($sqlJoin)
+    {
         $this->sqlJoin = $sqlJoin;
     }
 
-    public function getSqlBridge() {
+    public function getSqlBridge()
+    {
         return $this->sqlBridge;
     }
 
-    public function setSqlBridge($sqlBridge) {
+    public function setSqlBridge($sqlBridge)
+    {
         $this->sqlBridge = $sqlBridge;
     }
     
-    public function getSqlAutoIncrement() {
+    public function getSqlAutoIncrement()
+    {
         return $this->sqlAutoIncrement;
     }
 
-    public function setSqlAutoIncrement($sqlAutoIncrement) {
+    public function setSqlAutoIncrement($sqlAutoIncrement)
+    {
         $this->sqlAutoIncrement = $sqlAutoIncrement;
     }
 
     
-    public function getRelation() {
+    public function getRelation()
+    {
         return $this->relation;
     }
 
-    public function setRelation($relation) {
+    public function setRelation($relation)
+    {
         $this->relation = $relation;
     }
     
-    public function hasManyRelationship(){
+    public function hasManyRelationship()
+    {
         return $this->relation=="hasMany";
     }
-    public function hasManyThroughRelationship(){
+    public function hasManyThroughRelationship()
+    {
         return $this->relation=="hasManyThrough";
     }
 
-    public function relationIsBelongsTo(){
+    public function relationIsBelongsTo()
+    {
         return self::RELATION_BELONGS_TO == $this->relation;
     }
 
-    public function relationIsHas___(){
+    public function relationIsHas___()
+    {
         return self::RELATION_HAS_MANY == $this->relation || self::RELATION_HAS_ONE == $this->relation || self::RELATION_HAS_MANY_THROUGH == $this->relation;
     }
 
-    public function getRelatedBy() {
+    public function getRelatedBy()
+    {
         return $this->relatedBy;
     }
 
-    public function setRelatedBy($relatedBy) {
+    public function setRelatedBy($relatedBy)
+    {
         $this->relatedBy = $relatedBy;
     }
 
-    public function hasRelationTo(){
+    public function hasRelationTo()
+    {
         // TODO
-    }        
+    }
     
     /**
-     * 
+     *
      * @return EntityFace the face this element belongs to
      */
-    public function getParentFace() {
+    public function getParentFace()
+    {
         return $this->parentFace;
     }
 
-    public function setParentFace(EntityFace $parentFace) {
+    public function setParentFace(EntityFace $parentFace)
+    {
         $this->parentFace = $parentFace;
     }
 
             
     /**
-     * 
+     *
      * if this is a value type, it means it cant have a face
      * if this is an entity it will return the face matching with the class
-     * 
+     *
      * @return EntityFace the EntityFace or null
      */
-    public function getFace(){
-        if($this->isEntity())
+    public function getFace()
+    {
+        if ($this->isEntity()) {
             return call_user_func($this->getClass()."::getEntityFace");
-        else
+        } else {
             throw new \Exception("A value Element has no face. Only entity with an associed class can have a face. Call on " . $this->getName());
+        }
     }
-
-    
-    
-
 }

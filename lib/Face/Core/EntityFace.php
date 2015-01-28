@@ -4,7 +4,8 @@ namespace Face\Core;
 
 use Face\Util\StringUtils;
 
-class EntityFace implements \IteratorAggregate{
+class EntityFace implements \IteratorAggregate
+{
     private $elements;
     private $identifiers;
     
@@ -16,50 +17,56 @@ class EntityFace implements \IteratorAggregate{
     private $primaries;
     
     /**
-     * 
+     *
      * @param array $params array to construct the face is described here :  TODO array description
      */
-    function __construct($params=array(),$class=null) {
+    function __construct($params = array(), $class = null)
+    {
         $this->elements=array();
         $this->primaries=array();
         $this->relatedTable=array();
         
         $this->class=$class;
 
-        if(isset($params['elements'])){
-            foreach($params['elements'] as $k=>$elmParams){
-
-                if(is_numeric($k)){
-                    $element=new EntityFaceElement($elmParams,[]);
-                }else{
-                    $element=new EntityFaceElement($k,$elmParams);
+        if (isset($params['elements'])) {
+            foreach ($params['elements'] as $k => $elmParams) {
+                if (is_numeric($k)) {
+                    $element=new EntityFaceElement($elmParams, []);
+                } else {
+                    $element=new EntityFaceElement($k, $elmParams);
                 }
                 $this->addElement($element);
             }
         }
-        if(isset($params["sqlTable"]))
+        if (isset($params["sqlTable"])) {
             $this->sqlTable=$params["sqlTable"];
-        else
+        } else {
             $this->sqlTable= strtolower($this->getClass());
+        }
         
     }
     
-    public function getClass() {
+    public function getClass()
+    {
         return $this->class;
     }
 
-    public function setClass($class) {
+    public function setClass($class)
+    {
         $this->class = $class;
     }
 
-    public function addElement(EntityFaceElement $element){
+    public function addElement(EntityFaceElement $element)
+    {
         $this->elements[$element->getName()]=$element;
         
-         if($element->isPrimary())
+        if ($element->isPrimary()) {
             $this->primaries[]=$element;
+        }
         
-        if($element->isIdentifier())
+        if ($element->isIdentifier()) {
             $this->identifiers[]=$element;
+        }
         
       
         
@@ -77,28 +84,32 @@ class EntityFace implements \IteratorAggregate{
      * @throws \Exception
      * @throws \Face\Exception\RootFaceReachedException
      */
-    public function getElement($name,$offset=null,&$pieceOfPath=null){
+    public function getElement($name, $offset = null, &$pieceOfPath = null)
+    {
         
-        if(StringUtils::beginsWith("this.", $name))
+        if (StringUtils::beginsWith("this.", $name)) {
             $name = substr($name, 5);
+        }
         
-        if(null!==$offset){
-            if($offset<0)
+        if (null!==$offset) {
+            if ($offset<0) {
                 throw new \Exception("\$offset can't be negative. ".$offset." given");
+            }
 
             $lastPath="";
-            while($offset>0){
+            while ($offset>0) {
                 $lastDot= strrpos($name, ".");
-                $lastPath=substr($name,$lastDot+1).".".$lastPath;
-                $name=substr($name,0,$lastDot);
+                $lastPath=substr($name, $lastDot+1).".".$lastPath;
+                $name=substr($name, 0, $lastDot);
                 $offset--;
             }
 
-            if(""===$name)
+            if (""===$name) {
                 throw new \Face\Exception\RootFaceReachedException("Offset was too deep and reached root face");
+            }
 
 
-            $lastPath=rtrim($lastPath,".");
+            $lastPath=rtrim($lastPath, ".");
             $pieceOfPath[0]=$name;
             $pieceOfPath[1]=$lastPath;
 
@@ -106,21 +117,20 @@ class EntityFace implements \IteratorAggregate{
         }
         
         
-        if(false!==strpos($name, ".")){
-            
-            $firstChildFace=$this->getElement(strstr($name, ".",true))->getFace();
-            return $firstChildFace->getElement(trim(strstr($name, "."),"."));
+        if (false!==strpos($name, ".")) {
+            $firstChildFace=$this->getElement(strstr($name, ".", true))->getFace();
+            return $firstChildFace->getElement(trim(strstr($name, "."), "."));
         }
         
-        if(!isset($this->elements[$name])){
+        if (!isset($this->elements[$name])) {
             $names=$this->debugGetRelatedName($name);
 
 
-            if(count($names)>0){
+            if (count($names)>0) {
                 $relatedStr = "Did you mean '";
-                $relatedStr .= implode("' , '",$names);
+                $relatedStr .= implode("' , '", $names);
                 $relatedStr .= "' ?";
-            }else{
+            } else {
                 $relatedStr ="";
             }
 
@@ -131,37 +141,45 @@ class EntityFace implements \IteratorAggregate{
         return $this->elements[$name];
     }
 
-    public function getElements() {
+    public function getElements()
+    {
         return $this->elements;
     }
 
-    public function setElements($elements) {
+    public function setElements($elements)
+    {
         $this->elements = $elements;
     }
 
-    public function getPrimaries() {
+    public function getPrimaries()
+    {
         return $this->primaries;
     }
 
-    public function setPrimaries($primaries) {
+    public function setPrimaries($primaries)
+    {
         $this->primaries = $primaries;
     }
 
     
-    public function getIdentifiers(){
+    public function getIdentifiers()
+    {
         return $this->identifiers;
     }
     
 
-    public function getIterator() {
+    public function getIterator()
+    {
         return new \ArrayIterator($this->elements);
     }
 
-    public function getSqlTable() {
+    public function getSqlTable()
+    {
         return $this->sqlTable;
     }
 
-    public function setSqlTable($sqltable) {
+    public function setSqlTable($sqltable)
+    {
         $this->sqlTable = $sqltable;
     }
 
@@ -169,10 +187,12 @@ class EntityFace implements \IteratorAggregate{
      * @param string $node the elemtn we want to get
      * @return EntityFaceElement
      */
-    public function getDirectElement($node){
+    public function getDirectElement($node)
+    {
         
-        if(isset($this->elements[$node]))
+        if (isset($this->elements[$node])) {
             return $this->elements[$node];
+        }
         
         throw new \Exception("Element ".$node." doesnt exist into ".$this->getClass());
     }
@@ -185,12 +205,13 @@ class EntityFace implements \IteratorAggregate{
      * @param $e
      * @return array
      */
-    protected function debugGetRelatedName($e){
+    protected function debugGetRelatedName($e)
+    {
 
         $names=[];
 
-        foreach($this as $elm){
-            if(StringUtils::beginsWith($e,$elm->getName())){
+        foreach ($this as $elm) {
+            if (StringUtils::beginsWith($e, $elm->getName())) {
                 $names[]=$elm->getName();
             }
 
@@ -199,5 +220,4 @@ class EntityFace implements \IteratorAggregate{
 
         return $names;
     }
-
 }

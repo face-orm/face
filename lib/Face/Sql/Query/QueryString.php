@@ -7,16 +7,16 @@
 
 namespace Face\Sql\Query;
 
-
 use Face\Core\EntityFace;
 
-class QueryString extends FQuery{
+class QueryString extends FQuery
+{
 
     protected $sqlString;
 
     private $whereInCount=0;
 
-    function __construct(EntityFace $baseFace, $sqlString, $joins=[], $selectedColumns=[])
+    function __construct(EntityFace $baseFace, $sqlString, $joins = [], $selectedColumns = [])
     {
         parent::__construct($baseFace);
         $this->sqlString = $sqlString;
@@ -43,15 +43,16 @@ class QueryString extends FQuery{
      * @param $array array list of values to bind
      * @return $this QueryString
      */
-    public function bindIn($token,$array){
+    public function bindIn($token, $array)
+    {
         $bindString = "";
-        foreach($array as $value){
+        foreach ($array as $value) {
             $bindString.=',:fautoIn'.++$this->whereInCount;
-            $this->bindValue(':fautoIn'.$this->whereInCount,$value);
+            $this->bindValue(':fautoIn'.$this->whereInCount, $value);
         }
 
         // TODO saffer replace
-        $this->sqlString = str_replace($token,ltrim($bindString,","),$this->sqlString);
+        $this->sqlString = str_replace($token, ltrim($bindString, ","), $this->sqlString);
 
         return $this;
 

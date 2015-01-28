@@ -7,7 +7,8 @@ use Face\Sql\Query\Clause\WhereInterface;
 use Face\Sql\Query\FQuery;
 use Face\Traits\ContextAwareTrait;
 
-class WhereString implements  WhereInterface {
+class WhereString implements WhereInterface
+{
 
     use ContextAwareTrait;
 
@@ -24,18 +25,17 @@ class WhereString implements  WhereInterface {
         $newString=$this->string;
 
         $matchArray = [];
-        preg_match_all("#~([a-zA-Z0-9_]\\.{0,1})+#", $newString,$matchArray);
+        preg_match_all("#~([a-zA-Z0-9_]\\.{0,1})+#", $newString, $matchArray);
         $matchArray = array_unique($matchArray[0]);
 
         foreach ($matchArray as $match) {
-
             $nsMatch=$this->getNameInContext($match);
 
-            $path=ltrim($nsMatch,"~");
+            $path=ltrim($nsMatch, "~");
 
-            $tablePath = rtrim(substr($nsMatch,1, strrpos($nsMatch,".")),".");
+            $tablePath = rtrim(substr($nsMatch, 1, strrpos($nsMatch, ".")), ".");
 
-            $replace=$q->_doFQLTableName( $tablePath )
+            $replace=$q->_doFQLTableName($tablePath)
                 .".".$q->getBaseFace()->getElement($path)->getSqlColumnName();
 
             $newString=str_replace($match, $replace, $newString);
@@ -45,6 +45,4 @@ class WhereString implements  WhereInterface {
         return $newString;
 
     }
-
-
 }

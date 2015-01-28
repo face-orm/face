@@ -7,5 +7,6 @@ namespace Face\Exception;
  *
  * @author bobito
  */
-class FacelessException extends \Exception {
+class FacelessException extends \Exception
+{
 }

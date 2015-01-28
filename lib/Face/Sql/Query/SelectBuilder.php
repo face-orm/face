@@ -15,7 +15,8 @@ use Face\Traits\EntityFaceTrait;
  *
  * @author bobito
  */
-class SelectBuilder extends \Face\Sql\Query\FQuery{
+class SelectBuilder extends \Face\Sql\Query\FQuery
+{
 
     use ContextAwareTrait;
 
@@ -43,12 +44,14 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      */
     private $whereInCount=0;
 
-    function __construct(EntityFace $baseFace) {
+    function __construct(EntityFace $baseFace)
+    {
         parent::__construct($baseFace);
     }
 
 
-    public function getSqlString(){
+    public function getSqlString()
+    {
 
         $sqlQ=$this->prepareSelectClause();
         $sqlQ.=" ".$this->prepareFromClause();
@@ -65,7 +68,8 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @param string $path the face path to the join
      * @return \Face\Sql\Query\SelectBuilder it returns itSelf
      */
-    public function join($path){
+    public function join($path)
+    {
 
         $path = $this->getNameInContext($path);
 
@@ -79,12 +83,14 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @param string $path the face path to check
      * @return bool
      */
-    public function isJoined($path){
+    public function isJoined($path)
+    {
         return isset($this->joins[$this->_doFQLTableName($path, ".")]);
     }
 
-    public function addWhere(WhereInterface $where){
-        if(!$this->where) {
+    public function addWhere(WhereInterface $where)
+    {
+        if (!$this->where) {
             $this->where = new Where\WhereGroup();
         }
         $this->where->addWhere($where);
@@ -95,7 +101,8 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @param string $whereString the FQuery formated  where clause
      * @return \Face\Sql\Query\SelectBuilder   it returns itSelf
      */
-    public function where($whereString){
+    public function where($whereString)
+    {
 
         $where = new Where\WhereString($whereString);
         $where->context($this->getContext());
@@ -110,7 +117,8 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @param string $whereString the FQuery formated  where clause
      * @return \Face\Sql\Query\SelectBuilder   it returns itSelf
      */
-    public function whereAND($whereString){
+    public function whereAND($whereString)
+    {
 
         $where = new Where\WhereString($whereString);
         $where->context($this->getContext());
@@ -125,11 +133,12 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @param string $whereString the FQuery formated  where clause
      * @return \Face\Sql\Query\SelectBuilder   it returns itSelf
      */
-    public function whereOR($whereString){
+    public function whereOR($whereString)
+    {
         $where = new Where\WhereString($whereString);
         $where->context($this->getContext());
 
-        $this->addWhere($where,"OR");
+        $this->addWhere($where, "OR");
         return $this;
     }
 
@@ -141,21 +150,23 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @throws \Exception
      * @return \Face\Sql\Query\SelectBuilder
      */
-    public function whereIN($path,$array,$logic=null){
+    public function whereIN($path, $array, $logic = null)
+    {
         $fieldName = $this->getNameInContext($path);
-        $this->_whereInRaw($fieldName,$array,$logic);
+        $this->_whereInRaw($fieldName, $array, $logic);
         return $this;
     }
 
-    protected function _whereInRaw($fieldName,$array,$logic=null){
+    protected function _whereInRaw($fieldName, $array, $logic = null)
+    {
         $bindString = "";
-        foreach($array as $value){
+        foreach ($array as $value) {
             $bindString.=',:fautoIn'.++$this->whereInCount;
-            $this->bindValue(':fautoIn'.$this->whereInCount,$value);
+            $this->bindValue(':fautoIn'.$this->whereInCount, $value);
         }
-        $phrase = $fieldName . " IN (" . ltrim($bindString,",") . ")";
+        $phrase = $fieldName . " IN (" . ltrim($bindString, ",") . ")";
         $where = new Where\WhereString($phrase);
-        $this->addWhere($where,$logic);
+        $this->addWhere($where, $logic);
     }
 
     /**
@@ -164,33 +175,32 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
      * @return $this
      * @throws \Exception
      */
-    public function whereINRelation($relation, $entities, $logic = null){
+    public function whereINRelation($relation, $entities, $logic = null)
+    {
 
         $nsrelation = $this->getNameInContext($relation);
 
         $relatedElement = $this->baseFace->getDirectElement($relation);
         $join = $relatedElement->getSqlJoin();
 
-        if(count($join) > 1){
-
+        if (count($join) > 1) {
             // todo
             throw new \Exception("WhereINRelation with many join columns not implemented yet");
 
-        }else if(!empty($join)){
-
-            if($relatedElement->hasManyThroughRelationship() ){
+        } elseif (!empty($join)) {
+            if ($relatedElement->hasManyThroughRelationship()) {
                 $itsColumn = current($relatedElement->getFace()->getDirectElement($relatedElement->getRelatedBy())->getSqlJoin());
                 $this->softThroughJoin[$this->_doFQLTableName($nsrelation, ".")] = $relatedElement->getFace();
                 $values = $this->__whereINRelationOneIdentifierGetValues($entities, null, $relatedElement);
-                $this->_whereInRaw($this->_doFQLTableName("$relation.through") . ".$itsColumn" ,$values);
-            }else{
+                $this->_whereInRaw($this->_doFQLTableName("$relation.through") . ".$itsColumn", $values);
+            } else {
                 $myColumn  = key($join);
                 $itsColumn = $join[$myColumn];
                 $values = $this->__whereINRelationOneIdentifierGetValues($entities, $itsColumn, $relatedElement);
-                $this->_whereInRaw($myColumn,$values,$logic);
+                $this->_whereInRaw($myColumn, $values, $logic);
             }
 
-        }else{
+        } else {
             throw new \Exception("There is no sql join for : " . $this->baseFace->getClass() . "." . $nsrelation);
         }
 
@@ -199,45 +209,48 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
 
 
 
-    protected function __whereINRelationOneIdentifierGetValues($entities,$itsColumn,EntityFaceElement $relatedElement){
+    protected function __whereINRelationOneIdentifierGetValues($entities, $itsColumn, EntityFaceElement $relatedElement)
+    {
 
         $values = array();
 
-        if($relatedElement->hasManyThroughRelationship()){
-            foreach($entities as $e){
+        if ($relatedElement->hasManyThroughRelationship()) {
+            foreach ($entities as $e) {
                 $values[] = $e->faceGetIdentity();
             }
-        }else if($relatedElement->relationIsBelongsTo()){
-            foreach($entities as $e){
+        } elseif ($relatedElement->relationIsBelongsTo()) {
+            foreach ($entities as $e) {
                 $values[] = $e->faceGetter($itsColumn);
             }
-        }else if($relatedElement->relationIsHas___()){
-            foreach($entities as $e){
+        } elseif ($relatedElement->relationIsHas___()) {
+            foreach ($entities as $e) {
                 $v = $e->faceGetter($itsColumn);
                 $values[$v] = $v;
             }
             $values = array_values($values);
-        }else{
+        } else {
             throw new \Exception("unknown relation : " . $relatedElement->getRelation());
         }
 
         return $values;
     }
 
-    public function prepareSelectClause(){
+    public function prepareSelectClause()
+    {
 
 
         $facesToSelect["this"]=$this->baseFace;
-        $facesToSelect=  array_merge($facesToSelect,$this->joins);
+        $facesToSelect=  array_merge($facesToSelect, $this->joins);
 
         $selectFields=[];
 
-        foreach($facesToSelect as $path=>$face){
+        foreach ($facesToSelect as $path => $face) {
             $truePath = $this->_doFQLTableName($path);
-            foreach($face as $elm){
+            foreach ($face as $elm) {
                 /* @var $elm \Face\Core\EntityFaceElement */
-                if($elm->isValue())
+                if ($elm->isValue()) {
                     $selectFields[]=$truePath.".".$elm->getSqlColumnName()." AS ".$truePath.$this->dotToken.$elm->getName();
+                }
             }
         }
 
@@ -248,24 +261,26 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
         return $sql;
     }
 
-    public function prepareFromClause(){
+    public function prepareFromClause()
+    {
 
 
         return "FROM ".$this->baseFace->getSqlTable()." AS this";
 
     }
 
-    public function prepareJoinClause(){
+    public function prepareJoinClause()
+    {
         $sql="";
-        foreach ($this->joins as $path=>$face){
-            $sql.=$this->__prepareJoinClauseFor($path,$face,false);
+        foreach ($this->joins as $path => $face) {
+            $sql.=$this->__prepareJoinClauseFor($path, $face, false);
         }
 
         // Soft join
-        if(is_array($this->softThroughJoin)){
-            foreach($this->softThroughJoin as $path=>$face){
-                if(!$this->isJoined($path)){
-                    $sql.=$this->__prepareJoinClauseFor($path,$face,true);
+        if (is_array($this->softThroughJoin)) {
+            foreach ($this->softThroughJoin as $path => $face) {
+                if (!$this->isJoined($path)) {
+                    $sql.=$this->__prepareJoinClauseFor($path, $face, true);
                 }
             }
         }
@@ -273,12 +288,13 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
         return $sql;
     }
 
-    private function __prepareJoinClauseFor($path,EntityFace $face,$isSoft){
+    private function __prepareJoinClauseFor($path, EntityFace $face, $isSoft)
+    {
 
         $joinSql = "";
-        try{
-            $parentFace=$this->baseFace->getElement($path,1,$pieceOfPath)->getFace();
-        } catch (\Face\Exception\RootFaceReachedException $e){
+        try {
+            $parentFace=$this->baseFace->getElement($path, 1, $pieceOfPath)->getFace();
+        } catch (\Face\Exception\RootFaceReachedException $e) {
             $pieceOfPath[0]="";
             $pieceOfPath[1]=$path;
             $parentFace=$this->baseFace;
@@ -291,24 +307,19 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
         return $joinSql;
     }
 
-    public function prepareWhereClause(){
-        if(null===$this->where)
+    public function prepareWhereClause()
+    {
+        if (null===$this->where) {
             return "";
+        }
 
         $w = $this->where->getSqlString($this);
 
-        if(empty($w)){
+        if (empty($w)) {
             return "";
         }
 
 
         return "WHERE " . $w;
     }
-
-
-
-
-
-
-
 }

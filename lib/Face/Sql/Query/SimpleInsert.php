@@ -5,18 +5,20 @@ namespace Face\Sql\Query;
 use Face\Util\OOPUtils;
 
 /**
- * Provide a way for face to do inserts ignoring join. 
+ * Provide a way for face to do inserts ignoring join.
  *
  * @author sghzal
  */
-class SimpleInsert extends FQuery {
+class SimpleInsert extends FQuery
+{
  
     protected $entity;
 
 
-    public function __construct($entity) {
+    public function __construct($entity)
+    {
        
-        if(!OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait' )){
+        if (!OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait')) {
             throw new \Exception("Class ".get_class($entity)." doesnt use the trait \Face\Traits\EntityFaceTrait");
         }
         
@@ -26,20 +28,21 @@ class SimpleInsert extends FQuery {
     }
 
     
-    public function getSqlString() {
+    public function getSqlString()
+    {
         $baseFace = $this->getBaseFace();
         
         
         $fields="";
         $values="";
         $i=0;
-        foreach ($baseFace as $elm){
+        foreach ($baseFace as $elm) {
             /* @var $elm \Face\Core\EntityFaceElement */
-            if($elm->isValue() && !$elm->getSqlAutoIncrement() ){
-                if($i>0){
+            if ($elm->isValue() && !$elm->getSqlAutoIncrement()) {
+                if ($i>0) {
                     $fields.=",";
                     $values.=",";
-                }else{
+                } else {
                     $i++;
                 }
                 $fields.="`" . $elm->getSqlColumnName() . "`";
@@ -54,6 +57,4 @@ class SimpleInsert extends FQuery {
         return $queryStr;
         
     }
-
-    
 }

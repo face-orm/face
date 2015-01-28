@@ -4,8 +4,8 @@ namespace Face\Sql\Query\Clause;
 
 use Face\Sql\Query\FQuery;
 
-interface WhereInterface {
+interface WhereInterface
+{
 
     public function getSqlString(FQuery $q);
-
 }

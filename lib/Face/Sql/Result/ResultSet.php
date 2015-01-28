@@ -1,6 +1,7 @@
 <?php
 
 namespace Face\Sql\Result;
+
 use Face\Core\FacePool;
 use Face\Exception\RootFaceReachedException;
 use Face\Sql\Query\SelectBuilder;
@@ -12,7 +13,8 @@ use Face\Core\InstancesKeeper;
  *
  * @author sghzal
  */
-class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
+class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
+{
     
     /**
      *
@@ -28,37 +30,45 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
     protected $instancesByPath=array();
     protected $instancesByPathIdentity=array();
     
-    function __construct(EntityFace $baseFace , InstancesKeeper $instanceKeeper) {
+    function __construct(EntityFace $baseFace, InstancesKeeper $instanceKeeper)
+    {
         $this->instanceKeeper = $instanceKeeper;
         $this->baseFace = $baseFace;
     }
 
-    public function getInstanceKeeper() {
+    public function getInstanceKeeper()
+    {
         return $this->instanceKeeper;
     }
 
-    public function getInstancesByPath($path=null) {
-        if($path)
+    public function getInstancesByPath($path = null)
+    {
+        if ($path) {
             return isset($this->instancesByPath[$path]) ? $this->instancesByPath[$path] : [];
-        else
+        } else {
             return $this->instancesByPath;
+        }
     }
 
-    public function getInstancesByClass($className) {
+    public function getInstancesByClass($className)
+    {
         return $this->instanceKeeper->getInstance($className);
     }
     
 
-    public function addInstanceByPath($path,$instance,$identity) {
+    public function addInstanceByPath($path, $instance, $identity)
+    {
         $this->instancesByPath[$path][] = $instance;
         $this->instancesByPathIdentity[$path][$identity] = $instance;
     }
     
-    public function pathHasIdentity($path,$identity){
+    public function pathHasIdentity($path, $identity)
+    {
         return isset($this->instancesByPathIdentity[$path][$identity]);
     }
     
-    public function getBaseInstances() {
+    public function getBaseInstances()
+    {
         if (isset($this->instancesByPath["this"])) {
             return $this->instancesByPath["this"];
         } else {
@@ -109,15 +119,18 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
      *  FROM ARRAY ACCESS INTERFACE  =
      *================================*/
     
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->instancesByPath["this"][$offset]);
     }
 
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->instancesByPath["this"][$offset]) ? $this->instancesByPath["this"][$offset] : null;
     }
 
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         if (is_null($offset)) {
             $this->$this->instancesByPath["this"][]        = $value;
         } else {
@@ -125,7 +138,8 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
         }
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->$this->instancesByPath["this"][$offset]);
     }
 
@@ -137,7 +151,8 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
      *  FROM COUNTABLE INTERFACE  =
      *=============================*/
     
-    public function count() {
+    public function count()
+    {
         return isset($this->instancesByPath["this"]) ? count($this->instancesByPath["this"]) : 0;
     }
 
@@ -147,9 +162,8 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
      *  FROM INTERATOR AGGREGATEINTERFACE  =
      *======================================*/
     
-    public function getIterator() {
+    public function getIterator()
+    {
         return isset($this->instancesByPath["this"]) ? new \ArrayIterator($this->instancesByPath["this"]) : new \ArrayIterator();
     }
-
-  
 }

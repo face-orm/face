@@ -3,21 +3,24 @@
 
 
 namespace Face\Core;
+
 /**
  * Description of FaceFactory
  *
  * @author bobito
  */
-class FaceFactory {
+class FaceFactory
+{
     
-    public static function buildFace($params,$className=null){
-        if(is_array($params))
-            return new EntityFace($params,$className);
-        else if($params instanceof \Face\Core\EntityFace)
+    public static function buildFace($params, $className = null)
+    {
+        if (is_array($params)) {
+            return new EntityFace($params, $className);
+        } elseif ($params instanceof \Face\Core\EntityFace) {
             return $params;
-        else
+        } else {
             throw new \Exception("Invalid type for building a face");
+        }
             
     }
-    
 }

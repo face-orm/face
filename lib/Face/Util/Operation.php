@@ -2,7 +2,6 @@
 
 namespace Face\Util;
 
-
 /**
  * Class Operation
  * @package Face\Core
@@ -10,7 +9,8 @@ namespace Face\Util;
  * An operation is something named that embeds some options
  *
  */
-class Operation {
+class Operation
+{
 
     /**
      * @var string
@@ -23,7 +23,8 @@ class Operation {
     protected $options=array();
 
 
-    public function __construct($name){
+    public function __construct($name)
+    {
         $this->name=$name;
     }
 
@@ -46,7 +47,7 @@ class Operation {
     /**
      * @param array $options
      */
-    public function setOptions($name,$options)
+    public function setOptions($name, $options)
     {
         $this->options[$name] = $options;
     }

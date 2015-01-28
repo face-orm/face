@@ -8,8 +8,8 @@
 
 namespace Face\Util;
 
-
-class OOPUtils {
+class OOPUtils
+{
 
     /**
      * will check if the given class uses the given trait
@@ -17,8 +17,8 @@ class OOPUtils {
      * @param string $trait name of the trait to check
      * @return boolean true if the class uses the trait
      */
-    public static function UsesTrait($class,$trait){
+    public static function UsesTrait($class, $trait)
+    {
         return array_key_exists($trait, class_uses($class));
     }
-
 }

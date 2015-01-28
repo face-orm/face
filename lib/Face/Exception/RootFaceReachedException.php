@@ -7,6 +7,7 @@ namespace Face\Exception;
  *
  * @author bobito
  */
-class RootFaceReachedException extends \Exception {
+class RootFaceReachedException extends \Exception
+{
     //put your code here
 }

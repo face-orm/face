@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap 'exit' ERR
+
 SCRIPTFILE=$(readlink -f "$0")
 SCRIPTDIR=$(dirname "$SCRIPTFILE")
 

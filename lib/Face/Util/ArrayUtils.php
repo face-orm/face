@@ -7,8 +7,8 @@
 
 namespace Face\Util;
 
-
-class ArrayUtils {
+class ArrayUtils
+{
 
     /**
      * if the given array has the given key, function will give the value at the given key, else it will return $defaultValue
@@ -16,11 +16,12 @@ class ArrayUtils {
      * @param type $key the key to check
      * @param type $defaultValue the value to return if key is not set. Default to null
      */
-    public static function getIfArrayKey(&$array,$key,$defaultValue=null){
-        if(isset($array[$key]))
+    public static function getIfArrayKey(&$array, $key, $defaultValue = null)
+    {
+        if (isset($array[$key])) {
             return $array[$key];
-        else
+        } else {
             return $defaultValue;
+        }
     }
-
 }

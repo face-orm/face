@@ -2,8 +2,8 @@
 
 namespace Face\Traits;
 
-
-trait ContextAwareTrait {
+trait ContextAwareTrait
+{
 
     /**
      * the name context used to shortcut the call to other entities
@@ -19,7 +19,8 @@ trait ContextAwareTrait {
      * @param $context
      * @return $this
      */
-    public function context($context=null){
+    public function context($context = null)
+    {
         if (is_null($context) || empty($context) || $context == "this") {
             $context = null;
         } else {
@@ -33,20 +34,21 @@ trait ContextAwareTrait {
      * @param $name
      * @return string
      */
-    protected function getNameInContext($name){
-        if( null === $this->__contextAwareContext) {
+    protected function getNameInContext($name)
+    {
+        if (null === $this->__contextAwareContext) {
             return $name;
-        }else{
-            if("~" === $name[0]){
-                return "~" . $this->__contextAwareContext . "." . ltrim($name,"~");
-            }else{
+        } else {
+            if ("~" === $name[0]) {
+                return "~" . $this->__contextAwareContext . "." . ltrim($name, "~");
+            } else {
                 return $this->__contextAwareContext. "." . $name;
             }
         }
     }
 
-    public function getContext(){
+    public function getContext()
+    {
         return $this->__contextAwareContext;
     }
-
 }

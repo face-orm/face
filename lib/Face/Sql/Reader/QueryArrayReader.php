@@ -12,7 +12,8 @@ use Face\Util\StringUtils;
  *
  * @author bobito
  */
-class QueryArrayReader implements QueryReaderInterface{
+class QueryArrayReader implements QueryReaderInterface
+{
 
     const OPERATION_PASS=0;
     const OPERATION_FORWARD_JOIN=1;
@@ -40,21 +41,24 @@ class QueryArrayReader implements QueryReaderInterface{
 
     protected $unfoundPrecedence;
 
-    function __construct(\Face\Sql\Query\FQuery $FQuery, InstancesKeeper $instancesKeeper=null) {
+    function __construct(\Face\Sql\Query\FQuery $FQuery, InstancesKeeper $instancesKeeper = null)
+    {
 
         $this->FQuery = $FQuery;
 
-        if(!$instancesKeeper)
+        if (!$instancesKeeper) {
             $this->instancesKeeper=new InstancesKeeper();
-        else
+        } else {
             $this->instancesKeeper=$instancesKeeper;
+        }
 
         $this->resultSet=new \Face\Sql\Result\ResultSet($FQuery->getBaseFace(), $this->instancesKeeper);
         
     }
 
 
-    public function read(\PDOStatement $stmt){
+    public function read(\PDOStatement $stmt)
+    {
 
         $this->unfoundPrecedence=array();
 
@@ -65,9 +69,8 @@ class QueryArrayReader implements QueryReaderInterface{
 
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-
             // loop over joined faces
-            foreach($faceList as $basePath=>$face){
+            foreach ($faceList as $basePath => $face) {
                 /* @var $face \Face\Core\EntityFace */
                 
                 
@@ -76,7 +79,7 @@ class QueryArrayReader implements QueryReaderInterface{
                 $identity=$this->_getIdentityOfArray($face, $row, $basePath);
 
 
-                if($identity) {
+                if ($identity) {
                     // if already instantiated then get it from ikeeper and try the forwards
                     if ($this->instancesKeeper->hasInstance($face->getClass(), $identity)) {
                         $instance = $this->instancesKeeper->getInstance($face->getClass(), $identity);
@@ -102,9 +105,9 @@ class QueryArrayReader implements QueryReaderInterface{
         }
 
         // set unset instances. To be improved ?
-        foreach ($this->unfoundPrecedence as $unfound){
+        foreach ($this->unfoundPrecedence as $unfound) {
             $unfoundInstance = $this->instancesKeeper->getInstance($unfound['elementToSet']->getClass(), $unfound['identityOfElement']);
-            $unfound['instance']->faceSetter($unfound['elementToSet']->getName(),$unfoundInstance);
+            $unfound['instance']->faceSetter($unfound['elementToSet']->getName(), $unfoundInstance);
         }
 
         return $this->resultSet;
@@ -119,7 +122,8 @@ class QueryArrayReader implements QueryReaderInterface{
      * @param array $faceList
      * @return \Face\Sql\Reader\className
      */
-    protected function createInstance(\Face\Core\EntityFace $face,$array,$basePath, $faceList){
+    protected function createInstance(\Face\Core\EntityFace $face, $array, $basePath, $faceList)
+    {
 
 
         $className = $face->getClass();
@@ -137,29 +141,29 @@ class QueryArrayReader implements QueryReaderInterface{
      * @param type $faceList
      * @throws \Exception
      */
-    protected function instanceHydrateAndForwardEntities($instance,\Face\Core\EntityFace $face,$array,$basePath, $faceList,$doValues=false){
-        foreach($face as $element){
-            if($element->isEntity()){
-
+    protected function instanceHydrateAndForwardEntities($instance, \Face\Core\EntityFace $face, $array, $basePath, $faceList, $doValues = false)
+    {
+        foreach ($face as $element) {
+            if ($element->isEntity()) {
                 $pathToElement=$basePath.".".$element->getName();
                 
-                if( isset($faceList[$pathToElement])  ){ // if element is joined we know what to do
+                if (isset($faceList[$pathToElement])) {
+// if element is joined we know what to do
 
-                    $identity = $this->_getIdentityOfArray($element->getFace(),$array,$basePath.".".$element->getName());
+                    $identity = $this->_getIdentityOfArray($element->getFace(), $array, $basePath.".".$element->getName());
 
-                    if(!empty($identity)){
-                        if ($this->instancesKeeper->hasInstance($element->getClass(), $identity) ){ // if element is already instanciated
+                    if (!empty($identity)) {
+                        if ($this->instancesKeeper->hasInstance($element->getClass(), $identity)) {
+// if element is already instanciated
                             $childInstance = $this->instancesKeeper->getInstance($element->getClass(), $identity);
-                            $instance->faceSetter($element,$childInstance);
-                        }else{
+                            $instance->faceSetter($element, $childInstance);
+                        } else {
                             //var_dump($identity);
                             //var_dump($this->instancesKeeper);
                             throw new \Exception("TODO : precedence");
                         }
                     }
-                }else{
-
-
+                } else {
                     /*
                      * A . Look if the child was join by the parent
                      *
@@ -198,54 +202,44 @@ class QueryArrayReader implements QueryReaderInterface{
                     // when action is found, we register it as an operation,
                     // in this way next time we come back to this element, we don't need calculate action again
                     // this is perfect for performances
-                    if(!isset($this->operationsList[$pathToElement])){
-
-
-                        $related = \Face\Core\FacePool::getFace( $element->getClass() )->getDirectElement($element->getRelatedBy());
-                        if( $related ){
-
-
+                    if (!isset($this->operationsList[$pathToElement])) {
+                        $related = \Face\Core\FacePool::getFace($element->getClass())->getDirectElement($element->getRelatedBy());
+                        if ($related) {
                             // B
                             // this.tree => bad
                             // this.tree.lemon => good
-                            if(substr_count($basePath,".")<1){
-
+                            if (substr_count($basePath, ".")<1) {
                                 $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
 
-                            }else{
-
+                            } else {
                                 // find the related base path and take its face
                                 $relatedBasePath=  StringUtils::subStringBefore($basePath, ".");
                                 $parentFace=$faceList[$relatedBasePath];
 
                                 // C
                                 // Same class ?
-                                if( $parentFace->getClass() != $element->getClass() ){
-
+                                if ($parentFace->getClass() != $element->getClass()) {
                                     $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
 
-                                }else{
-
+                                } else {
                                     /* @var $parentFace \Face\Core\EntityFace */
                                     // D
                                     // Look if parent and child refer to the same one
-                                    if( $parentFace->getDirectElement( $element->getRelatedBy() )->getRelatedBy() == $element->getName() ){
-
-                                        $relatedBasePath=substr($basePath, 0, strrpos( $basePath, '.'));
+                                    if ($parentFace->getDirectElement($element->getRelatedBy())->getRelatedBy() == $element->getName()) {
+                                        $relatedBasePath=substr($basePath, 0, strrpos($basePath, '.'));
 
                                         // if $related is not in $facelist, then it means that $related is not a part of the query, ignore it..
-                                        if(isset($faceList[$relatedBasePath.".".$related->getName()])){
-
+                                        if (isset($faceList[$relatedBasePath.".".$related->getName()])) {
                                             $operation = new Operation(self::OPERATION_FORWARD_JOIN);
-                                            $operation->setOptions("related",$related);
-                                            $operation->setOptions("relatedBasePath",$relatedBasePath);
+                                            $operation->setOptions("related", $related);
+                                            $operation->setOptions("relatedBasePath", $relatedBasePath);
 
                                             $this->operationsList[$pathToElement]=$operation;
 
-                                        }else{
+                                        } else {
                                             $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
                                         }
-                                    }else{
+                                    } else {
                                         $this->operationsList[$pathToElement]=new Operation(self::OPERATION_IMPLIED);
                                     }
 
@@ -255,8 +249,7 @@ class QueryArrayReader implements QueryReaderInterface{
                             }
 
 
-                        }else{
-
+                        } else {
                             $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
 
                         }
@@ -266,18 +259,19 @@ class QueryArrayReader implements QueryReaderInterface{
                     $operation = $this->operationsList[$pathToElement];
 
                     switch($operation->getName()){
-                        case self::OPERATION_FORWARD_JOIN :
+                        case self::OPERATION_FORWARD_JOIN:
 
-                            $identity = $this->_getIdentityOfArray($operation->getOptions("related")->getParentFace(),$array,$operation->getOptions("relatedBasePath"));
+                            $identity = $this->_getIdentityOfArray($operation->getOptions("related")->getParentFace(), $array, $operation->getOptions("relatedBasePath"));
 
-                            if( $this->instancesKeeper->hasInstance($element->getClass(), $identity) )
-                                $instance->faceSetter($element->getName(), $this->instancesKeeper->getInstance($element->getClass(), $identity) );
-                            else
+                            if ($this->instancesKeeper->hasInstance($element->getClass(), $identity)) {
+                                $instance->faceSetter($element->getName(), $this->instancesKeeper->getInstance($element->getClass(), $identity));
+                            } else {
                                 $this->unfoundPrecedence[]=["instance"=>$instance,"elementToSet"=>$element,"identityOfElement"=>$identity];
+                            }
 
                             break;
 
-                        case self::OPERATION_IMPLIED :
+                        case self::OPERATION_IMPLIED:
 
                             break;
                     }
@@ -285,47 +279,48 @@ class QueryArrayReader implements QueryReaderInterface{
 
                 }
 
-            }else if($doValues){
-                
-                $cName = $this->_makeColumnName($element,$basePath);
+            } elseif ($doValues) {
+                $cName = $this->_makeColumnName($element, $basePath);
                 
                 
                 $value=isset($array[$cName]) ? $array[$cName] : null;
                 
-                if($value)
-                    $instance->faceSetter($element,$value);
+                if ($value) {
+                    $instance->faceSetter($element, $value);
+                }
             }
         }
     }
 
 
-    private function _getIdentityOfArray(\Face\Core\EntityFace $face,$array,$basePath){
+    private function _getIdentityOfArray(\Face\Core\EntityFace $face, $array, $basePath)
+    {
         $primaries=$face->getPrimaries();
         $identity="";
 
-        foreach($primaries as $elm){
+        foreach ($primaries as $elm) {
             /* @var $elm \Face\Core\EntityFaceElement */
 
-            $identity.=$array[$this->_makeColumnName($elm,$basePath)];
+            $identity.=$array[$this->_makeColumnName($elm, $basePath)];
         }
 
         return $identity;
     }
 
 
-    private function _makeColumnName(\Face\Core\EntityFaceElement $elm,$basePath){
+    private function _makeColumnName(\Face\Core\EntityFaceElement $elm, $basePath)
+    {
         
         $elmName = $elm->getName();
         
         $selectColumns = $this->FQuery->getSelectedColumns();
-        if(isset($selectColumns["$basePath.$elmName"])){
+        if (isset($selectColumns["$basePath.$elmName"])) {
             $name = $selectColumns["$basePath.$elmName"];
-        }else{
+        } else {
             $name = $this->FQuery->_doFQLTableName($basePath.".".$elmName);
         }
         
         return $name;
         
     }
-    
 }

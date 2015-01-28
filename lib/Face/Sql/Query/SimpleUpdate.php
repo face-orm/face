@@ -4,21 +4,21 @@ namespace Face\Sql\Query;
 
 use Face\Util\OOPUtils;
 
-
-
 /**
- * Provide a way for face to do inserts ignoring join. 
+ * Provide a way for face to do inserts ignoring join.
  *
  * @author sghzal
  */
-class SimpleUpdate extends FQuery {
+class SimpleUpdate extends FQuery
+{
  
     protected $entity;
 
 
-    public function __construct($entity) {
+    public function __construct($entity)
+    {
        
-        if(!OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait' )){
+        if (!OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait')) {
             throw new \Exception("Class ".get_class($entity)." doesnt use the trait \Face\Traits\EntityFaceTrait");
         }
         
@@ -28,24 +28,24 @@ class SimpleUpdate extends FQuery {
     }
 
     
-    public function getSqlString() {
+    public function getSqlString()
+    {
         $baseFace = $this->getBaseFace();
         
         
         $sets="";
         $where="";
         $i=0;
-        foreach ($baseFace as $elm){
-
-            if($elm->isValue()){
+        foreach ($baseFace as $elm) {
+            if ($elm->isValue()) {
                 /* @var $elm \Face\Core\EntityFaceElement */
-                if($elm->isValue() && !$elm->isPrimary() ){
+                if ($elm->isValue() && !$elm->isPrimary()) {
                     $sets.=",";
                     $sets.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
-                }else{
-                    if($i>0){
+                } else {
+                    if ($i>0) {
                         $where.=" AND ";
-                    }else{
+                    } else {
                         $i++;
                     }
                     $where.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
@@ -57,11 +57,9 @@ class SimpleUpdate extends FQuery {
 
         }
         
-        $queryStr= "UPDATE ".$baseFace->getSqlTable()." SET ".ltrim($sets,",")." WHERE ".$where." LIMIT 1";
+        $queryStr= "UPDATE ".$baseFace->getSqlTable()." SET ".ltrim($sets, ",")." WHERE ".$where." LIMIT 1";
 
         return $queryStr;
         
     }
-
-    
 }

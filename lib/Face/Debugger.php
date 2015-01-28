@@ -7,40 +7,43 @@
 
 namespace Face;
 
-
 use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
 use Face\Traits\EntityFaceTrait;
 
-class Debugger {
+class Debugger
+{
 
 
     /**
      * @param \Face\Traits\EntityFaceTrait[]|\Face\Traits\EntityFaceTrait $data
      */
-    public static function dumpFaceData($data){
-        if(!is_array($data) && !$data instanceof \Traversable )
+    public static function dumpFaceData($data)
+    {
+        if (!is_array($data) && !$data instanceof \Traversable) {
             $dataArray[]=$data;
-        else
+        } else {
             $dataArray = $data;
+        }
 
         echo PHP_EOL;
 
-        foreach($data as $d){
-
-            self::_proccessDumpFaceData($d,[],0);
+        foreach ($data as $d) {
+            self::_proccessDumpFaceData($d, [], 0);
 
         }
 
     }
 
-    private static function _proccessDumpFaceData($data,$alreadyPrinted,$depth,$maxDepth=30){
+    private static function _proccessDumpFaceData($data, $alreadyPrinted, $depth, $maxDepth = 30)
+    {
 
         $nlStr=PHP_EOL;
 
         // no endless loop
-        if($depth>$maxDepth)
+        if ($depth>$maxDepth) {
             return ;
+        }
 
         $spacesToIndent=2;
 
@@ -48,9 +51,9 @@ class Debugger {
         $face=$data->getEntityFace();
 
 
-        echo str_repeat(" ",$depth*$spacesToIndent) . $face->getClass() . "::" . $data->faceGetIdentity();
+        echo str_repeat(" ", $depth*$spacesToIndent) . $face->getClass() . "::" . $data->faceGetIdentity();
 
-        if(in_array($data,$alreadyPrinted)){
+        if (in_array($data, $alreadyPrinted)) {
             echo "::RECURSION::" . $nlStr;
             return ;
         }
@@ -62,29 +65,27 @@ class Debugger {
 
         $depth++;
 
-        foreach($face as $elm){
+        foreach ($face as $elm) {
             /* @var $elm EntityFaceElement */
-            if($elm->isValue()){
+            if ($elm->isValue()) {
+                echo str_repeat(" ", $depth*$spacesToIndent) . $elm->getName() . "::" . $data->faceGetter($elm->getName()) . $nlStr;
 
-                echo str_repeat(" ",$depth*$spacesToIndent) . $elm->getName() . "::" . $data->faceGetter($elm->getName()) . $nlStr;
-
-            }else{
-
+            } else {
                 $arr = $data->faceGetter($elm->getName());
 
-                if(!$arr)
-                    echo str_repeat(" ",$depth*$spacesToIndent) . "::NULL::".$elm->getName();
-                else if( is_array( $arr ) )
-                    foreach($arr as $a)
-                        self::_proccessDumpFaceData($a,$alreadyPrinted,$depth+1);
-                else
-                    self::_proccessDumpFaceData($data->faceGetter($elm->getName()),$alreadyPrinted,$depth);
+                if (!$arr) {
+                    echo str_repeat(" ", $depth*$spacesToIndent) . "::NULL::".$elm->getName();
+                } elseif (is_array($arr)) {
+                    foreach ($arr as $a) {
+                        self::_proccessDumpFaceData($a, $alreadyPrinted, $depth+1);
+                    }
+                } else {
+                    self::_proccessDumpFaceData($data->faceGetter($elm->getName()), $alreadyPrinted, $depth);
+                }
 
             }
 
         }
 
     }
-
-
 }
