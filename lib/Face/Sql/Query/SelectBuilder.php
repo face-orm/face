@@ -6,6 +6,7 @@ use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
 use Face\Debugger;
 use Face\Sql\Query\Clause\Where;
+use Face\Sql\Query\Clause\WhereInterface;
 use Face\Traits\ContextAwareTrait;
 use Face\Traits\EntityFaceTrait;
 
@@ -82,7 +83,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery{
         return isset($this->joins[$this->_doFQLTableName($path, ".")]);
     }
 
-    public function addWhere(Where $where){
+    public function addWhere(WhereInterface $where){
         if(!$this->where) {
             $this->where = new Where\WhereGroup();
         }

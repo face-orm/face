@@ -53,13 +53,6 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
         $this->instancesByPath[$path][] = $instance;
         $this->instancesByPathIdentity[$path][$identity] = $instance;
     }
-
-    public function getIdentifiedInstancesByPath($path=null){
-        if($path)
-            return $this->instancesByPath[$path];
-        else
-            return $this->instancesByPath;
-    }
     
     public function pathHasIdentity($path,$identity){
         return isset($this->instancesByPathIdentity[$path][$identity]);
@@ -79,35 +72,35 @@ class ResultSet implements \ArrayAccess,\Countable, \IteratorAggregate {
      * @param EntityFace $from
      * @param \PDO $PDO
      */
-    public function queryJoin($what, \PDO $PDO){
-
-
-        // TODO
-
-        $join = $this->baseFace->getElement($what);
-
-        try {
-            $from = $this->baseFace->getElement($what, 1, $pieces);
-            $joinPath = $pieces[1];
-        } catch (RootFaceReachedException $e) {
-            $from = $this->baseFace;
-            $joinPath = $what;
-        }
-
-        $instances = $this->getInstancesByClass($from->getClass());
-
-        if(!$instances){
-            return;
-        }else{
-            $query = new SelectBuilder($from->getFace());
-            $query->join($joinPath);
-
-            $from->getFace()->getIdentifiers();
-        }
-
-
-
-    }
+//    public function queryJoin($what, \PDO $PDO){
+//
+//
+//        // TODO
+//
+//        $join = $this->baseFace->getElement($what);
+//
+//        try {
+//            $from = $this->baseFace->getElement($what, 1, $pieces);
+//            $joinPath = $pieces[1];
+//        } catch (RootFaceReachedException $e) {
+//            $from = $this->baseFace;
+//            $joinPath = $what;
+//        }
+//
+//        $instances = $this->getInstancesByClass($from->getClass());
+//
+//        if(!$instances){
+//            return;
+//        }else{
+//            $query = new SelectBuilder($from->getFace());
+//            $query->join($joinPath);
+//
+//            $from->getFace()->getIdentifiers();
+//        }
+//
+//
+//
+//    }
     
     
     

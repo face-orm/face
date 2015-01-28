@@ -3,10 +3,11 @@
 namespace Face\Sql\Query\Clause\Where;
 
 use Face\Sql\Query\Clause\Where;
+use Face\Sql\Query\Clause\WhereInterface;
 use Face\Sql\Query\FQuery;
 use Face\Traits\ContextAwareTrait;
 
-class WhereString extends Where {
+class WhereString implements  WhereInterface {
 
     use ContextAwareTrait;
 

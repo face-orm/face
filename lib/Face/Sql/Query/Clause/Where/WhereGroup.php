@@ -3,12 +3,13 @@
 namespace Face\Sql\Query\Clause\Where;
 
 use Face\Sql\Query\Clause\Where;
+use Face\Sql\Query\Clause\WhereInterface;
 use Face\Sql\Query\FQuery;
 
-class WhereGroup extends Where {
+class WhereGroup implements  WhereInterface {
 
     /**
-     * @var Where[]
+     * @var WhereInterface[]
      */
     protected $whereList = [];
 
@@ -34,7 +35,7 @@ class WhereGroup extends Where {
         return $str . ")";
     }
 
-    public function addWhere(Where $where,$logic=null){
+    public function addWhere(WhereInterface $where,$logic=null){
         $this->whereList[] = [$where,$logic];
     }
 }
