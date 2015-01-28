@@ -83,8 +83,8 @@ abstract class  FQuery {
             
         }else{
             echo "TODO : handle errors ".__FILE__.":".__LINE__;
-            var_dump($stmt->errorInfo());
-            return false;
+            throw new \Exception($stmt->errorInfo());
+            //return false;
         }
 
     }

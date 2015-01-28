@@ -10,5 +10,3 @@ namespace Face\Exception;
 class RootFaceReachedException extends \Exception {
     //put your code here
 }
-
-?>

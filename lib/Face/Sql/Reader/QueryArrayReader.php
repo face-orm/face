@@ -152,8 +152,8 @@ class QueryArrayReader implements QueryReaderInterface{
                             $childInstance = $this->instancesKeeper->getInstance($element->getClass(), $identity);
                             $instance->faceSetter($element,$childInstance);
                         }else{
-                            var_dump($identity);
-                            var_dump($this->instancesKeeper);
+                            //var_dump($identity);
+                            //var_dump($this->instancesKeeper);
                             throw new \Exception("TODO : precedence");
                         }
                     }

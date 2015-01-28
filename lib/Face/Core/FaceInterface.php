@@ -9,5 +9,3 @@ namespace Face\Core;
 interface FaceInterface {
     //put your code here
 }
-
-?>

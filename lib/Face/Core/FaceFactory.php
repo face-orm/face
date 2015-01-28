@@ -21,5 +21,3 @@ class FaceFactory {
     }
     
 }
-
-?>

@@ -32,5 +32,3 @@ abstract class FacePool implements \IteratorAggregate{
         return self::$faces[$className];
     }
 }
-
-?>

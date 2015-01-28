@@ -201,5 +201,3 @@ class EntityFace implements \IteratorAggregate, FaceInterface{
     }
 
 }
-
-?>
