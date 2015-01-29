@@ -9,8 +9,6 @@ use Face\Core\FaceLoaderInterface;
 
 class ArrayLoader implements FaceLoaderInterface{
 
-    protected $array;
-
     /**
      * @var EntityFace[]
      */
@@ -23,23 +21,21 @@ class ArrayLoader implements FaceLoaderInterface{
 
     function __construct($array)
     {
-        $this->array = $array;
-
         foreach($array as $a){
             $this->facesByName[$a["name"]] = new EntityFace($a);
-            $this->facesByClass[$a["class"]] = $this->facesByName[$a["name"]];
+            $this->facesByClass[$a["class"]] = $a["name"];
         }
 
     }
 
     public function getFaceForClass($className)
     {
-        return $this->facesByClass[$className];
+        return $this->getFaceForName($this->facesByClass[$className]);
     }
 
     public function getFaceForName($name)
     {
-        return $this->facesByClass[$name];
+        return $this->facesByName[$name];
     }
 
 

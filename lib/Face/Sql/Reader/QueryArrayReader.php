@@ -147,7 +147,7 @@ class QueryArrayReader implements QueryReaderInterface
 
         $config = Config::getDefault();
 
-        foreach ($face as $element) {
+        foreach ($face->getElements() as $element) {
             if ($element->isEntity()) {
                 $pathToElement=$basePath.".".$element->getName();
                 

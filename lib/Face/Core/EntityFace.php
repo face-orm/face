@@ -143,6 +143,9 @@ class EntityFace implements \IteratorAggregate
         return $this->elements[$name];
     }
 
+    /**
+     * @return EntityFace[]
+     */
     public function getElements()
     {
         return $this->elements;
