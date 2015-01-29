@@ -4,6 +4,7 @@ namespace Face\Core\FaceLoader;
 
 
 use Face\Cache\CacheInterface;
+use Face\Cache\NoCache;
 use Face\Core\EntityFace;
 use Face\Core\FaceLoader;
 use Face\Core\FaceLoaderInterface;
@@ -11,7 +12,7 @@ use Face\Exception\FaceClassDoesntExistsException;
 
 abstract class CachableLoader extends  FaceLoader {
 
-    private $loaded = true;
+    private $loaded = false;
 
     /**
      * @var CacheInterface
@@ -29,11 +30,14 @@ abstract class CachableLoader extends  FaceLoader {
      */
     public function getFaceForClass($className)
     {
+        $face = null;
+
+
         if($this->faceClassExists($className)){
             return parent::getFaceForClass($className);
         }else{
             // todo unserialize ?
-            $face = $this->cache->get("class_" . $className);
+            $face = $this->getCache()->get("class_" . $className);
             if(!$face){
                 if(!$this->loaded){
                     $this->loadAndCacheFaces();
@@ -55,7 +59,9 @@ abstract class CachableLoader extends  FaceLoader {
             return parent::getFaceForName($name);
         }else{
             // todo unserialize ?
-            $face = $this->cache->get("name_" . $name);
+
+            $face = $this->getCache()->get("name_" . $name);
+
             if(!$face){
                 if(!$this->loaded){
                     $this->loadAndCacheFaces();
@@ -66,6 +72,13 @@ abstract class CachableLoader extends  FaceLoader {
             }
         }
         return parent::getFaceForName($name);
+    }
+
+    public function getCache(){
+        if(null === $this->cache){
+            $this->cache = NoCache::singleInstance();
+        }
+        return $this->cache;
     }
 
     /**
@@ -83,12 +96,9 @@ abstract class CachableLoader extends  FaceLoader {
      * register a face in the cache
      * @param EntityFace $faces
      */
-    protected function cacheFace(EntityFace $faces){
-        foreach($faces as $face){
-            // TODO : serialize it ?
-            $this->cache->set("name_".$face->getName(),$face);
-            $this->cache->set("class_".$face->getClass(),$face);
-        }
+    protected function cacheFace(EntityFace $face){
+        $this->getCache()->set("name_".$face->getName(),$face);
+        $this->getCache()->set("class_".$face->getClass(),$face);
     }
 
     /**

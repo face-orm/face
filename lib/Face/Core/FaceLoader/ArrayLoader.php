@@ -5,6 +5,7 @@ namespace Face\Core\FaceLoader;
 
 
 use Face\Core\EntityFace;
+use Face\Core\FaceFactory;
 use Face\Core\FaceLoader;
 use Face\Core\FaceLoaderInterface;
 
@@ -21,7 +22,7 @@ class ArrayLoader extends FaceLoader{
     function __construct($array)
     {
         foreach($array as $a){
-            $this->addFace(new EntityFace($a));
+            $this->addFace(FaceFactory::buildFace($a));
         }
 
     }
