@@ -2,7 +2,9 @@
 
 namespace Face\Traits;
 
+use Face\Config;
 use \Face\Core\EntityFaceElement;
+use Face\Core\FaceLoaderInterface;
 use Face\Core\Navigator;
 use Face\ORM;
 use Face\Sql\Query\SelectBuilder;
@@ -148,9 +150,14 @@ trait EntityFaceTrait
      *
      * @return \Face\Core\EntityFace
      */
-    public static function getEntityFace()
+    public static function getEntityFace(FaceLoaderInterface $faceLoader = null)
     {
-        return \Face\Core\FacePool::getFace(__CLASS__);
+
+        if(null === $faceLoader){
+            $faceLoader = Config::getDefault()->getFaceLoader();
+        }
+
+        return $faceLoader->getFaceForClass(__CLASS__);
     }
     
     public function faceHydrate($data, $map)
@@ -238,11 +245,6 @@ trait EntityFaceTrait
             return ORM::execute($fQuery, $pdo);
 
         }
-    }
-    
-    public static function __getEntityFace()
-    {
-        throw new \Exception("__getEntityFace Method must be overwritten");
     }
 
     /**

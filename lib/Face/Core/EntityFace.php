@@ -9,7 +9,8 @@ class EntityFace implements \IteratorAggregate
     private $elements;
     private $identifiers;
     
-    
+
+    private $name;
     private $class;
     
     // SQL
@@ -20,28 +21,29 @@ class EntityFace implements \IteratorAggregate
      *
      * @param array $params array to construct the face is described here :  TODO array description
      */
-    function __construct($params = array(), $class = null)
+    function __construct($params = array())
     {
-        $this->elements=array();
-        $this->primaries=array();
-        $this->relatedTable=array();
+        $this->elements = array();
+        $this->primaries = array();
+        $this->relatedTable = array();
         
-        $this->class=$class;
+        $this->class = $params["class"];
+        $this->name = $params["name"];
 
         if (isset($params['elements'])) {
             foreach ($params['elements'] as $k => $elmParams) {
                 if (is_numeric($k)) {
-                    $element=new EntityFaceElement($elmParams, []);
+                    $element = new EntityFaceElement($elmParams, []);
                 } else {
-                    $element=new EntityFaceElement($k, $elmParams);
+                    $element = new EntityFaceElement($k, $elmParams);
                 }
                 $this->addElement($element);
             }
         }
         if (isset($params["sqlTable"])) {
-            $this->sqlTable=$params["sqlTable"];
+            $this->sqlTable = $params["sqlTable"];
         } else {
-            $this->sqlTable= strtolower($this->getClass());
+            $this->sqlTable = strtolower($this->getClass());
         }
         
     }

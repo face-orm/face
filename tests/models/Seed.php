@@ -42,34 +42,6 @@ class Seed{
 
     use \Face\Traits\EntityFaceTrait;
 
-    public static function __getEntityFace() {
-        return [
-            "sqlTable"=>"seed",
-
-            "elements"=>[
-                "id"=>[
-                    "identifier"=>true,
-                    "sql"=>[
-                        "isPrimary" => true
-                    ]
-                ],
-                "lemon_id"=>[
-                ],
-                "fertil"=>[
-                ],
-                "lemon"=>[
-                    "class"     =>  "Lemon",
-                    "relatedBy" => "seeds",
-                    "relation"  => "belongsTo",
-                    "sql"   =>[
-                        "join"  => ["lemon_id"=>"id"]
-                    ]
-                ]
-
-            ]
-
-        ];
-    }
 
 
 

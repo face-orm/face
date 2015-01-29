@@ -6,26 +6,6 @@ class A{
     protected $a;
     protected $b;
 
-    public static function __getEntityFace() {
-        return [
-
-            "elements"=>[
-                "a"=>[
-                    "propertyName"  =>  "a",
-                    "type"          =>  "value",
-                    "defaultMap"    =>  "a_column",
-                    "relation"      =>  "hasOne"
-                ],
-                "b"=>[
-                    "propertyName"  =>  "b",
-                    "type"          =>  "entity",
-                    "class"         =>  "B",
-                    "relation"      =>  "hasOne"
-                ]
-            ]
-
-        ];
-    }
     public function getA() {
         return $this->a;
     }

@@ -32,44 +32,5 @@ class Leaf {
         $this->tree_id = $tree_id;
     }
 
-    public static function __getEntityFace() {
-        return [
-            "sqlTable"=>"leaf",
-
-            "elements"=>[
-                "id"=>[
-                    "type"=>"value",
-                    "identifier"=>true,
-                    "sql"=>[
-                        "columnName"=> "id",
-                        "isPrimary" => true
-                    ]
-                ],
-                "tree_id"=>[
-                    "type"      => "value",
-                    "sql"=>[
-                        "columnName" => "tree_id"
-                    ]
-                ],
-                "length"=>[
-                    "type"      => "value",
-                    "sql"=>[
-
-                    ]
-                ],
-                "tree"=>[
-                    "class"     =>  "Tree",
-                    "relation"  => "belongsTo",
-                    "relatedBy" => "leafs",
-                    "sql"   =>[
-                        "join"  => ["tree_id"=>"id"]
-                    ]
-                ],
-
-
-            ]
-
-        ];
-    }
 
 }

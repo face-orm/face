@@ -2,6 +2,7 @@
 
 namespace Face\Sql\Reader;
 
+use Face\Config;
 use \Face\Sql\Query\FQuery;
 use Face\Core\InstancesKeeper;
 use Face\Util\Operation;
@@ -143,6 +144,9 @@ class QueryArrayReader implements QueryReaderInterface
      */
     protected function instanceHydrateAndForwardEntities($instance, \Face\Core\EntityFace $face, $array, $basePath, $faceList, $doValues = false)
     {
+
+        $config = Config::getDefault();
+
         foreach ($face as $element) {
             if ($element->isEntity()) {
                 $pathToElement=$basePath.".".$element->getName();
@@ -203,7 +207,7 @@ class QueryArrayReader implements QueryReaderInterface
                     // in this way next time we come back to this element, we don't need calculate action again
                     // this is perfect for performances
                     if (!isset($this->operationsList[$pathToElement])) {
-                        $related = \Face\Core\FacePool::getFace($element->getClass())->getDirectElement($element->getRelatedBy());
+                        $related = $config->getFaceLoader()->getFaceForClass($element->getClass())->getDirectElement($element->getRelatedBy());
                         if ($related) {
                             // B
                             // this.tree => bad
