@@ -14,4 +14,4 @@ fi
 
 
 
-$SCRIPTDIR/../vendor/bin/phpcs --standard="$SCRIPTDIR/csrules.xml" --extensions=php --warning-severity=0 "$SCRIPTDIR/../lib/" --report="$REPPORT_TYPE"
+$SCRIPTDIR/../../vendor/bin/phpcs --standard="$SCRIPTDIR/../csrules.xml" --extensions=php --warning-severity=0 "$SCRIPTDIR/../../lib/" --report="$REPPORT_TYPE"

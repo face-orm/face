@@ -3,7 +3,7 @@
 namespace Face\Exception;
 
 /**
- * Description of FacelessException
+ * FaceDoesntExistsException
  *
  * @author bobito
  */

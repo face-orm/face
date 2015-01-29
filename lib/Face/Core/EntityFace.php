@@ -47,7 +47,17 @@ class EntityFace implements \IteratorAggregate
         }
         
     }
-    
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+
+
     public function getClass()
     {
         return $this->class;

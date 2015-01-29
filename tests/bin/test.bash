@@ -6,8 +6,8 @@ SCRIPTFILE=$(readlink -f "$0")
 SCRIPTDIR=$(dirname "$SCRIPTFILE")
 
 mysql -u root -e 'create database `lemon-test`;'
-mysql -u root  < "$SCRIPTDIR/schemas.sql"
+mysql -u root  < "$SCRIPTDIR/../res/schemas.sql"
 
-phpunit --debug -c phpunit.dist.xml --coverage-clover build/logs/clover.xml
+phpunit --debug -c phpunit.dist.xml --coverage-clover "$SCRIPTDIR/../../build/logs/clover.xml"
 
 ./vendor/bin/test-reporter

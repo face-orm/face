@@ -5,7 +5,7 @@ include_once( __DIR__ . '/../vendor/autoload.php');
 
 $config = new \Face\Config();
 
-$facesArray = include( __DIR__ . "/faces-definition.php");
+$facesArray = include( __DIR__ . "/res/faces-definition.php");
 
 $config->setFaceLoader(new \Face\Core\FaceLoader\ArrayLoader($facesArray));
 

@@ -31,8 +31,8 @@
     "autoload-dev": {
         "psr-0" : {
 
-            "Test" : "./tests"
+            "Test" : "./tests/res"
         },
-        "classmap" : ["./tests/models"]
+        "classmap" : ["./tests/res/models"]
     }
 }

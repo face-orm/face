@@ -3,7 +3,7 @@
 namespace Face\Exception;
 
 /**
- * Description of NoThisElementException
+ * RootFaceReachedException
  *
  * @author bobito
  */
