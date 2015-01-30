@@ -14,6 +14,7 @@ class RedisCache extends NamespaceAwareCache{
     function __construct(Redis $redis,$namespace = null)
     {
         $this->redis = $redis;
+        parent::__construct($namespace);
     }
 
     protected function _get($key)

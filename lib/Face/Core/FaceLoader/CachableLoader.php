@@ -32,7 +32,6 @@ abstract class CachableLoader extends  FaceLoader {
     {
         $face = null;
 
-
         if($this->faceClassExists($className)){
             return parent::getFaceForClass($className);
         }else{
@@ -43,6 +42,8 @@ abstract class CachableLoader extends  FaceLoader {
                     $this->loadAndCacheFaces();
                 }
             }else{
+                //todo : improve
+                $face = unserialize($face);
                 $this->addFace($face);
                 return $face;
             }
@@ -85,6 +86,7 @@ abstract class CachableLoader extends  FaceLoader {
      * Load all faces and cache them
      */
     protected function loadAndCacheFaces(){
+
         $faces = $this->_loadFaces();
         foreach($faces as $face){
             $this->cacheFace($face);
@@ -97,8 +99,10 @@ abstract class CachableLoader extends  FaceLoader {
      * @param EntityFace $faces
      */
     protected function cacheFace(EntityFace $face){
-        $this->getCache()->set("name_".$face->getName(),$face);
-        $this->getCache()->set("class_".$face->getClass(),$face);
+        // todo : improve
+        $serialized = serialize($face);
+        $this->getCache()->set("name_".$face->getName(),$serialized);
+        $this->getCache()->set("class_".$face->getClass(),$serialized);
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 namespace Face;
+use Face\Core\FaceLoader;
 use Face\Core\FaceLoaderInterface;
 
 /**
@@ -37,7 +38,7 @@ class Config
     protected $pdo;
 
     /**
-     * @var FaceLoaderInterface
+     * @var FaceLoader
      */
     protected $faceLoader;
 
@@ -58,14 +59,14 @@ class Config
     }
 
     /**
-     * @return FaceLoaderInterface
+     * @return FaceLoader
      */
     public function getFaceLoader(){
         return $this->faceLoader;
     }
 
     /**
-     * @param FaceLoaderInterface $faceLoader
+     * @param FaceLoader $faceLoader
      */
     public function setFaceLoader($faceLoader)
     {
