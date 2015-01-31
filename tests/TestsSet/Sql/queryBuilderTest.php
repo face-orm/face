@@ -218,19 +218,31 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
 
         $this->assertEquals(4,count($trees));
+
         $this->assertEquals(1,$trees[0]->getId());
         $this->assertEquals(8,$trees[0]->getAge());
 
+        $this->assertEquals(2,$trees[1]->getId());
+        $this->assertEquals(2,$trees[1]->getAge());
+
+        $this->assertEquals(3,$trees[2]->getId());
+        $this->assertEquals(5,$trees[2]->getAge());
+
+        $this->assertEquals(4,$trees[3]->getId());
+        $this->assertEquals(300,$trees[3]->getAge());
+
+
+
         $this->assertEquals(3, count($trees[0]->childrenTrees));
-        $this->assertEquals(1, count($trees[2]->childrenTrees));
         $this->assertEquals(0, count($trees[1]->childrenTrees));
+        $this->assertEquals(1, count($trees[2]->childrenTrees));
         $this->assertEquals(0, count($trees[3]->childrenTrees));
-        
-        $this->assertEquals(2, count($trees[3]->parentTrees));
+
         $this->assertEquals(0, count($trees[0]->parentTrees));
         $this->assertEquals(1, count($trees[1]->parentTrees));
         $this->assertEquals(1, count($trees[2]->parentTrees));
-        
+        $this->assertEquals(2, count($trees[3]->parentTrees));
+
         $this->assertEquals($trees[0], $trees[2]->parentTrees[0]);
 
 

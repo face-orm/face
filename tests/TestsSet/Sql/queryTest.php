@@ -2,6 +2,30 @@
 
 class queryTest extends Test\PHPUnitTestDb
 {
+    /**
+     * @group perf
+     */
+    public function testPerf(){
+
+        $time = microtime(true);
+
+        $pdo = $this->getConnection()->getConnection();
+
+        $q=Tree::faceQueryBuilder()->join("lemons")->join("leafs")->join("lemons.seeds");
+
+
+        $trees=\Face\ORM::executeDebug($q,$pdo,$report);
+        //var_dump($trees[0]);
+
+        $time = microtime(true) - $time;
+
+        //var_dump($trees[0]);
+
+        echo "Total : " . $time *100 . "ms" . PHP_EOL;
+        echo "Dont : ";var_export($report);
+
+
+    }
 
     
     public function testGetter()

@@ -45,7 +45,7 @@ class Operation
     }
 
     /**
-     * @param array $options
+     * @param mixed $options
      */
     public function setOptions($name, $options)
     {
@@ -53,7 +53,7 @@ class Operation
     }
 
     /**
-     * @return array
+     * @return mixed
      */
     public function getOptions($name)
     {

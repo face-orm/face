@@ -120,7 +120,7 @@ abstract class FQuery
         return $this->selectedColumns;
     }
 
-    
+
     /**
      * @param $name
      * @return array
@@ -128,6 +128,15 @@ abstract class FQuery
     public function getBoundValue($name)
     {
         return $this->valueBinds[$name];
+    }
+
+    /**
+     * @param $name
+     * @return array
+     */
+    public function getBoundValues()
+    {
+        return $this->valueBinds;
     }
 
     /**

@@ -166,6 +166,9 @@ class EntityFace implements \IteratorAggregate
         $this->elements = $elements;
     }
 
+    /**
+     * @return EntityFaceElement[]
+     */
     public function getPrimaries()
     {
         return $this->primaries;
