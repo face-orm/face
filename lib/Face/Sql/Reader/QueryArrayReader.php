@@ -19,6 +19,7 @@ use Face\Util\StringUtils;
 class QueryArrayReader implements QueryReaderInterface
 {
 
+    public static $devtimer=0;
 
     /**
      *
@@ -112,6 +113,7 @@ class QueryArrayReader implements QueryReaderInterface
             $unfoundInstance = $this->instancesKeeper->getInstance($unfound['elementToSet']->getClass(), $unfound['identityOfElement']);
             $unfound['instance']->faceSetter($unfound['elementToSet'], $unfoundInstance);
         }
+
 
         return $this->resultSet;
 
