@@ -51,7 +51,7 @@ class SimpleUpdate extends FQuery
                     $where.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
                 }
 
-                $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm->getName()));
+                $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm));
             }
 
 

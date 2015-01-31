@@ -62,7 +62,6 @@ class QueryArrayReader implements QueryReaderInterface
 
         $this->unfoundPrecedence=array();
 
-
         $preparedReader = new PreparedOperations($this->FQuery);
 
 
@@ -111,7 +110,7 @@ class QueryArrayReader implements QueryReaderInterface
             }
 
             $unfoundInstance = $this->instancesKeeper->getInstance($unfound['elementToSet']->getClass(), $unfound['identityOfElement']);
-            $unfound['instance']->faceSetter($unfound['elementToSet']->getName(), $unfoundInstance);
+            $unfound['instance']->faceSetter($unfound['elementToSet'], $unfoundInstance);
         }
 
         return $this->resultSet;

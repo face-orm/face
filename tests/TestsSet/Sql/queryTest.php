@@ -21,7 +21,7 @@ class queryTest extends Test\PHPUnitTestDb
 
         //var_dump($trees[0]);
 
-        echo "Total : " . $time *100 . "ms" . PHP_EOL;
+        echo "Total : " . $time *1000 . "ms" . PHP_EOL;
         echo "Dont : ";var_export($report);
 
 

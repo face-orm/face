@@ -48,7 +48,7 @@ class SimpleInsert extends FQuery
                 $fields.="`" . $elm->getSqlColumnName() . "`";
                 $values.=":".$elm->getSqlColumnName();
                 
-                $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm->getName()));
+                $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm));
             }
         }
         

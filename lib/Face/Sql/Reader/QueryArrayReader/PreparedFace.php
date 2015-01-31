@@ -41,7 +41,7 @@ class PreparedFace extends SoftPreparedFace{
 
 
                     if ($instanceKeeper->hasInstance($element->getClass(), $identity)) {
-                        $instance->faceSetter($element->getName(), $instanceKeeper->getInstance($element->getClass(), $identity));
+                        $instance->faceSetter($element, $instanceKeeper->getInstance($element->getClass(), $identity));
                     } else {
                         $unfound[] = ["instance" => $instance, "elementToSet" => $element, "identityOfElement" => $identity];
                     }
@@ -74,7 +74,7 @@ class PreparedFace extends SoftPreparedFace{
                     $value = isset($array[$cName]) ? $array[$cName] : null;
 
                     if ($value) {
-                        $instance->faceSetter($operation->getOptions("element")->getName(), $value);
+                        $instance->faceSetter($operation->getOptions("element"), $value);
                     }
 
                     break;

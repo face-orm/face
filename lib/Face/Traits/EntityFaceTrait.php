@@ -24,7 +24,10 @@ trait EntityFaceTrait
     {
         
         // look the type of $needle then dispatch
-        if (is_string($needle)) {
+        if ( $needle instanceof \Face\Core\EntityFaceElement ) {
+            /*  if is already a face element, dont beed anymore work */
+            $element=$needle;
+        } else if (is_string($needle)) {
             /*
              * if it is a string the string can be the name of the element or a chain of elements separated by a dot
              * e.g 
@@ -37,9 +40,6 @@ trait EntityFaceTrait
             } else {
                 $element=$this->getEntityFace()->getElement($needle); // "elementName" case
             }
-        } elseif (is_a($needle, "\Face\Core\EntityFaceElement")) {
-            /*  if is already a face element, dont beed anymore work */
-            $element=$needle;
         } else {
             throw new Exception("Variable of type '".gettype($needle)."' is not a valide type for faceGetter");
         }
@@ -72,14 +72,20 @@ trait EntityFaceTrait
     
     /**
      * use the given element and use the right way for getting the value on this instance
+     *
+     * Be aware that it is really more performant to use the element instance instead of the element Name
+     *
      * @param \Face\Core\EntityFaceElement $element the element to get
      * @return mixed
      */
     public function faceSetter($path, $value)
     {
-        
+
         // look the type of $needle then dispatch
-        if (is_string($path)) {
+        if ( $path instanceof \Face\Core\EntityFaceElement) {
+            /*  if is already a face element, dont need anymore work */
+            $element=$path;
+        } elseif (is_string($path)) {
             /*
              * if it is a string the string can be the name of the element or a chain of elements separated by a dot
              * e.g 
@@ -96,9 +102,6 @@ trait EntityFaceTrait
                 $element=$this->getEntityFace()->getElement($path);
             }
             
-        } elseif (is_a($path, "\Face\Core\EntityFaceElement")) {
-            /*  if is already a face element, dont need anymore work */
-            $element=$path;
         } else {
             throw new Exception("Variable of type '".gettype($path)."' is not a valide type for path of faceSetter");
         }
@@ -127,11 +130,11 @@ trait EntityFaceTrait
                         if ($this->$property ==null) {
                             $this->$property=array();
                         }
-                        
+
                         array_push($this->$property, $value);
                         $this->___faceAlreadySetMany[$element->getName()][$value->faceGetIdentity()]=true;
                     }
-                    
+
                 } else {
                     $this->$property=$value;
                 }
@@ -158,13 +161,6 @@ trait EntityFaceTrait
         }
 
         return $faceLoader->getFaceForClass(__CLASS__);
-    }
-    
-    public function faceHydrate($data, $map)
-    {
-        foreach ($map as $elmName => $dataName) {
-            $this->faceSetter($elmName, $data[$dataName]);
-        }
     }
     
     
