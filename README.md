@@ -3,15 +3,17 @@ face
 [![Build Status](https://drone.io/github.com/laemons/face/status.png)](https://drone.io/github.com/laemons/face/latest)
 [![Code Climate](https://codeclimate.com/github/face-orm/face/badges/gpa.svg)](https://codeclimate.com/github/face-orm/face)
 
-Be aware that face is under beta testing. Though some cases may not be
+Be aware that face is under active development. The current master branch has broken compatibilities with versiosn ``0.1.1-BETA``
+
+The documentation and the site are under refactoring.
 
 Face is an ORM built under a few purposes :
- * Performances : unlike some ORM, it tries to add as few layers as possible and doesn't impact performances.
+ * Performances : unlike some ORM, it tries to add as few layers as possible and doesn't impact performances, but it tries to keep enough flexibility to fit all cases.
  * Ease of use  : Face is an ORM. That means that it aims to speed up application development and
  makes developers experience more comfortable with database interactions.
- * Understandable : It doesn't try to reinvent the wheel. It does the job in an usual and easy to understand way.
+ * Understandable : Face is very transparent. It wont run hidden queries, or other hidden task.
  * Feature Rich : performances are something, but it still thinks about strength and functionalities. 
-Face includes powerful workflow to deal with relation and complex request. 
+Face includes powerful workflow to deal with relation and complex requests. 
 
 
 Face is tested and safe enough for production. Right know it is perfectly suited for little and medium projects but it mays lack of maturity for biggest projects.
@@ -56,6 +58,7 @@ FaceQL is an important feature of Face. That's a Query language that is a mix be
 
 It allows you to create complex queries that the Select Builder can't build. 
 Actually everything that you can do with SQL is possible with FaceQL.
+
 
 
 ```php
@@ -113,7 +116,7 @@ $update->execute($pdo);
 Support
 ----------
 
-You may [open an issue](https://github.com/laemons/face/issues) for support
+The best place to get support is to [open an issue](https://github.com/laemons/face/issues)
 
 
 Documentation
