@@ -71,7 +71,7 @@ class SoftPreparedFace {
             $str .= '$row["'. $name .'"].';
 
         }
-
+        // TODO : OK for performances, but should fix security issue
         return create_function('$row','return '. rtrim($str,".") .';');
 
     }
