@@ -134,6 +134,7 @@ $cacheableLoader = new \Face\Core\FaceLoader\FileReader\PhpArrayReader( "path/to
 $cacheableLoader->setCache($cache);
 
 // the config
+$config = new \Face\Config();
 $config->setFaceLoader($cacheableLoader);
 
 // set it as default
