@@ -22,6 +22,7 @@ Face is tested and safe enough for production. Right know it is perfectly suited
 Quick Overview
 --------------
 
+
 ### SelectBuilder
 
 An api is available to select datas from the db
@@ -113,8 +114,145 @@ $update = new SimpleUpdate($parsing);
 $update->execute($pdo);
 ```
 
+
+
+Configure the orm
+-----------------
+
+### The Loader
+
+```php
+
+// prepare the cache
+$redis = new Redis();
+$redis->connect("127.0.0.1");
+$redis->flushAll();
+$cache = new \Face\Cache\RedisCache($redis);
+
+// the loader
+$cacheableLoader = new \Face\Core\FaceLoader\FileReader\PhpArrayReader( "path/to/models/definitions/" );
+$cacheableLoader->setCache($cache);
+
+// the config
+$config->setFaceLoader($cacheableLoader);
+
+// set it as default
+$config::setDefault($config);
+
+```
+
+### Write entity definition
+
+```php
+
+<?php
+// path/to/models/definitions/tree.php
+
+return [
+
+    "sqlTable"=>"tree",
+    "name"=> "tree",
+    "class"=> "Tree",
+    "elements"=>[
+        "id"=>[
+            "identifier"=>true,
+            "sql"=>[
+                "columnName"=> "id",
+                "isPrimary" => true
+            ]
+        ],
+        
+        "age",
+        
+        "lemons"=>[
+            "class"     => "Lemon",
+            "relation"  => "hasMany",
+            "relatedBy" => "tree",
+            "sql"   =>[
+                "join"  => ["id"=>"tree_id"]
+            ]
+        ],
+        "leafs"=>[
+            "class"     => "Leaf",
+            "relation"  => "hasMany",
+            "relatedBy" => "tree",
+            "sql"   =>[
+                "join"  => ["id"=>"tree_id"]
+            ]
+        ],
+        "childrenTrees"=>[
+            "class"     => "Tree",
+            "relation"  => "hasManyThrough",
+            "relatedBy" => "parentTrees",
+            "sql"   =>[
+                "join"  => ["id"=>"tree_parent_id"],
+                "throughTable" => "tree_has_parent"
+            ]
+        ],
+        "parentTrees"=>[
+            "class"     => "Tree",
+            "relation"  => "hasManyThrough",
+            "relatedBy" => "childrenTrees",
+            "sql"   =>[
+                "join"  => ["id"=>"tree_child_id"],
+                "throughTable" => "tree_has_parent"
+            ]
+        ]
+    ]
+];
+
+
+```
+
+
+### The model
+
+```php
+<?php
+// lib/Tree.php
+
+class Tree {
+    use \Face\Traits\EntityFaceTrait;
+    public $id;
+    public $age;
+    public $lemons=array();
+    public $leafs=array();
+    public $childrenTrees=array();
+    public $parentTrees = array();
+    
+    public function getId() {
+        return $this->id;
+    }
+    public function setId($id) {
+        $this->id = $id;
+    }
+    public function getAge() {
+        return $this->age;
+    }
+    public function setAge($age) {
+        $this->age = $age;
+    }
+    public function getLemons() {
+        return $this->lemons;
+    }
+    public function setLemons($lemons) {
+        $this->lemons = $lemons;
+        echo "TREE : ".$this->id." SET LEMON : ".$lemons->getId().PHP_EOL;
+    }
+    public function getLeafs() {
+        return $this->leafs;
+    }
+    public function setLeafs($leafs) {
+        $this->leafs = $leafs;
+    }
+}
+
+```
+
+
+
 Support
-----------
+-------
 
 The best place to get support is to [open an issue](https://github.com/laemons/face/issues)
 
@@ -132,7 +270,7 @@ simple benchmark is available at : https://github.com/laemons/ORM-benchmark
 
 
 Roadmap
----------
+-------
 
 Important
  * Literals selectors
