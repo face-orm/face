@@ -34,7 +34,7 @@ abstract class AbstractModifierSimpleQuery extends FQuery {
      * @param Config $config
      * @throws \Exception
      */
-    public function __construct(EntityFaceTrait $entity,Config $config = null)
+    public function __construct($entity,Config $config = null)
     {
         if(!$config){
             $config = Config::getDefault();

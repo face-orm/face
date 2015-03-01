@@ -2,9 +2,11 @@
 
 namespace Face\Sql\Query;
 
+use Face\Config;
 use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
+use Face\Exception\BadParameterException;
 use Face\Util\StringUtils;
 
 /**
@@ -73,11 +75,21 @@ abstract class FQuery
 
     /**
      * Executes the query from the given pdo object
-     * @param \PDO $pdo
+     * @param \PDO|Config|null $pdo
      * @return \PDOStatement the pdo statement ready to fetch
      */
-    public function execute(\PDO $pdo)
+    public function execute($config = null)
     {
+
+        if(null == $config){
+            $pdo = Config::getDefault()->getPdo();
+        }else if($config instanceof \PDO){
+            $pdo = $config;
+        }else if($config instanceof Config){
+            $pdo = $config->getPdo();
+        }else{
+            throw new BadParameterException('First parameter of FQuery::execute is not correct');
+        }
 
         $stmt = $this->getPdoStatement($pdo);
         

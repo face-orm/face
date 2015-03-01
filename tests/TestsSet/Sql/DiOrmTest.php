@@ -120,6 +120,22 @@ class DiOrmTest extends Test\PHPUnitTestDb
     }
     
 
+    public function testSelectBuilder(){
+
+        $select = $this->getDiOrm()->selectBuilder("tree");
+
+        $select->join("lemons")
+            ->join("lemons.seeds")
+            ->join("leafs");
+
+        $trees = $select->results();
+
+        $this->assertEquals(4,count($trees));
+        $this->assertEquals(12,count($trees->getInstancesByPath("this.lemons")));
+        $this->assertEquals(1,$trees[0]->getId());
+        $this->assertEquals(8,$trees[0]->getAge());
+
+    }
  
 
 }

@@ -4,6 +4,7 @@ namespace Face;
 
 use Face\Core\InstancesKeeper;
 use Face\Sql\Query\FQuery;
+use Face\Sql\Query\SelectBuilder;
 use Face\Sql\Query\SimpleDelete;
 use Face\Sql\Query\SimpleInsert;
 use Face\Sql\Query\SimpleUpdate;
@@ -11,6 +12,7 @@ use Face\Sql\Result\DeleteResult;
 use Face\Sql\Result\InsertResult;
 use Face\Sql\Result\ResultSet;
 use Face\Sql\Result\UpdateResult;
+use Face\DiORM\SelectBuilder as DiSelectBuilder;
 
 /**
  * Face\DiORM is a class usable in a DI that make it easyer to use in a framework
@@ -56,6 +58,22 @@ class DiORM
         $this->config = $config;
     }
 
+    /**
+     * @param $name
+     * @return Core\EntityFace
+     * @throws Exception\FaceNameDoesntExistsException
+     */
+    public function getFace($name){
+        return $this->config->getFaceLoader()->getFaceForName($name);
+    }
+
+    /**
+     * @param $name
+     * @return DiSelectBuilder
+     */
+    public function selectBuilder($name){
+        return new DiSelectBuilder($this->getFace($name), $this);
+    }
     
     /**
      * Execute a select query, parse the result and returns a resultSet
