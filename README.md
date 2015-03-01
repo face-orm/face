@@ -1,6 +1,6 @@
 face
 ====
-[![Build Status](https://drone.io/github.com/laemons/face/status.png)](https://drone.io/github.com/laemons/face/latest)
+[![Build Status](https://drone.io/github.com/face-orm/face/status.png)](https://drone.io/github.com/face-orm/face/latest)
 [![Code Climate](https://codeclimate.com/github/face-orm/face/badges/gpa.svg)](https://codeclimate.com/github/face-orm/face)
 
 Be aware that face is under active development. The current master branch has broken compatibilities with versiosn ``0.1.1-BETA``
