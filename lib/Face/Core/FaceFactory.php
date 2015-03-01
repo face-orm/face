@@ -12,10 +12,10 @@ namespace Face\Core;
 class FaceFactory
 {
     
-    public static function buildFace($params, $className = null)
+    public static function buildFace($params,FaceLoader $faceLoader = null)
     {
         if (is_array($params)) {
-            return new EntityFace($params, $className);
+            return new EntityFace($params, $faceLoader);
         } elseif ($params instanceof \Face\Core\EntityFace) {
             return $params;
         } else {

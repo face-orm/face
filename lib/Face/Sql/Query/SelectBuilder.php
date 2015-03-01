@@ -73,7 +73,9 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
         $path = $this->getNameInContext($path);
 
-        $this->joins[$this->_doFQLTableName($path, ".")]=$this->baseFace->getElement($path)->getFace();
+        $this->joins[$this->_doFQLTableName($path, ".")] = $this->baseFace
+            ->getElement($path)
+            ->getFace();
 
         return $this;
     }

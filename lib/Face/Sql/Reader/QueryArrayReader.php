@@ -2,19 +2,14 @@
 
 namespace Face\Sql\Reader;
 
-use Face\Config;
-use \Face\Sql\Query\FQuery;
+
 use Face\Core\InstancesKeeper;
-use Face\Sql\Reader\QueryArrayReader\PreparedFace;
 use Face\Sql\Reader\QueryArrayReader\PreparedOperations;
-use Face\Sql\Reader\QueryArrayReader\PreparedReader;
-use Face\Util\Operation;
-use Face\Util\StringUtils;
 
 /**
  * Description of QueryArrayReader
  *
- * @author bobito
+ * @author sghzal
  */
 class QueryArrayReader implements QueryReaderInterface
 {

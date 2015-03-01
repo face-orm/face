@@ -3,6 +3,14 @@
 namespace Face;
 
 use Face\Core\InstancesKeeper;
+use Face\Sql\Query\FQuery;
+use Face\Sql\Query\SimpleDelete;
+use Face\Sql\Query\SimpleInsert;
+use Face\Sql\Query\SimpleUpdate;
+use Face\Sql\Result\DeleteResult;
+use Face\Sql\Result\InsertResult;
+use Face\Sql\Result\ResultSet;
+use Face\Sql\Result\UpdateResult;
 
 /**
  * Face\DiORM is a class usable in a DI that make it easyer to use in a framework
@@ -13,33 +21,39 @@ class DiORM
     
     /**
      *
-     * @var \PDO
+     * @var Config
      */
-    protected $pdo;
+    protected $config;
 
     /**
      * @var InstancesKeeper
      */
-    protected $ik;
+    protected $instancesKeeper;
 
     /**
-     * @param \PDO $pdo pdo instance for db connections
+     * @param Config $config config instance
      * @param InstancesKeeper $instancesKeeper instance keeper to manage instances
      */
-    function __construct(\PDO $pdo, InstancesKeeper $instancesKeeper = null)
+    function __construct(Config $config, InstancesKeeper $instancesKeeper = null)
     {
-        $this->pdo = $pdo;
-        $this->ik=$instancesKeeper;
-    }
-    
-    public function getPdo()
-    {
-        return $this->pdo;
+        $this->config = $config;
+        $this->instancesKeeper= null !== $instancesKeeper ? $instancesKeeper : new InstancesKeeper();
     }
 
-    public function setPdo(\PDO $pdo)
+    /**
+     * @return Config
+     */
+    public function getConfig()
     {
-        $this->pdo = $pdo;
+        return $this->config;
+    }
+
+    /**
+     * @param Config $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
     }
 
     
@@ -48,14 +62,84 @@ class DiORM
      * @param \Face\Sql\Query\FQuery $fQuery
      * @return Sql\Result\ResultSet
      */
-    public function execute(Sql\Query\FQuery $fQuery)
+    public function select(Sql\Query\FQuery $fQuery)
     {
-        $j=$fQuery->execute($this->pdo);
+        $j=$fQuery->execute($this->config->getPdo());
 
-        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery, $this->ik);
+        if (!$j->rowCount()) {
+            return new ResultSet($fQuery->getBaseFace(), $this->instancesKeeper);
+        }
 
+        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery, $this->instancesKeeper);
         $rs=$reader->read($j);
-
         return $rs;
+    }
+
+    /**
+     * @param FQuery $fQuery
+     * @return InsertResult
+     * @throws \Exception
+     */
+    public function insert(Sql\Query\FQuery $fQuery){
+        $pdo = $this->config->getPdo();
+        $statement = $fQuery->execute($pdo);
+        return new InsertResult($statement,$pdo->lastInsertId());
+    }
+
+    /**
+     * performs a SimpleInsert query for the given entity
+     * @param $entity
+     * @return InsertResult
+     */
+    public function simpleInsert($entity){
+        $simpleInsert = new SimpleInsert($entity,$this->getConfig());
+        return $this->insert($simpleInsert);
+    }
+
+    /**
+     * @param FQuery $fQuery
+     * @return UpdateResult
+     * @throws \Exception
+     */
+    public function update(FQuery $fQuery){
+        $pdo = $this->config->getPdo();
+        $statement = $fQuery->execute($pdo);
+        return new UpdateResult($statement);
+    }
+
+    /**
+     * performs a SimpleUpdate query for the given entity
+     * @param $entity
+     * @return UpdateResult
+     */
+    public function simpleUpdate($entity){
+        $simpleUpdate = new SimpleUpdate($entity,$this->getConfig());
+        return $this->update($simpleUpdate);
+    }
+
+
+    /**
+     * @param FQuery $fQuery
+     * @return DeleteResult
+     * @throws \Exception
+     */
+    public function delete(FQuery $fQuery){
+
+        $pdo = $this->config->getPdo();
+
+        $statement = $fQuery->execute($pdo);
+
+        return new DeleteResult($statement);
+
+    }
+
+    /**
+     * performs a SimpleDelete query for the given entity
+     * @param $entity
+     * @return DeleteResult
+     */
+    public function simpleDelete($entity){
+        $simpleDelete = new SimpleDelete($entity,$this->getConfig());
+        return $this->delete($simpleDelete);
     }
 }

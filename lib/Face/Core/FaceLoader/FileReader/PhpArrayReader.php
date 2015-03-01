@@ -18,7 +18,7 @@ class PhpArrayReader extends  FileReaderLoader{
     {
 
         // todo : handle errors
-        return FaceFactory::buildFace(require $fileName);
+        return FaceFactory::buildFace(require $fileName, $this);
 
     }
 

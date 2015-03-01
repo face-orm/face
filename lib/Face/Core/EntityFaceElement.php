@@ -85,9 +85,6 @@ class EntityFaceElement
         $this->sqlJoin       =   ArrayUtils::getIfArrayKey($params['sql'], "join");
         $this->sqlBridge     =   ArrayUtils::getIfArrayKey($params['sql'], "bridge");
         $this->sqlAutoIncrement= ArrayUtils::getIfArrayKey($params['sql'], "autoIncrement", $this->isPrimary());
-        
-        
-       
     }
     
     
@@ -202,7 +199,9 @@ class EntityFaceElement
         return $this->defaultMap;
     }
 
-    
+    /**
+     * @return string
+     */
     public function getSqlColumnName()
     {
         return $this->sqlColumnName;
@@ -328,7 +327,10 @@ class EntityFaceElement
     public function getFace()
     {
         if ($this->isEntity()) {
-            return call_user_func($this->getClass()."::getEntityFace");
+
+            $faceLoader = $this->parentFace->getFaceLoader();
+
+            return call_user_func($this->getClass()."::getEntityFace",$faceLoader);
         } else {
             throw new \Exception("A value Element has no face. Only entity with an associed class can have a face. Call on " . $this->getName());
         }

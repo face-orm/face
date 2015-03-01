@@ -96,7 +96,7 @@ class PreparedFace extends SoftPreparedFace{
         //protected function instanceHydrateAndForwardEntities($instance, \Face\Core\EntityFace $face, $array, $basePath, $faceList, $doValues = false)
     {
 
-        $config = Config::getDefault();
+        $faceLoader = $this->getFace()->getFaceLoader();
 
         $face = $this->face;
 
@@ -154,7 +154,7 @@ class PreparedFace extends SoftPreparedFace{
 
 
 
-                    $related = $config->getFaceLoader()->getFaceForClass($element->getClass())->getDirectElement($element->getRelatedBy());
+                    $related = $faceLoader->getFaceForClass($element->getClass())->getDirectElement($element->getRelatedBy());
                     if ($related) {
                         // B
                         // this.tree => bad

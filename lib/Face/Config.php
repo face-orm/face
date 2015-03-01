@@ -1,6 +1,7 @@
 <?php
 
 namespace Face;
+use Face\Cache\CacheInterface;
 use Face\Core\FaceLoader;
 use Face\Core\FaceLoaderInterface;
 
@@ -23,14 +24,10 @@ class Config
 
     /**
      *
-     * @var Cache\CacheAdapter
+     * @var CacheInterface
      */
     protected $cacheAdapter;
-    /**
-     *
-     * @var
-     */
-    protected $reader;
+
     /**
      *
      * @var \PDO
@@ -43,20 +40,7 @@ class Config
     protected $faceLoader;
 
 
-    public static function setDefault(Config $default){
-        self::$default = $default;
-    }
 
-    /**
-     * @return Config
-     */
-    public static function getDefault(){
-        if(self::$default) {
-            return self::$default;
-        }else{
-            throw new \Exception("No configuration");
-        }
-    }
 
     /**
      * @return FaceLoader
@@ -73,6 +57,40 @@ class Config
         $this->faceLoader = $faceLoader;
     }
 
+    /**
+     * @return \PDO
+     */
+    public function getPdo()
+    {
+        return $this->pdo;
+    }
+
+    /**
+     * @param \PDO $pdo
+     */
+    public function setPdo($pdo)
+    {
+        $this->pdo = $pdo;
+    }
 
 
+
+
+
+    // STATIC FOR GLOBAL CONFIG
+
+    public static function setDefault(Config $default = null){
+        self::$default = $default;
+    }
+
+    /**
+     * @return Config
+     */
+    public static function getDefault(){
+        if(self::$default) {
+            return self::$default;
+        }else{
+            throw new \Exception("No default configuration");
+        }
+    }
 }

@@ -4,6 +4,7 @@ namespace Face\Traits;
 
 use Face\Config;
 use \Face\Core\EntityFaceElement;
+use Face\Core\FaceLoader;
 use Face\Core\FaceLoaderInterface;
 use Face\Core\Navigator;
 use Face\ORM;
@@ -78,7 +79,7 @@ trait EntityFaceTrait
      * @param \Face\Core\EntityFaceElement $element the element to get
      * @return mixed
      */
-    public function faceSetter($path, $value)
+    public function faceSetter($path, $value, FaceLoader $faceLoader = null)
     {
 
         // look the type of $needle then dispatch
@@ -99,12 +100,14 @@ trait EntityFaceTrait
                 (new Navigator($path))->chainSet($this, $value);
                 return $value;
             } else {
-                $element=$this->getEntityFace()->getElement($path);
+                $element=$this->getEntityFace($faceLoader)->getElement($path);
             }
             
         } else {
-            throw new Exception("Variable of type '".gettype($path)."' is not a valide type for path of faceSetter");
+            throw new \Exception("Variable of type '".gettype($path)."' is not a valide type for path of faceSetter");
         }
+
+        $faceLoader = $element->getParentFace()->getFaceLoader();
         
         /* @var $element \Face\Core\EntityFaceElement */
         
@@ -126,13 +129,13 @@ trait EntityFaceTrait
             $property = $element->getPropertyName();
             if (!empty($property)) {
                 if ($element->hasManyRelationship() || $element->hasManyThroughRelationship()) {
-                    if (!isset($this->___faceAlreadySetMany[$element->getName()][$value->faceGetIdentity()])) {
+                    if (!isset($this->___faceAlreadySetMany[$element->getName()][$value->faceGetIdentity($faceLoader)])) {
                         if ($this->$property ==null) {
                             $this->$property=array();
                         }
 
                         array_push($this->$property, $value);
-                        $this->___faceAlreadySetMany[$element->getName()][$value->faceGetIdentity()]=true;
+                        $this->___faceAlreadySetMany[$element->getName()][$value->faceGetIdentity($faceLoader)]=true;
                     }
 
                 } else {
@@ -153,20 +156,18 @@ trait EntityFaceTrait
      *
      * @return \Face\Core\EntityFace
      */
-    public static function getEntityFace(FaceLoaderInterface $faceLoader = null)
+    public static function getEntityFace(FaceLoader $faceLoader = null)
     {
-
         if(null === $faceLoader){
             $faceLoader = Config::getDefault()->getFaceLoader();
         }
-
         return $faceLoader->getFaceForClass(__CLASS__);
     }
     
     
-    public function faceGetIdentity()
+    public function faceGetIdentity(FaceLoader $faceLoader = null)
     {
-        $array=self::getEntityFace()->getIdentifiers();
+        $array=self::getEntityFace($faceLoader)->getIdentifiers();
 
         if (!$array || 0==count($array)) {
             throw new \Exception("The Class ".__CLASS__." has no face identifier.");
@@ -214,9 +215,13 @@ trait EntityFaceTrait
      * Shortcut to construct a FQuery
      * @return SelectBuilder
      */
-    public static function faceQueryBuilder()
+    public static function faceQueryBuilder(Config $config = null)
     {
-        return new SelectBuilder(self::getEntityFace());
+        if(null == $config) {
+            return new SelectBuilder(self::getEntityFace());
+        }else{
+            return new SelectBuilder(self::getEntityFace($config->getFaceLoader()));
+        }
     }
 
     /**

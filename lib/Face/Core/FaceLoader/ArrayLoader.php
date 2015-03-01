@@ -22,7 +22,7 @@ class ArrayLoader extends FaceLoader{
     function __construct($array)
     {
         foreach($array as $a){
-            $this->addFace(FaceFactory::buildFace($a));
+            $this->addFace(FaceFactory::buildFace($a, $this));
         }
 
     }

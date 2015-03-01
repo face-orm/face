@@ -67,7 +67,7 @@ class queryTest extends Test\PHPUnitTestDb
 //        var_dump($j);
         
     }
-    
+
     public function testInsert(){
 
 
@@ -81,10 +81,38 @@ class queryTest extends Test\PHPUnitTestDb
 
         $fQuery= Tree::faceQueryBuilder();
         $fQuery->where('~age=:age')
-               ->bindValue(':age',301,PDO::PARAM_INT);
+            ->bindValue(':age',301,PDO::PARAM_INT);
 
         $tree = Face\ORM::execute($fQuery, $pdo)[0];
         $this->assertEquals(5,$tree->getId());
+
+    }
+
+
+
+    public function testSimpleDelete(){
+
+
+        $pdo = $this->getConnection()->getConnection();
+
+        $a = new Seed();
+        $a->setId(1);
+
+        $delete = new Face\Sql\Query\SimpleDelete($a);
+
+        $this->assertEquals("DELETE FROM seed WHERE id=:id LIMIT 1", $delete->getSqlString());
+
+        $delete->execute($pdo);
+
+        $fQuery= Seed::faceQueryBuilder();
+        $seeds = Face\ORM::execute($fQuery, $pdo);
+        $this->assertEquals(7,$seeds->count());
+
+        $fQuery= Seed::faceQueryBuilder();
+        $fQuery->where('~id=:id')
+            ->bindValue(':id',1,PDO::PARAM_INT);
+        $seeds = Face\ORM::execute($fQuery, $pdo);
+        $this->assertEquals(0,$seeds->count());
 
     }
     

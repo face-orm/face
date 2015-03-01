@@ -16,13 +16,17 @@ class EntityFace implements \IteratorAggregate
     // SQL
     protected $sqlTable;
     private $primaries;
-    
+
+    protected $faceLoader;
+
     /**
      *
      * @param array $params array to construct the face is described here :  TODO array description
      */
-    function __construct($params = array())
+    function __construct($params = array(), FaceLoader $faceLoader = null)
     {
+        $this->faceLoader = $faceLoader;
+
         $this->elements = array();
         $this->primaries = array();
         $this->relatedTable = array();
@@ -56,6 +60,13 @@ class EntityFace implements \IteratorAggregate
         return $this->name;
     }
 
+    /**
+     * @return FaceLoader
+     */
+    public function getFaceLoader()
+    {
+        return $this->faceLoader;
+    }
 
 
     public function getClass()

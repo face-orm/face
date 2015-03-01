@@ -2,6 +2,14 @@
 
 namespace Face\Traits;
 
+/**
+ * Class ContextAwareTrait
+ *
+ * this trait helps to do create a context for a job in the whole class
+ *
+ * context are just a namespace appended to a named operation
+ *
+ */
 trait ContextAwareTrait
 {
 
