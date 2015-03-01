@@ -15,7 +15,7 @@ return [
         "b"=>[
             "propertyName"  =>  "b",
             "type"          =>  "entity",
-            "class"         =>  "B",
+            "entity"         =>  "B",
             "relation"      =>  "hasOne"
         ]
     ]

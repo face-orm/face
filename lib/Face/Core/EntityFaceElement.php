@@ -28,7 +28,8 @@ class EntityFaceElement
 
 
     protected $type;
-    protected $class;
+    protected $entityName;
+    protected $_class;
     
     protected $isIdentifier;
     
@@ -70,8 +71,8 @@ class EntityFaceElement
 
         $this->defaultMap   =  ArrayUtils::getIfArrayKey($params, "defaultMap");
 
-        $this->type         =  isset($params["class"])?"entity":"value";
-        $this->class        =  ArrayUtils::getIfArrayKey($params, "class");
+        $this->type         =  isset($params["entity"])?"entity":"value";
+        $this->entityName        =  ArrayUtils::getIfArrayKey($params, "entity");
         $this->isIdentifier =  ArrayUtils::getIfArrayKey($params, "identifier", false);
 
         if ($this->isEntity()) {
@@ -161,7 +162,18 @@ class EntityFaceElement
 
     public function getClass()
     {
-        return $this->class;
+
+        if($this->isEntity()) {
+
+            if (null == $this->_class) {
+                $this->_class = $this->parentFace->getFaceLoader()
+                    ->getFaceForName($this->entityName)
+                    ->getClass();
+            }
+
+        }
+
+        return $this->_class;
     }
 
     public function setClass($class)

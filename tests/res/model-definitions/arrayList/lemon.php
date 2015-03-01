@@ -27,7 +27,7 @@ return [
             ]
         ],
         "tree"=>[
-            "class"     =>  "Tree",
+            "entity"     =>  "tree",
             "relatedBy" => "lemons",
             "relation"  => "belongsTo",
             "sql"   =>[
@@ -35,7 +35,7 @@ return [
             ]
         ],
         "seeds"=>[
-            "class"     => "Seed",
+            "entity"     => "seed",
             "relation"  => "hasMany",
             "relatedBy" => "lemon",
             "sql"   =>[

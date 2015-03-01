@@ -15,7 +15,7 @@ return [
         ],
         "age",
         "lemons"=>[
-            "class"     => "Lemon",
+            "entity"     => "lemon",
             "relation"  => "hasMany",
             "relatedBy" => "tree",
             "sql"   =>[
@@ -23,7 +23,7 @@ return [
             ]
         ],
         "leafs"=>[
-            "class"     => "Leaf",
+            "entity"     => "leaf",
             "relation"  => "hasMany",
             "relatedBy" => "tree",
             "sql"   =>[
@@ -32,7 +32,7 @@ return [
         ],
 
         "childrenTrees"=>[
-            "class"     => "Tree",
+            "entity"     => "tree",
             "relation"  => "hasManyThrough",
             "relatedBy" => "parentTrees",
             "sql"   =>[
@@ -42,7 +42,7 @@ return [
         ],
 
         "parentTrees"=>[
-            "class"     => "Tree",
+            "entity"     => "tree",
             "relation"  => "hasManyThrough",
             "relatedBy" => "childrenTrees",
             "sql"   =>[

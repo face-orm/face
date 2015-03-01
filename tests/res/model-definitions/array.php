@@ -17,7 +17,7 @@ return [
             ],
             "age",
             "lemons"=>[
-                "class"     => "Lemon",
+                "entity"    => "Lemon",
                 "relation"  => "hasMany",
                 "relatedBy" => "tree",
                 "sql"   =>[
@@ -25,7 +25,7 @@ return [
                 ]
             ],
             "leafs"=>[
-                "class"     => "Leaf",
+                "entity"     => "Leaf",
                 "relation"  => "hasMany",
                 "relatedBy" => "tree",
                 "sql"   =>[
@@ -34,7 +34,7 @@ return [
             ],
 
             "childrenTrees"=>[
-                "class"     => "Tree",
+                "entity"     => "Tree",
                 "relation"  => "hasManyThrough",
                 "relatedBy" => "parentTrees",
                 "sql"   =>[
@@ -44,7 +44,7 @@ return [
             ],
 
             "parentTrees"=>[
-                "class"     => "Tree",
+                "entity"     => "Tree",
                 "relation"  => "hasManyThrough",
                 "relatedBy" => "childrenTrees",
                 "sql"   =>[
@@ -75,7 +75,7 @@ return [
             "fertil"=>[
             ],
             "lemon"=>[
-                "class"     =>  "Lemon",
+                "entity"     =>  "Lemon",
                 "relatedBy" => "seeds",
                 "relation"  => "belongsTo",
                 "sql"   =>[
@@ -115,7 +115,7 @@ return [
                 ]
             ],
             "tree"=>[
-                "class"     =>  "Tree",
+                "entity"     =>  "Tree",
                 "relatedBy" => "lemons",
                 "relation"  => "belongsTo",
                 "sql"   =>[
@@ -123,7 +123,7 @@ return [
                 ]
             ],
             "seeds"=>[
-                "class"     => "Seed",
+                "entity"     => "Seed",
                 "relation"  => "hasMany",
                 "relatedBy" => "lemon",
                 "sql"   =>[
@@ -162,7 +162,7 @@ return [
                 ]
             ],
             "tree"=>[
-                "class"     =>  "Tree",
+                "entity"     =>  "Tree",
                 "relation"  => "belongsTo",
                 "relatedBy" => "leafs",
                 "sql"   =>[
@@ -204,7 +204,7 @@ return [
             ],
             "c"=>[
                 "type"          =>  "entity",
-                "class"         =>  "C",
+                "entity"         =>  "C",
                 "relation"      =>  "hasOne"
             ]
         ]
@@ -226,7 +226,7 @@ return [
             "b"=>[
                 "propertyName"  =>  "b",
                 "type"          =>  "entity",
-                "class"         =>  "B",
+                "entity"         =>  "B",
                 "relation"      =>  "hasOne"
             ]
         ]

@@ -27,7 +27,7 @@ return [
             ]
         ],
         "tree"=>[
-            "class"     =>  "Tree",
+            "entity"     =>  "tree",
             "relation"  => "belongsTo",
             "relatedBy" => "leafs",
             "sql"   =>[

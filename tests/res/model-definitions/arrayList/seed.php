@@ -17,7 +17,7 @@ return [
         "fertil"=>[
         ],
         "lemon"=>[
-            "class"     =>  "Lemon",
+            "entity"     =>  "lemon",
             "relatedBy" => "seeds",
             "relation"  => "belongsTo",
             "sql"   =>[

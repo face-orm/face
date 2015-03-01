@@ -12,7 +12,7 @@ return [
         ],
         "c"=>[
             "type"          =>  "entity",
-            "class"         =>  "C",
+            "entity"         =>  "C",
             "relation"      =>  "hasOne"
         ]
     ]
