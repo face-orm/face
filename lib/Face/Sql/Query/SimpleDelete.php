@@ -10,30 +10,8 @@ use Face\Util\OOPUtils;
  *
  * @author sghzal
  */
-class SimpleDelete extends FQuery
+class SimpleDelete extends AbstractModifierSimpleQuery
 {
- 
-    protected $entity;
-
-    protected $config;
-
-    public function __construct($entity,Config $config = null)
-    {
-
-        if(!$config){
-            $config = Config::getDefault();
-        }
-        $this->config = $config;
-
-        if (!OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait')) {
-            throw new \Exception("Class ".get_class($entity)." doesnt use the trait \Face\Traits\EntityFaceTrait");
-        }
-        
-        $this->entity = $entity;
-        
-        parent::__construct($entity->getEntityFace($config->getFaceLoader()));
-    }
-
     
     public function getSqlString()
     {
