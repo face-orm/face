@@ -38,37 +38,4 @@ abstract class ORM
         return $rs;
     }
 
-
-    public static function executeDebug(Sql\Query\FQuery $fQuery, \PDO $pdo, &$repport){
-        $beginTime = microtime(true);
-
-        $string = $fQuery->getSqlString();
-        $stringTime = microtime(true);
-
-        $stmt = $pdo->prepare($string);
-        $values = $fQuery->getBoundValues();
-        foreach ($values as $name => $bind) {
-            $stmt->bindValue($name, $bind[0], $bind[1]);
-        }
-        $prepareSttTime = microtime(true);
-
-        $r = $stmt->execute();
-        $executionTime =microtime(true);
-
-        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery);
-        $rs=$reader->read($stmt);
-        $readTime = microtime(true);
-
-
-        $repport = array(
-
-            "queryParsing"   => ($stringTime - $beginTime) * 1000,
-            "pdoStatementBuilding" => ($prepareSttTime -$stringTime) * 1000,
-            "queryExecution" => ($executionTime - $prepareSttTime) * 1000,
-            "hydrationTime"  => ($readTime - $executionTime) * 1000
-        );
-
-        return $rs;
-
-    }
 }
