@@ -76,6 +76,14 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
         }
     }
 
+    public function first(){
+        return isset($this[0]) ? $this[0] : null;
+    }
+
+    public function getAt($i){
+        return isset($this[$i]) ? $this[$i] : null;
+    }
+
 
     /**
      * @param EntityFace $join

@@ -15,11 +15,9 @@ class ResultsetTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($ik,$r->getInstanceKeeper());
 
-
     }
 
-
-    public function testGetter(){
+    public function testBasics(){
 
         $face = Tree::getEntityFace();
         $ik = new \Face\Core\InstancesKeeper();
@@ -72,6 +70,12 @@ class ResultsetTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($r->getInstancesByPath("this"),$r->getBaseInstances());
 
+
+        // TEST ->get($i) and ->first()
+        $this->assertSame($tree1, $r->first());
+        $this->assertSame($tree1, $r->getAt(0));
+        $this->assertSame($tree2, $r->getAt(1));
+        $this->assertSame(NULL, $r->getAt(3));
 
     }
 
