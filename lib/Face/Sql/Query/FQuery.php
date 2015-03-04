@@ -231,7 +231,7 @@ abstract class FQuery
             $throughTable = $childElement->getSqlThrough();
             $throughAlias = FQuery::__doFQLTableNameStatic("$path.through", $token);
 
-            $joinSql1 = "LEFT JOIN $throughTable AS $throughAlias ON ";
+            $joinSql1 = "LEFT JOIN `$throughTable` AS `$throughAlias` ON ";
 
             $join = $childElement->getSqlJoin();
             $i=0;
@@ -244,7 +244,7 @@ abstract class FQuery
                 }
 
                 $parentOn  = FQuery::__doFQLTableNameStatic($basePath, $token).".".$parentFace->getElement($thisElementName)->getSqlColumnName();
-                $throughOn = "$throughAlias.$throughcolumn";
+                $throughOn = "`$throughAlias`.`$throughcolumn`";
                 $joinSql1 .= " $parentOn = $throughOn" ;
             }
 
@@ -256,7 +256,7 @@ abstract class FQuery
                 $otherTable        = $otherFace->getSqlTable();
                 $otherAlias        = FQuery::__doFQLTableNameStatic($path, $token);
 
-                $joinSql2 = "LEFT JOIN $otherTable AS $otherAlias ON ";
+                $joinSql2 = "LEFT JOIN `$otherTable` AS `$otherAlias` ON ";
                 $join = $otherTableElement->getSqlJoin();
                 $i = 0;
                 foreach ($join as $thisElementName => $throughcolumn) {
@@ -266,8 +266,8 @@ abstract class FQuery
                         $i++;
                     }
 
-                    $otherOn = "$otherAlias." . $otherFace->getElement($thisElementName)->getSqlColumnName();
-                    $throughOn = "$throughAlias.$throughcolumn";
+                    $otherOn = "`$otherAlias`." . $otherFace->getElement($thisElementName)->getSqlColumnName(true);
+                    $throughOn = "`$throughAlias`.`$throughcolumn`";
                     $joinSql2 .= " $otherOn = $throughOn";
                 }
 

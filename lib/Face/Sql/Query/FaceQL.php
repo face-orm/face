@@ -82,7 +82,7 @@ abstract class FaceQL
             $tablePath = rtrim(substr($match, 1, strrpos($match, ".")), ".");
 
             $replace=FQuery::__doFQLTableNameStatic($tablePath)
-                .".".$baseFace->getElement($path)->getSqlColumnName();
+                .".".$baseFace->getElement($path)->getSqlColumnName(true);
 
             $string=str_replace($match, $replace, $string);
 
@@ -157,11 +157,12 @@ abstract class FaceQL
             throw new FacelessException("Class '$classname' does not use EntityFaceTrait");
         }
 
+        /** @var  $face EntityFace */
         $face = call_user_func($classname .'::getEntityFace');
 
         $string=str_replace(
             $match[0],
-            " FROM " . $face->getSqlTable() . " AS " . FQuery::__doFQLTableNameStatic("this"),
+            " FROM " . $face->getSqlTable(true) . " AS " . FQuery::__doFQLTableNameStatic("this"),
             $string
         );
 
