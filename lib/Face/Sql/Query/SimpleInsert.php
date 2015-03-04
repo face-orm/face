@@ -31,14 +31,14 @@ class SimpleInsert extends AbstractModifierSimpleQuery
                 } else {
                     $i++;
                 }
-                $fields.="`" . $elm->getSqlColumnName() . "`";
+                $fields.= $elm->getSqlColumnName(true);
                 $values.=":".$elm->getSqlColumnName();
                 
                 $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm));
             }
         }
         
-        $queryStr= "INSERT INTO `".$baseFace->getSqlTable()."`($fields) VALUES($values)";
+        $queryStr= "INSERT INTO ".$baseFace->getSqlTable(true)."($fields) VALUES($values)";
         
         return $queryStr;
         

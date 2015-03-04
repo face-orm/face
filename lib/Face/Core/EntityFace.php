@@ -202,9 +202,13 @@ class EntityFace implements \IteratorAggregate
         return new \ArrayIterator($this->elements);
     }
 
-    public function getSqlTable()
+    public function getSqlTable($escape = false)
     {
-        return $this->sqlTable;
+        if($escape) {
+            return '`' . $this->sqlTable . '`';
+        } else {
+            return $this->sqlTable;
+        }
     }
 
     public function setSqlTable($sqltable)

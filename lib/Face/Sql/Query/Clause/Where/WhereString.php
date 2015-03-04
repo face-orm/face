@@ -35,8 +35,8 @@ class WhereString implements WhereInterface
 
             $tablePath = rtrim(substr($nsMatch, 1, strrpos($nsMatch, ".")), ".");
 
-            $replace=$q->_doFQLTableName($tablePath)
-                .".".$q->getBaseFace()->getElement($path)->getSqlColumnName();
+            $replace= $q->_doFQLTableName($tablePath)
+                 . "." . $q->getBaseFace()->getElement($path)->getSqlColumnName(true);
 
             $newString=str_replace($match, $replace, $newString);
 

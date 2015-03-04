@@ -30,7 +30,7 @@ class SimpleDelete extends AbstractModifierSimpleQuery
                     } else {
                         $i++;
                     }
-                    $where.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
+                    $where.= $elm->getSqlColumnName(true) . '=:' . $elm->getSqlColumnName();
                     $this->bindValue(":" . $elm->getSqlColumnName(), $this->entity->faceGetter($elm));
                 }
 
@@ -39,7 +39,7 @@ class SimpleDelete extends AbstractModifierSimpleQuery
 
         }
         
-        $queryStr= "DELETE FROM ".$baseFace->getSqlTable(). " WHERE ".$where." LIMIT 1";
+        $queryStr= "DELETE FROM " . $baseFace->getSqlTable(true) . " WHERE ".$where." LIMIT 1";
 
         return $queryStr;
         

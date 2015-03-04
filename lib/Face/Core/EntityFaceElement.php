@@ -214,9 +214,15 @@ class EntityFaceElement
     /**
      * @return string
      */
-    public function getSqlColumnName()
+    public function getSqlColumnName($escape = false)
     {
-        return $this->sqlColumnName;
+
+        if($escape){
+            return '`' . $this->sqlColumnName . '`';
+        }else{
+            return $this->sqlColumnName;
+        }
+
     }
 
     public function setSqlColumnName($sqlColumnName)

@@ -19,11 +19,11 @@ class WhereTest extends PHPUnit_Framework_TestCase
         $dotToken = $fQuery::DOT_TOKEN;
 
         $w = new \Face\Sql\Query\Clause\Where\WhereString("~lemons.id=5");
-        $this->assertEquals("this${dotToken}lemons.id=5",$w->getSqlString($this->getFQuery()));
+        $this->assertEquals("this${dotToken}lemons.`id`=5",$w->getSqlString($this->getFQuery()));
 
         $w = new \Face\Sql\Query\Clause\Where\WhereString("~seeds.id=5");
         $w->context("lemons");
-        $this->assertEquals("this${dotToken}lemons${dotToken}seeds.id=5",$w->getSqlString($this->getFQuery()));
+        $this->assertEquals("this${dotToken}lemons${dotToken}seeds.`id`=5",$w->getSqlString($this->getFQuery()));
 
     }
 

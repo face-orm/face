@@ -26,14 +26,14 @@ class SimpleUpdate extends AbstractModifierSimpleQuery
                 /* @var $elm \Face\Core\EntityFaceElement */
                 if ($elm->isValue() && !$elm->isPrimary()) {
                     $sets.=",";
-                    $sets.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
+                    $sets.= $elm->getSqlColumnName(true).'=:'.$elm->getSqlColumnName();
                 } else {
                     if ($i>0) {
                         $where.=" AND ";
                     } else {
                         $i++;
                     }
-                    $where.=$elm->getSqlColumnName()."=:".$elm->getSqlColumnName();
+                    $where.= $elm->getSqlColumnName(true) . '=:'. $elm->getSqlColumnName();
                 }
 
                 $this->bindValue(":".$elm->getSqlColumnName(), $this->entity->faceGetter($elm));
@@ -42,7 +42,7 @@ class SimpleUpdate extends AbstractModifierSimpleQuery
 
         }
         
-        $queryStr= "UPDATE ".$baseFace->getSqlTable()." SET ".ltrim($sets, ",")." WHERE ".$where." LIMIT 1";
+        $queryStr= "UPDATE ".$baseFace->getSqlTable(true)." SET ".ltrim($sets, ",")." WHERE ".$where." LIMIT 1";
 
         return $queryStr;
         

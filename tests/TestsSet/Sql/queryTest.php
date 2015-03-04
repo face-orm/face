@@ -100,7 +100,7 @@ class queryTest extends Test\PHPUnitTestDb
 
         $delete = new Face\Sql\Query\SimpleDelete($a);
 
-        $this->assertEquals("DELETE FROM seed WHERE id=:id LIMIT 1", $delete->getSqlString());
+        $this->assertEquals("DELETE FROM `seed` WHERE `id`=:id LIMIT 1", $delete->getSqlString());
 
         $delete->execute($pdo);
 
