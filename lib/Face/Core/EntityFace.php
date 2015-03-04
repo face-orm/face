@@ -157,7 +157,7 @@ class EntityFace implements \IteratorAggregate
                 $relatedStr ="";
             }
 
-            throw new \Exception("Face '" . $this->getClass() . "' has no element called '$name'. $relatedStr");
+            throw new \Exception( "Face : " . $this->getName() . "' has no element called '$name' $relatedStr");
         }
 
 
@@ -246,9 +246,11 @@ class EntityFace implements \IteratorAggregate
         foreach ($this as $elm) {
             if (StringUtils::beginsWith($e, $elm->getName())) {
                 $names[]=$elm->getName();
+            }else if (StringUtils::endsWith($e,$elm->getName)){
+                $names[]=$elm->getName();
             }
 
-            // TODO ends with
+            // TODO more global matches
         }
 
         return $names;
