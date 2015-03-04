@@ -22,8 +22,8 @@ abstract class FQuery
     // when we generate sql queries
     // we have to replace the face navigation token "." by an other
     // Because "." is not compatible with alias in sql and we want to avoid conflicts with user table / column names
-    // then __dot__ is safe enough
-    const DOT_TOKEN="__dot__";
+    // then ___ is safe enough
+    const DOT_TOKEN="___";
 
     // alias that can be replaced from an instance
     protected $dotToken=self::DOT_TOKEN;
