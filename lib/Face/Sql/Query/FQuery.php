@@ -7,6 +7,7 @@ use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
 use Face\Exception\BadParameterException;
+use Face\Exception\QueryFailedException;
 use Face\Util\StringUtils;
 
 /**
@@ -97,8 +98,8 @@ abstract class FQuery
             return $stmt;
             
         } else {
-            echo "TODO : handle errors ".__FILE__.":".__LINE__;
-            throw new \Exception($stmt->errorInfo());
+            // TODO : handle errors ".__FILE__.":".__LINE__;
+            throw new QueryFailedException($stmt);
             //return false;
         }
 
