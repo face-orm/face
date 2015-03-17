@@ -24,6 +24,8 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
     const RELATION_JOIN_USE_DATA = 1;
     const RELATION_USE_DATA = 2;
 
+    const ORDER_ASC  = "ASC";
+    const ORDER_DESC = "DESC";
 
     /**
      *
@@ -50,6 +52,8 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
     protected $fromLimit;
     protected $fromOffset;
 
+    protected $orderBy = [];
+
     function __construct(EntityFace $baseFace)
     {
         parent::__construct($baseFace);
@@ -63,8 +67,21 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
         $sqlQ=$this->prepareSelectClause();
         $sqlQ.=" ".$this->prepareFromClause();
-        $sqlQ.=" ".$this->prepareJoinClause();
-        $sqlQ.=" ".$this->prepareWhereClause();
+
+        $join = $this->prepareJoinClause();
+        if($join){
+            $sqlQ.=" " . $join;
+        }
+
+        $where = $this->prepareWhereClause();
+        if($where){
+            $sqlQ.=" " . $where;
+        }
+
+        $order = $this->prepareOrderByClause();
+        if($order){
+            $sqlQ.=" " . $order;
+        }
 
         $sqlQ = rtrim($sqlQ);
 
@@ -88,10 +105,12 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
     /**
      * Be aware that this method wont use the global offset, instead it will be used into the FROM clause
      * @param int $offset the offset used for the OFFSET clause of the FROM table
+     * @return SelectBuilder
      */
-    public function setOffset($offset)
+    public function offset($offset)
     {
         $this->fromOffset = intval($offset);
+        return $this;
     }
 
 
@@ -100,25 +119,26 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
      *
      *
      * @param int $limit limit used for the LIMIT clause
-     * @param int $offset optionnaly you can pass the offset in this method. It's aimed to mimic the ``LIMIT 2,10`` syntax
+     * @param int $offset optionally you can pass the offset in this method. It's aimed to mimic the ``LIMIT 2,10`` syntax
+     * @return SelectBuilder
      */
-    public function setLimit($limit, $offset=null)
+    public function limit($limit, $offset=null)
     {
         $this->fromLimit = intval($limit);
         if(null !== $offset){
-            $this->setOffset($offset);
+            $this->offset($offset);
         }
+        return $this;
     }
 
 
     /**
      * add a join clause to the query
      * @param string $path the face path to the join
-     * @return \Face\Sql\Query\SelectBuilder it returns itSelf
+     * @return SelectBuilder
      */
     public function join($path)
     {
-
         $path = $this->getNameInContext($path);
 
         $this->joins[$this->_doFQLTableName($path, ".")] = $this->baseFace
@@ -126,6 +146,28 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
             ->getFace();
 
         return $this;
+    }
+
+
+    public function orderBy($field, $direction = null){
+
+        if(null === $field){
+            $this->orderBy = [];
+        }else{
+
+            $directionUpper = strtoupper($direction);
+
+            if(null == $direction){
+                $directionUpper = self::ORDER_ASC;
+            }else if($directionUpper !== self::ORDER_DESC && $directionUpper !== self::ORDER_ASC){
+                throw new \Exception("Value '$direction' for direction is not valid. Please use '" . self::ORDER_ASC . "' or '" . self::ORDER_DESC . "' ");
+            }
+
+            $this->orderBy[] = [$field, $directionUpper];
+        }
+
+        return $this;
+
     }
 
     /**
@@ -361,19 +403,20 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
         $joinSql = "";
         try {
-            $parentFace=$this->baseFace->getElement($path, 1, $pieceOfPath)->getFace();
+            $parentFace = $this->baseFace->getElement($path, 1, $pieceOfPath)->getFace();
         } catch (\Face\Exception\RootFaceReachedException $e) {
-            $pieceOfPath[0]="";
-            $pieceOfPath[1]=$path;
-            $parentFace=$this->baseFace;
+            $pieceOfPath[0] = "";
+            $pieceOfPath[1] = $path;
+            $parentFace = $this->baseFace;
         }
 
-        $childElement=$parentFace->getElement($pieceOfPath[1]);
+        $childElement = $parentFace->getElement($pieceOfPath[1]);
 
         $joinSql = FQuery::__doFQLJoinTable($path, $face, $parentFace, $childElement, $pieceOfPath[0], $this->dotToken, $isSoft);
 
         return $joinSql;
     }
+
 
     public function prepareWhereClause()
     {
@@ -389,5 +432,38 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
 
         return "WHERE " . $w;
+    }
+
+    public function prepareOrderByClause()
+    {
+
+        if (count($this->orderBy) > 0) {
+            $str = "ORDER BY";
+            $i = 0;
+            foreach($this->orderBy as $orderBy){
+
+                try {
+                    $parentFace = $this->baseFace->getElement($orderBy[0], 1, $pieceOfPath)->getFace();
+                } catch (\Face\Exception\RootFaceReachedException $e) {
+                    $pieceOfPath[0] = "";
+                    $pieceOfPath[1] = $orderBy[0];
+                    $parentFace = $this->baseFace;
+                }
+                $childElement = $parentFace->getElement($pieceOfPath[1]);
+
+                if($i>0){
+                    $str.=",";
+                }
+
+                $str .= " " . $this->_doFQLTableName($pieceOfPath[0], null, true) . "." . $childElement->getSqlColumnName(true) . " " . $orderBy[1];
+                $i++;
+            }
+
+            return $str;
+        }else{
+            return "";
+        }
+
+
     }
 }

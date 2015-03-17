@@ -51,8 +51,8 @@ class queryBuilderTest extends Test\PHPUnitTestDb
     public function testLimitAndOffset(){
 
         $q=Tree::faceQueryBuilder();
-        $q->setLimit(2);
-        $q->setOffset(1);
+        $q->limit(2);
+        $q->offset(1);
 
         $sqlString = $q->getSqlString();
 
@@ -69,12 +69,37 @@ class queryBuilderTest extends Test\PHPUnitTestDb
     }
 
 
+    public function testOrderBy(){
+
+        $q=Tree::faceQueryBuilder();
+        $q->orderBy("id", \Face\Sql\Query\SelectBuilder::ORDER_ASC);
+        $sqlString = $q->getSqlString();
+
+        $this->assertEquals("SELECT `this`.`id` AS `this.id`,`this`.`age` AS `this.age` FROM `tree` AS `this` ORDER BY `this`.`id` ASC", $sqlString);
+
+
+
+        $q->orderBy("age", \Face\Sql\Query\SelectBuilder::ORDER_DESC);
+        $sqlString = $q->getSqlString();
+
+        $this->assertEquals("SELECT `this`.`id` AS `this.id`,`this`.`age` AS `this.age` FROM `tree` AS `this` ORDER BY `this`.`id` ASC, `this`.`age` DESC", $sqlString);
+
+
+        $q=Tree::faceQueryBuilder();
+        $q->orderBy("age", \Face\Sql\Query\SelectBuilder::ORDER_DESC);
+        $sqlString = $q->getSqlString();
+
+        $this->assertEquals("SELECT `this`.`id` AS `this.id`,`this`.`age` AS `this.age` FROM `tree` AS `this` ORDER BY `this`.`age` DESC", $sqlString);
+
+    }
+
+
     public function testLimitAndOffsetWithJoin(){
 
         $q=Tree::faceQueryBuilder();
         $q->join("leafs");
-        $q->setLimit(2);
-        $q->setOffset(1);
+        $q->limit(2);
+        $q->offset(1);
 
         $sqlString = $q->getSqlString();
 
