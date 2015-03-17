@@ -44,6 +44,9 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
      */
     private $whereInCount=0;
 
+    protected $offset=0;
+    protected $limit=0;
+
     function __construct(EntityFace $baseFace)
     {
         parent::__construct($baseFace);
@@ -58,10 +61,55 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
         $sqlQ.=" ".$this->prepareJoinClause();
         $sqlQ.=" ".$this->prepareWhereClause();
 
+        $sqlQ = rtrim($sqlQ);
+
+        if($this->limit > 0){
+            $sqlQ.= " LIMIT " . $this->limit;
+        }
+
+
+        if($this->offset > 0){
+            $sqlQ.= " OFFSET " . $this->offset;
+        }
+
 
         return $sqlQ;
 
     }
+
+    /**
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+    }
+
+
 
     /**
      * add a join clause to the query
@@ -251,7 +299,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
             foreach ($face as $elm) {
                 /* @var $elm \Face\Core\EntityFaceElement */
                 if ($elm->isValue()) {
-                    $selectFields[]=$truePath.".".$elm->getSqlColumnName()." AS ".$truePath.$this->dotToken.$elm->getName();
+                    $selectFields[]= "`" . $truePath . "`." . $elm->getSqlColumnName(true) . " AS `" . $truePath . $this->dotToken . $elm->getName() . "`";
                 }
             }
         }
@@ -265,10 +313,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
     public function prepareFromClause()
     {
-
-
-        return "FROM ".$this->baseFace->getSqlTable()." AS this";
-
+        return "FROM ".$this->baseFace->getSqlTable(true)." AS `this`";
     }
 
     public function prepareJoinClause()

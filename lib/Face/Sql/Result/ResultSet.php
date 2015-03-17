@@ -80,6 +80,11 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
         return isset($this[0]) ? $this[0] : null;
     }
 
+    /**
+     * get the base item a the given index (depends on order by clause).
+     * @param int $i Index of the item. It is 0 indexed
+     * @return null
+     */
     public function getAt($i){
         return isset($this[$i]) ? $this[$i] : null;
     }

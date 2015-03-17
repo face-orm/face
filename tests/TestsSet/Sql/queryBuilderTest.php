@@ -49,6 +49,29 @@ class queryBuilderTest extends Test\PHPUnitTestDb
     }
 
     /**
+     * @group limitoffset
+     */
+    public function testLimitAndOffset(){
+
+        $q=Tree::faceQueryBuilder();
+        $q->setLimit(2);
+        $q->setOffset(1);
+
+        $sqlString = $q->getSqlString();
+
+        $this->assertEquals("SELECT `this`.`id` AS `this___id`,`this`.`age` AS `this___age` FROM `tree` AS `this` LIMIT 2 OFFSET 1", $sqlString);
+
+
+
+        $pdo=$this->getConnection()->getConnection();
+        $trees=\Face\ORM::execute($q,$pdo);
+        $this->assertEquals(2, $trees->count());
+        $this->assertEquals(2, $trees->getAt(0)->getId());
+        $this->assertEquals(3, $trees->getAt(1)->getId());
+
+    }
+
+    /**
      * test the WhereINRelation with a belongsTo element as base
      *
      * @throws Exception
