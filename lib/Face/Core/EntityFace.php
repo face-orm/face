@@ -165,7 +165,7 @@ class EntityFace implements \IteratorAggregate
     }
 
     /**
-     * @return EntityFace[]
+     * @return EntityFaceElement[]
      */
     public function getElements()
     {
