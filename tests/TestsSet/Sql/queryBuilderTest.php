@@ -85,7 +85,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals("SELECT `this`.`id` AS `this.id`,`this`.`age` AS `this.age` FROM `tree` AS `this` ORDER BY `this`.`id` ASC, `this`.`age` DESC", $sqlString);
 
 
-        $q=Tree::faceQueryBuilder();
+        $q->orderBy(null);
         $q->orderBy("age", \Face\Sql\Query\SelectBuilder::ORDER_DESC);
         $sqlString = $q->getSqlString();
 
