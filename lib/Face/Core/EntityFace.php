@@ -141,23 +141,23 @@ class EntityFace implements \IteratorAggregate
         
         
         if (false!==strpos($name, ".")) {
-            $firstChildFace=$this->getElement(strstr($name, ".", true))->getFace();
+            $firstChildFace = $this->getElement(strstr($name, ".", true))->getFace();
             return $firstChildFace->getElement(trim(strstr($name, "."), "."));
         }
         
         if (!isset($this->elements[$name])) {
-            $names=$this->debugGetRelatedName($name);
+            $names = $this->debugGetRelatedName($name);
 
 
             if (count($names)>0) {
-                $relatedStr = "Did you mean '";
+                $relatedStr  = "Did you mean '";
                 $relatedStr .= implode("' , '", $names);
                 $relatedStr .= "' ?";
             } else {
                 $relatedStr ="";
             }
 
-            throw new \Exception( "Face : " . $this->getName() . "' has no element called '$name' $relatedStr");
+            throw new \Exception( "Face : '" . $this->getName() . "' has no element called '$name' $relatedStr");
         }
 
 
@@ -245,9 +245,9 @@ class EntityFace implements \IteratorAggregate
 
         foreach ($this as $elm) {
             if (StringUtils::beginsWith($e, $elm->getName())) {
-                $names[]=$elm->getName();
-            }else if (StringUtils::endsWith($e,$elm->getName)){
-                $names[]=$elm->getName();
+                $names[] = $elm->getName();
+            }else if (StringUtils::endsWith($e,$elm->getName())){
+                $names[] = $elm->getName();
             }
 
             // TODO more global matches
