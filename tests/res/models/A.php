@@ -1,6 +1,6 @@
 <?php
 
-class A{
+class A implements \Face\Core\EntityInterface{
     use \Face\Traits\EntityFaceTrait;
 
     protected $a;

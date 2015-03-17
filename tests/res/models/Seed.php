@@ -1,6 +1,6 @@
 <?php
 
-class Seed{
+class Seed implements \Face\Core\EntityInterface {
     public $id;
     public $lemon_id;
     public $fertil;

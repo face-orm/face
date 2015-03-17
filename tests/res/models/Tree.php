@@ -1,6 +1,6 @@
 <?php
 
-class Tree {
+class Tree implements \Face\Core\EntityInterface {
 
     use \Face\Traits\EntityFaceTrait;
 

@@ -17,8 +17,8 @@ trait EntityFaceTrait
     protected $___faceAlreadySetMany;
     
     /**
-     * use the given element and use the right way for getting the value on this instance
-     * @param \Face\Core\EntityFaceElement $element the element to get
+     * take the given element and use the right way for getting the value on this instance
+     * @param \Face\Core\EntityFaceElement|string $element the element to get or the path to the element
      * @return mixed
      */
     public function faceGetter($needle)
@@ -42,7 +42,7 @@ trait EntityFaceTrait
                 $element=$this->getEntityFace()->getElement($needle); // "elementName" case
             }
         } else {
-            throw new Exception("Variable of type '".gettype($needle)."' is not a valide type for faceGetter");
+            throw new \Exception("Variable of type '".gettype($needle)."' is not a valide type for faceGetter");
         }
 
 
@@ -56,7 +56,7 @@ trait EntityFaceTrait
 // custom callable
                 return $getter();
             } else {
-                throw new Exception('Getter is set but it is not usable : '.var_export($getter, true));
+                throw new \Exception('Getter is set but it is not usable : '.var_export($getter, true));
             }
         
         // else we use the property directly
@@ -96,7 +96,7 @@ trait EntityFaceTrait
             // TODO catch "this.elementName" case for dont instanciate a Navigator not needed for performances
             
             if (false!==strpos($path, ".")) {
-// "elementName1.elementName2.elementName3" case
+                // "elementName1.elementName2.elementName3" case
                 (new Navigator($path))->chainSet($this, $value);
                 return $value;
             } else {
@@ -115,13 +115,13 @@ trait EntityFaceTrait
         if ($element->hasSetter()) {
             $setter = $element->getSetter();
             if (is_string($setter)) {
-//method of this object
+                //method of this object
                 return $this->$setter($value);
             } elseif (is_callable($setter)) {
-// custom callable
+                // custom callable
                 return $setter($value);
             } else {
-                throw new Exception('Setter is set but it is not usable : '.var_export($setter, true));
+                throw new \Exception('Setter is set but it is not usable : '.var_export($setter, true));
             }
         
         // else we use the property directly
@@ -142,7 +142,7 @@ trait EntityFaceTrait
                     $this->$property=$value;
                 }
             } else {
-// TODO  exception or something else ?
+                // TODO  exception or something else ?
             }
         }
         // TODO chainSet in Navigator instead than in this trait
@@ -183,7 +183,7 @@ trait EntityFaceTrait
         return $identityString;
         
     }
-    
+
     /**
      * Takes the DefaultMap contained in this face to create a default map.
      * The given array (the map) maps the element name (the key) to a string (which most of time represents the sql column name).
@@ -203,14 +203,14 @@ trait EntityFaceTrait
                 $map[$elm->getName()]=$elm->getDefaultMap();
             }
         }
-        
+
         foreach ($include as $name => $mapName) {
             $map[$name]=$mapName;
         }
 
         return $map;
     }
-    
+
     /**
      * Shortcut to construct a FQuery
      * @return SelectBuilder
@@ -249,9 +249,9 @@ trait EntityFaceTrait
     }
 
     /**
-     *
+     * shortcut to create a @see \Face\Sql\Query\QueryString
      * @param string $string the SQL query
-     * @param type $options
+     * @param array $options fields to select and
      */
     public static function queryString($string, $options)
     {

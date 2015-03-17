@@ -147,14 +147,15 @@ abstract class FaceQL
             throw new \Exception("Problem occurred while parsing the FROM clause");
         }
 
+
         $classname=isset($match[1])?$match[1]:"";
 
         if (!class_exists($classname)) {
             throw new \Exception("Class '$classname' does not exist");
         }
 
-        if (!OOPUtils::UsesTrait($classname, 'Face\Traits\EntityFaceTrait')) {
-            throw new FacelessException("Class '$classname' does not use EntityFaceTrait");
+        if (!OOPUtils::ImplementsInterface($classname, "Face\Core\EntityInterface")) {
+            throw new FacelessException("Class '$classname' does not implement EntityInterface");
         }
 
         /** @var  $face EntityFace */

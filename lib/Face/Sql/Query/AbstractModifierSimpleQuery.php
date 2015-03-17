@@ -4,14 +4,13 @@ namespace Face\Sql\Query;
 
 
 use Face\Config;
+use Face\Core\EntityInterface;
 use Face\Traits\EntityFaceTrait;
 use Face\Util\OOPUtils;
 
 /**
  *
- * It represents a query :
- * - that is not a read query (only modification) : update/insert/delete
- * - that is linked to only one entity (that's why it's called simple).
+ * It represents a query that will modify the database (update/insert/delete) and that uses only one entity (not a collection, ignore children/parents)
  *
  * Class AbstractSimpleQuery
  * @package Face\Sql\Query
@@ -34,16 +33,12 @@ abstract class AbstractModifierSimpleQuery extends FQuery {
      * @param Config $config
      * @throws \Exception
      */
-    public function __construct($entity,Config $config = null)
+    public function __construct(EntityInterface $entity,Config $config = null)
     {
         if(!$config){
             $config = Config::getDefault();
         }
         $this->config = $config;
-
-        if (!OOPUtils::UsesTrait($entity, 'Face\Traits\EntityFaceTrait')) {
-            throw new \Exception("Class ".get_class($entity)." doesnt use the trait Face\Traits\EntityFaceTrait");
-        }
 
         $this->entity = $entity;
 

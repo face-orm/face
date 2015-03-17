@@ -1,6 +1,6 @@
 <?php
 
-class Lemon {
+class Lemon implements \Face\Core\EntityInterface {
 
     use \Face\Traits\EntityFaceTrait;
 

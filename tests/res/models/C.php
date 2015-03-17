@@ -1,7 +1,7 @@
 <?php
 
 
-class C{
+class C implements \Face\Core\EntityInterface{
     use \Face\Traits\EntityFaceTrait;
 
     protected $name;

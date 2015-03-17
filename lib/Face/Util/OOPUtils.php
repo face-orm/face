@@ -21,4 +21,8 @@ class OOPUtils
     {
         return array_key_exists($trait, class_uses($class));
     }
+
+    public static function ImplementsInterface($className, $interfaceName){
+        return array_key_exists($interfaceName, class_implements($className));
+    }
 }

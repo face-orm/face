@@ -1,6 +1,6 @@
 <?php
 
-class Leaf {
+class Leaf implements \Face\Core\EntityInterface {
 
     public $id;
     public $length;
