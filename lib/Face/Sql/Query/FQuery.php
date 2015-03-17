@@ -23,10 +23,10 @@ abstract class FQuery
     // we have to replace the face navigation token "." by an other
     // Because "." is not compatible with alias in sql and we want to avoid conflicts with user table / column names
     // then ___ is safe enough
-    const DOT_TOKEN="___";
+    public static $DOT_TOKEN = ".";
 
     // alias that can be replaced from an instance
-    protected $dotToken=self::DOT_TOKEN;
+    protected $dotToken;
 
     
     
@@ -64,6 +64,7 @@ abstract class FQuery
 
     function __construct(EntityFace $baseFace)
     {
+        $this->dotToken = self::$DOT_TOKEN;
         $this->baseFace = $baseFace;
         $this->joins=[];
         $this->valueBinds=[];
@@ -169,14 +170,14 @@ abstract class FQuery
      * @param string $token the token to use for separate elements of the path. Default  $this->getDotToken() will be used
      * @return string
      */
-    public function _doFQLTableName($path, $token = null)
+    public function _doFQLTableName($path, $token = null, $escape = false)
     {
 
         if (null===$token) {
             $token=$this->dotToken;
         }
 
-        return self::__doFQLTableNameStatic($path, $token);
+        return self::__doFQLTableNameStatic($path, $token, $escape);
     }
 
     /**
@@ -185,14 +186,18 @@ abstract class FQuery
      * @param null $token
      * @return mixed|string
      */
-    public static function __doFQLTableNameStatic($path, $token = null)
+    public static function __doFQLTableNameStatic($path, $token = null, $escape = false)
     {
         if (null===$token) {
-            $token=self::DOT_TOKEN;
+            $token=self::$DOT_TOKEN;
         }
 
         if ("this"===$path || empty($path)) {
-            return "this";
+            if($escape){
+                return "`this`";
+            }else{
+                return "this";
+            }
         }
 
         if (0!==strncmp($path, "this.", 5)) {
@@ -200,7 +205,13 @@ abstract class FQuery
             $path="this.".$path;
         }
 
-        return str_replace(".", $token, $path);
+        $name = str_replace(".", $token, $path);
+
+        if($escape){
+            return "`$name`";
+        }else{
+            return $name;
+        }
     }
 
     /**
@@ -215,9 +226,6 @@ abstract class FQuery
      */
     public static function __doFQLJoinTable($path, EntityFace $face, EntityFace $parentFace, EntityFaceElement $childElement, $basePath, $token, $isSoftJoin = false)
     {
-
-        
-
 
         $relation = $childElement->getRelation();
         
@@ -244,9 +252,9 @@ abstract class FQuery
                     $i++;
                 }
 
-                $parentOn  = FQuery::__doFQLTableNameStatic($basePath, $token).".".$parentFace->getElement($thisElementName)->getSqlColumnName();
+                $parentOn  = FQuery::__doFQLTableNameStatic($basePath, $token, true).".".$parentFace->getElement($thisElementName)->getSqlColumnName(true);
                 $throughOn = "`$throughAlias`.`$throughcolumn`";
-                $joinSql1 .= " $parentOn = $throughOn" ;
+                $joinSql1 .= "$parentOn = $throughOn" ;
             }
 
             // In a soft join we dont join the other table, only the through table
@@ -254,10 +262,10 @@ abstract class FQuery
                 $otherFace    = $face;
                 $otherTableElement = $otherFace->getDirectElement($childElement->getRelatedBy());
 
-                $otherTable        = $otherFace->getSqlTable();
-                $otherAlias        = FQuery::__doFQLTableNameStatic($path, $token);
+                $otherTable        = $otherFace->getSqlTable(true);
+                $otherAlias        = FQuery::__doFQLTableNameStatic($path, $token, true);
 
-                $joinSql2 = "LEFT JOIN `$otherTable` AS `$otherAlias` ON ";
+                $joinSql2 = "LEFT JOIN $otherTable AS $otherAlias ON ";
                 $join = $otherTableElement->getSqlJoin();
                 $i = 0;
                 foreach ($join as $thisElementName => $throughcolumn) {
@@ -267,9 +275,9 @@ abstract class FQuery
                         $i++;
                     }
 
-                    $otherOn = "`$otherAlias`." . $otherFace->getElement($thisElementName)->getSqlColumnName(true);
+                    $otherOn = "$otherAlias." . $otherFace->getElement($thisElementName)->getSqlColumnName(true);
                     $throughOn = "`$throughAlias`.`$throughcolumn`";
-                    $joinSql2 .= " $otherOn = $throughOn";
+                    $joinSql2 .= "$otherOn = $throughOn";
                 }
 
             } else {
@@ -281,21 +289,21 @@ abstract class FQuery
             
             
         } else {
-            $joinArray=$childElement->getSqlJoin();
+            $joinArray = $childElement->getSqlJoin();
             
             // How it is going to look :
             // JOIN something AS alias ON alias.one = parent.one AND alias.two = parent.two
             
             // Begining of the join clause
             // JOIN something AS alias ON
-            $joinSql="LEFT JOIN ".$face->getSqlTable()." AS ".FQuery::__doFQLTableNameStatic($path, $token)." ON ";
+            $joinSql = "LEFT JOIN " . $face->getSqlTable(true) . " AS " . FQuery::__doFQLTableNameStatic($path, $token, true) . " ON";
             
             //end of the join clause
             // alias.one = parent.one AND alias.two = parent.two
             $i=0;
             foreach ($joinArray as $parentJoinElementName => $childJoinElementName) {
-                $parentJoin=FQuery::__doFQLTableNameStatic($basePath, $token).".".$parentFace->getElement($parentJoinElementName)->getSqlColumnName();
-                $childJoin=FQuery::__doFQLTableNameStatic($path, $token).".".$childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName();
+                $parentJoin = FQuery::__doFQLTableNameStatic($basePath, $token, true) . '.' . $parentFace->getElement($parentJoinElementName)->getSqlColumnName(true);
+                $childJoin  = FQuery::__doFQLTableNameStatic($path, $token, true) . '.' . $childElement->getFace()->getElement($childJoinElementName)->getSqlColumnName(true);
 
                 if ($i>0) {
                     $joinSql.=" AND ";
@@ -336,8 +344,8 @@ abstract class FQuery
             }
 
 
-            $selectFields.=self::__doFQLTableNameStatic($piecesOfPath[0], $token) .
-                "." . $face->getElement($piecesOfPath[1])->getSqlColumnName() . " AS " . $alias . ",";
+            $selectFields.=self::__doFQLTableNameStatic($piecesOfPath[0], $token, true) .
+                "." . $face->getElement($piecesOfPath[1])->getSqlColumnName(true) . " AS `" . $alias . "`,";
 
         }
 

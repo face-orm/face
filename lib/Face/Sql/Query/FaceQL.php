@@ -81,7 +81,7 @@ abstract class FaceQL
 
             $tablePath = rtrim(substr($match, 1, strrpos($match, ".")), ".");
 
-            $replace=FQuery::__doFQLTableNameStatic($tablePath)
+            $replace=FQuery::__doFQLTableNameStatic($tablePath, null, true)
                 .".".$baseFace->getElement($path)->getSqlColumnName(true);
 
             $string=str_replace($match, $replace, $string);
@@ -114,7 +114,7 @@ abstract class FaceQL
                     /* @var $elm \Face\Core\EntityFaceElement */
                     if ($elm->isValue()) {
                         $selectFields[ $path . "." .  $elm->getName() ]
-                            = $truePath.FQuery::DOT_TOKEN.$elm->getName();
+                            = $truePath . FQuery::$DOT_TOKEN . $elm->getName();
                     }
                 }
             }
@@ -162,7 +162,7 @@ abstract class FaceQL
 
         $string=str_replace(
             $match[0],
-            " FROM " . $face->getSqlTable(true) . " AS " . FQuery::__doFQLTableNameStatic("this"),
+            " FROM " . $face->getSqlTable(true) . " AS " . FQuery::__doFQLTableNameStatic("this", null, true),
             $string
         );
 

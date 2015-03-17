@@ -59,7 +59,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
         $sqlString = $q->getSqlString();
 
-        $this->assertEquals("SELECT `this`.`id` AS `this___id`,`this`.`age` AS `this___age` FROM `tree` AS `this` LIMIT 2 OFFSET 1", $sqlString);
+        $this->assertEquals("SELECT `this`.`id` AS `this.id`,`this`.`age` AS `this.age` FROM `tree` AS `this` LIMIT 2 OFFSET 1", $sqlString);
 
 
 
@@ -68,6 +68,31 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(2, $trees->count());
         $this->assertEquals(2, $trees->getAt(0)->getId());
         $this->assertEquals(3, $trees->getAt(1)->getId());
+
+    }
+
+    /**
+     * @group limitoffset
+     */
+    public function testLimitAndOffsetWithJoin(){
+
+        $q=Tree::faceQueryBuilder();
+        $q->join("leafs");
+        $q->setLimit(2);
+        $q->setOffset(1);
+
+        $sqlString = $q->getSqlString();
+//
+//
+//        $this->assertEquals("SELECT `this`.`id` AS `this___id`,`this`.`age` AS `this___age` FROM `tree` AS `this` LIMIT 2 OFFSET 1", $sqlString);
+//
+//
+//
+//        $pdo=$this->getConnection()->getConnection();
+//        $trees=\Face\ORM::execute($q,$pdo);
+//        $this->assertEquals(2, $trees->count());
+//        $this->assertEquals(2, $trees->getAt(0)->getId());
+//        $this->assertEquals(3, $trees->getAt(1)->getId());
 
     }
 
@@ -154,6 +179,9 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     }
 
+    /**
+     * @group blbl
+     */
     public function testWhereINRelationHasManyThoughNotJoined(){
 
         $pdo = $this->getConnection()->getConnection();
@@ -161,6 +189,8 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         // expected data
         $fQuery = Tree::faceQueryBuilder();
         $fQuery->join("childrenTrees")->whereIN("~id",[1,2]);
+
+
         $res = Face\ORM::execute($fQuery, $pdo);
         $expected = $res->getInstancesByPath("this");
         $childrenTrees = $res->getInstancesByPath("this.childrenTrees");
@@ -179,6 +209,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(1,$a);
 
         $resActual = Face\ORM::execute($fQuery, $pdo);
+
 
         $this->assertEquals(2, $resActual->count());
 

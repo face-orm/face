@@ -47,10 +47,21 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
     protected $offset=0;
     protected $limit=0;
 
-    function __construct(EntityFace $baseFace)
+    protected $fromLimit;
+    protected $fromOffset;
+    protected $fromSelect =  null;
+
+    function __construct(EntityFace $baseFace, $items = null)
     {
         parent::__construct($baseFace);
+
+        if($items){
+            $this->fromSelect = $items;
+        }
+
     }
+
+
 
 
     public function getSqlString()
@@ -63,52 +74,47 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
         $sqlQ = rtrim($sqlQ);
 
-        if($this->limit > 0){
-            $sqlQ.= " LIMIT " . $this->limit;
+
+        if( ($this->fromLimit > 0 || $this->fromOffset > 0) && count($this->joins) == 0) {
+
+            if ($this->fromLimit > 0) {
+                $sqlQ .= " LIMIT " . $this->fromLimit;
+            }
+
+
+            if ($this->fromOffset > 0) {
+                $sqlQ .= " OFFSET " . $this->fromOffset;
+            }
         }
-
-
-        if($this->offset > 0){
-            $sqlQ.= " OFFSET " . $this->offset;
-        }
-
 
         return $sqlQ;
 
     }
 
     /**
-     * @return int
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @param int $offset
+     * Be aware that this method wont use the global offset, instead it will be used into the FROM clause
+     * @param int $offset the offset used for the OFFSET clause of the FROM table
      */
     public function setOffset($offset)
     {
-        $this->offset = $offset;
+        $this->fromOffset = intval($offset);
     }
+
 
     /**
-     * @return int
+     * Be aware that this method wont use the global limit, instead it will be used into the FROM clause
+     *
+     *
+     * @param int $limit limit used for the LIMIT clause
+     * @param int $offset optionnaly you can pass the offset in this method. It's aimed to mimic the ``LIMIT 2,10`` syntax
      */
-    public function getLimit()
+    public function setLimit($limit, $offset=null)
     {
-        return $this->limit;
+        $this->fromLimit = intval($limit);
+        if(null !== $offset){
+            $this->setOffset($offset);
+        }
     }
-
-    /**
-     * @param int $limit
-     */
-    public function setLimit($limit)
-    {
-        $this->limit = $limit;
-    }
-
 
 
     /**
@@ -214,7 +220,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
             $bindString.=',:fautoIn'.++$this->whereInCount;
             $this->bindValue(':fautoIn'.$this->whereInCount, $value);
         }
-        $phrase = $fieldName . " IN (" . ltrim($bindString, ",") . ")";
+        $phrase = "$fieldName IN (" . ltrim($bindString, ",") . ")";
         $where = new Where\WhereString($phrase);
         $this->addWhere($where, $logic);
     }
@@ -242,12 +248,12 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
                 $itsColumn = current($relatedElement->getFace()->getDirectElement($relatedElement->getRelatedBy())->getSqlJoin());
                 $this->softThroughJoin[$this->_doFQLTableName($nsrelation, ".")] = $relatedElement->getFace();
                 $values = $this->__whereINRelationOneIdentifierGetValues($entities, null, $relatedElement);
-                $this->_whereInRaw($this->_doFQLTableName("$relation.through") . ".$itsColumn", $values);
+                $this->_whereInRaw($this->_doFQLTableName("$relation.through", null, true) . ".`$itsColumn`", $values);
             } else {
                 $myColumn  = key($join);
                 $itsColumn = $join[$myColumn];
                 $values = $this->__whereINRelationOneIdentifierGetValues($entities, $itsColumn, $relatedElement);
-                $this->_whereInRaw($myColumn, $values, $logic);
+                $this->_whereInRaw( "`$myColumn`", $values, $logic);
             }
 
         } else {
@@ -313,14 +319,35 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
     public function prepareFromClause()
     {
-        return "FROM ".$this->baseFace->getSqlTable(true)." AS `this`";
+
+        $baseTable = $this->baseFace->getSqlTable(true);
+
+        $table = "";
+
+        if( ($this->fromLimit > 0 || $this->fromOffset > 0) && count($this->joins)>0){
+
+                $table = "SELECT * FROM $baseTable";
+                if($this->fromLimit>0){
+                    $table .= " LIMIT " . $this->fromLimit;
+                }
+                if($this->fromOffset>0){
+                    $table .= " OFFSET " . $this->fromOffset;
+                }
+
+                $table = "($table)";
+
+        }else{
+            $table = $baseTable;
+        }
+
+        return "FROM " . $table . " AS `this`";
     }
 
     public function prepareJoinClause()
     {
-        $sql="";
+        $sql = "";
         foreach ($this->joins as $path => $face) {
-            $sql.=$this->__prepareJoinClauseFor($path, $face, false);
+            $sql .= $this->__prepareJoinClauseFor($path, $face, false);
         }
 
         // Soft join
