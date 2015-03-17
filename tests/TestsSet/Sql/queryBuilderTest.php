@@ -48,9 +48,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     }
 
-    /**
-     * @group limitoffset
-     */
     public function testLimitAndOffset(){
 
         $q=Tree::faceQueryBuilder();
@@ -71,9 +68,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     }
 
-    /**
-     * @group limitoffset
-     */
+
     public function testLimitAndOffsetWithJoin(){
 
         $q=Tree::faceQueryBuilder();
@@ -82,17 +77,15 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $q->setOffset(1);
 
         $sqlString = $q->getSqlString();
-//
-//
-//        $this->assertEquals("SELECT `this`.`id` AS `this___id`,`this`.`age` AS `this___age` FROM `tree` AS `this` LIMIT 2 OFFSET 1", $sqlString);
-//
-//
-//
-//        $pdo=$this->getConnection()->getConnection();
-//        $trees=\Face\ORM::execute($q,$pdo);
-//        $this->assertEquals(2, $trees->count());
-//        $this->assertEquals(2, $trees->getAt(0)->getId());
-//        $this->assertEquals(3, $trees->getAt(1)->getId());
+
+        $this->assertEquals("SELECT `this`.`id` AS `this.id`,`this`.`age` AS `this.age`,`this.leafs`.`id` AS `this.leafs.id`,`this.leafs`.`tree_id` AS `this.leafs.tree_id`,`this.leafs`.`length` AS `this.leafs.length` FROM (SELECT * FROM `tree` LIMIT 2 OFFSET 1) AS `this` LEFT JOIN `leaf` AS `this.leafs` ON `this`.`id`=`this.leafs`.`tree_id`", $sqlString);
+
+
+        $pdo=$this->getConnection()->getConnection();
+        $trees=\Face\ORM::execute($q,$pdo);
+        $this->assertEquals(2, $trees->count());
+        $this->assertEquals(2, $trees->getAt(0)->getId());
+        $this->assertEquals(3, $trees->getAt(1)->getId());
 
     }
 
@@ -179,9 +172,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     }
 
-    /**
-     * @group blbl
-     */
     public function testWhereINRelationHasManyThoughNotJoined(){
 
         $pdo = $this->getConnection()->getConnection();
@@ -216,7 +206,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(1,$resActual[0]->getId());
         $this->assertEquals(3,$resActual[1]->getId());
 
-        return ;
     }
 
     public function testWhereINRelationHasManyThoughAlreadyJoined(){
@@ -251,7 +240,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(1,$resActual[0]->getId());
         $this->assertEquals(3,$resActual[1]->getId());
 
-        return ;
     }
 
     

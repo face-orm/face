@@ -49,16 +49,10 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
     protected $fromLimit;
     protected $fromOffset;
-    protected $fromSelect =  null;
 
-    function __construct(EntityFace $baseFace, $items = null)
+    function __construct(EntityFace $baseFace)
     {
         parent::__construct($baseFace);
-
-        if($items){
-            $this->fromSelect = $items;
-        }
-
     }
 
 
