@@ -16,7 +16,7 @@ Face is an ORM built under a few purposes :
 Face includes powerful workflow to deal with relation and complex requests. 
 
 
-Face is tested and safe enough for production. Right know it is perfectly suited for little and medium projects but it mays lack of maturity for biggest projects.
+Face is tested and safe enough for production. Right now it is perfectly suited for little and medium projects but it mays lack of maturity for biggest projects.
 
 
 Quick Overview
