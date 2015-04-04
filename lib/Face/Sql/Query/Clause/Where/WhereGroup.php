@@ -2,11 +2,11 @@
 
 namespace Face\Sql\Query\Clause\Where;
 
+use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\Clause\Where;
-use Face\Sql\Query\Clause\WhereInterface;
 use Face\Sql\Query\FQuery;
 
-class WhereGroup implements WhereInterface
+class WhereGroup extends AbstractWhereClause implements SqlClauseInterface
 {
 
     /**

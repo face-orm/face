@@ -2,12 +2,12 @@
 
 namespace Face\Sql\Query\Clause\Where;
 
+use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\Clause\Where;
-use Face\Sql\Query\Clause\WhereInterface;
 use Face\Sql\Query\FQuery;
 use Face\Traits\ContextAwareTrait;
 
-class WhereString implements WhereInterface
+class WhereString extends AbstractWhereClause implements SqlClauseInterface
 {
 
     use ContextAwareTrait;
