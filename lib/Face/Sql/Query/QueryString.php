@@ -8,6 +8,8 @@
 namespace Face\Sql\Query;
 
 use Face\Core\EntityFace;
+use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\SelectBuilder\QueryFace;
 
 class QueryString extends FQuery
 {
@@ -16,12 +18,30 @@ class QueryString extends FQuery
 
     private $whereInCount=0;
 
-    function __construct(EntityFace $baseFace, $sqlString, $joins = [], $selectedColumns = [])
+    /**
+     * @param EntityFace $baseFace
+     * @param $sqlString
+     * @param JoinQueryFace[] $joins
+     */
+    function __construct(EntityFace $baseFace, $sqlString)
     {
         parent::__construct($baseFace);
         $this->sqlString = $sqlString;
-        $this->joins = $joins;
-        $this->selectedColumns=$selectedColumns;
+    }
+
+    /**
+     * @param $path
+     * @param null $columns
+     * @return JoinQueryFace
+     * @throws \Exception
+     * @throws \Face\Exception\RootFaceReachedException
+     */
+    public function setJoin($path, $columns = null){
+        $this->joins[$path] = new JoinQueryFace($path, $this->baseFace->getElement($path)->getFace(), $this);
+        if($columns){
+            $this->joins[$path]->setColumns($columns);
+        }
+        return $this->joins[$path];
     }
 
     public function getSqlString()
