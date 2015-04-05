@@ -239,7 +239,6 @@ class Tree {
     }
     public function setLemons($lemons) {
         $this->lemons = $lemons;
-        echo "TREE : ".$this->id." SET LEMON : ".$lemons->getId().PHP_EOL;
     }
     public function getLeafs() {
         return $this->leafs;

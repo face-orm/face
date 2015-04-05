@@ -15,7 +15,7 @@ return [
         ],
         "age",
         "lemons"=>[
-            "entity"     => "lemon",
+            "entity"    => "lemon",
             "relation"  => "hasMany",
             "relatedBy" => "tree",
             "sql"   =>[
