@@ -70,8 +70,8 @@ class QueryString extends FQuery
     {
         $bindString = "";
         foreach ($array as $value) {
-            $bindString.=',:fautoIn'.++$this->whereInCount;
-            $this->bindValue(':fautoIn'.$this->whereInCount, $value);
+            $bindString .= ',:fautoIn' . ++$this->whereInCount;
+            $this->bindValue(':fautoIn' . $this->whereInCount, $value);
         }
 
         // TODO saffer replace

@@ -79,5 +79,24 @@ class QueryStringTest extends Test\PHPUnitTestDb
     }
 
 
+    public function testBindIn(){
+
+        $pdo = $this->getConnection()->getConnection();
+
+        $q = Tree::queryString("SELECT id FROM lemon WHERE lemon.id IN (::lemonIds)");
+        $q->bindIn("::lemonIds", [1,2,4]);
+
+        $q->getBoundValues();
+
+        $expected = "SELECT id FROM lemon WHERE lemon.id IN (:fautoIn1,:fautoIn2,:fautoIn3)";
+
+        $this->assertEquals($expected, $q->getSqlString());
+        $this->assertEquals(1, $q->getBoundValue(":fautoIn1")[0]);
+        $this->assertEquals(2, $q->getBoundValue(":fautoIn2")[0]);
+        $this->assertEquals(4, $q->getBoundValue(":fautoIn3")[0]);
+
+    }
+
+
 
 }
