@@ -2,6 +2,7 @@
 
 namespace Face\Core;
 
+use Face\Exception;
 use Face\Util\ArrayUtils;
 
 class EntityFaceElement
@@ -51,7 +52,6 @@ class EntityFaceElement
     protected $sqlColumnName;
     protected $sqlIsPrimary;
     protected $sqlJoin;
-    protected $sqlBridge;
     protected $sqlAutoIncrement;
     protected $sqlThrough;
 
@@ -84,7 +84,6 @@ class EntityFaceElement
         $this->sqlColumnName =   ArrayUtils::getIfArrayKey($params['sql'], "columnName", $name);
         $this->sqlIsPrimary  =   ArrayUtils::getIfArrayKey($params['sql'], "isPrimary");
         $this->sqlJoin       =   ArrayUtils::getIfArrayKey($params['sql'], "join");
-        $this->sqlBridge     =   ArrayUtils::getIfArrayKey($params['sql'], "bridge");
         $this->sqlAutoIncrement= ArrayUtils::getIfArrayKey($params['sql'], "autoIncrement", $this->isPrimary());
     }
     
@@ -94,10 +93,6 @@ class EntityFaceElement
         return $this->name;
     }
 
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
 
     public function getPropertyName()
     {
@@ -176,11 +171,7 @@ class EntityFaceElement
         return $this->_class;
     }
 
-    public function setClass($class)
-    {
-        $this->class = $class;
-    }
-    
+
     public function isEntity()
     {
         return "entity"===$this->getType();
@@ -191,11 +182,6 @@ class EntityFaceElement
         return "value"===$this->getType();
     }
     
-    public function getIsIdentifier()
-    {
-        return $this->isIdentifier;
-    }
-    
     public function isIdentifier()
     {
         return true===$this->isIdentifier;
@@ -204,11 +190,6 @@ class EntityFaceElement
     public function setIsIdentifier($isIdentifier)
     {
         $this->isIdentifier = $isIdentifier;
-    }
-    
-    public function getDefaultMap()
-    {
-        return $this->defaultMap;
     }
 
     /**
@@ -230,11 +211,6 @@ class EntityFaceElement
         $this->sqlColumnName = $sqlColumnName;
     }
 
-    public function getSqlIsPrimary()
-    {
-        return $this->sqlIsPrimary;
-    }
-    
     public function isPrimary()
     {
         return $this->sqlIsPrimary;
@@ -255,15 +231,7 @@ class EntityFaceElement
         $this->sqlJoin = $sqlJoin;
     }
 
-    public function getSqlBridge()
-    {
-        return $this->sqlBridge;
-    }
 
-    public function setSqlBridge($sqlBridge)
-    {
-        $this->sqlBridge = $sqlBridge;
-    }
     
     public function getSqlAutoIncrement()
     {
@@ -275,7 +243,7 @@ class EntityFaceElement
         $this->sqlAutoIncrement = $sqlAutoIncrement;
     }
 
-    
+
     public function getRelation()
     {
         return $this->relation;
@@ -314,11 +282,6 @@ class EntityFaceElement
     {
         $this->relatedBy = $relatedBy;
     }
-
-    public function hasRelationTo()
-    {
-        // TODO
-    }
     
     /**
      *
@@ -350,7 +313,7 @@ class EntityFaceElement
 
             return call_user_func($this->getClass()."::getEntityFace",$faceLoader);
         } else {
-            throw new \Exception("A value Element has no face. Only entity with an associed class can have a face. Call on " . $this->getName());
+            throw new Exception("A value Element has no face. Only entity with an associed class can have a face. Call on " . $this->getName());
         }
     }
 }

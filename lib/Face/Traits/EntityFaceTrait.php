@@ -3,13 +3,11 @@
 namespace Face\Traits;
 
 use Face\Config;
-use \Face\Core\EntityFaceElement;
 use Face\Core\FaceLoader;
-use Face\Core\FaceLoaderInterface;
 use Face\Core\Navigator;
+use Face\Exception\BadParameterException;
 use Face\ORM;
 use Face\Sql\Query\SelectBuilder;
-use Face\Util\StringUtils;
 
 trait EntityFaceTrait
 {
@@ -42,7 +40,7 @@ trait EntityFaceTrait
                 $element=$this->getEntityFace()->getElement($needle); // "elementName" case
             }
         } else {
-            throw new \Exception("Variable of type '".gettype($needle)."' is not a valide type for faceGetter");
+            throw new BadParameterException("Variable of type '".gettype($needle)."' is not a valide type for faceGetter");
         }
 
 
@@ -183,32 +181,7 @@ trait EntityFaceTrait
         
     }
 
-    /**
-     * Takes the DefaultMap contained in this face to create a default map.
-     * The given array (the map) maps the element name (the key) to a string (which most of time represents the sql column name).
-     * Each line of the array has this form : ElementName => Wished name
-     * @param array $exclude Elements to exclude. e.g. : if you want to exclude elements "id" and "name" just use ["id","name"]
-     * @param array $include Elements to include or replace. e.g : if "name" has not default it wont be included if you dont specify it in the map. Just use ["name"=>"name"]
-     * @return array The map with the form [ElementName => Wished name]
-     */
-    public static function faceDefaultMap($exclude = [], $include = [])
-    {
-        $map=array();
-        $face=self::getEntityFace();
 
-        foreach ($face as $elm) {
-            /* @var $elm EntityFaceElement */
-            if (!in_array($elm->getName(), $exclude) && $elm->getDefaultMap()) {
-                $map[$elm->getName()]=$elm->getDefaultMap();
-            }
-        }
-
-        foreach ($include as $name => $mapName) {
-            $map[$name]=$mapName;
-        }
-
-        return $map;
-    }
 
     /**
      * Shortcut to construct a FQuery
@@ -288,35 +261,35 @@ trait EntityFaceTrait
         
     }
     
-    private static function __queryStringDoColumnRecursive(&$selectedColumns, $k, $v, $basePath)
-    {
-       
-        
-        // case   "lemons.tree_id"
-        if (is_numeric($k)) {
-            $pos = strrpos($v, ".");
-            $columnName = false ===  $pos ? $v : substr($v, $pos+1);
-            $selectedColumns["$basePath.$columnName"] = $columnName;
-
-        } else {
-            // case  "lemons" => [ "tree_id" ]
-            if (is_array($v)) {
-                foreach ($v as $kk => $vv) {
-                    $newBasePath = "$basePath.$k." . (is_numeric($kk) ? $vv : $kk);
-                    $newBasePath = substr($newBasePath, 0, strrpos($newBasePath, "."));
-                    self::__queryStringDoColumnRecursive($selectedColumns, $kk, $vv, $newBasePath);
-                    
-                }
-               
-            // case  "lemons.tree_id"=>"tree_id"
-            } else {
-                $pos = strrpos($k, ".");
-                $nameEnd = false ===  $pos ? $k : substr($k, $pos+1);
-                $selectedColumns["$basePath.$nameEnd"] = $v;
-            }
-
-        }
-
-        
-    }
+//    private static function __queryStringDoColumnRecursive(&$selectedColumns, $k, $v, $basePath)
+//    {
+//
+//
+//        // case   "lemons.tree_id"
+//        if (is_numeric($k)) {
+//            $pos = strrpos($v, ".");
+//            $columnName = false ===  $pos ? $v : substr($v, $pos+1);
+//            $selectedColumns["$basePath.$columnName"] = $columnName;
+//
+//        } else {
+//            // case  "lemons" => [ "tree_id" ]
+//            if (is_array($v)) {
+//                foreach ($v as $kk => $vv) {
+//                    $newBasePath = "$basePath.$k." . (is_numeric($kk) ? $vv : $kk);
+//                    $newBasePath = substr($newBasePath, 0, strrpos($newBasePath, "."));
+//                    self::__queryStringDoColumnRecursive($selectedColumns, $kk, $vv, $newBasePath);
+//
+//                }
+//
+//            // case  "lemons.tree_id"=>"tree_id"
+//            } else {
+//                $pos = strrpos($k, ".");
+//                $nameEnd = false ===  $pos ? $k : substr($k, $pos+1);
+//                $selectedColumns["$basePath.$nameEnd"] = $v;
+//            }
+//
+//        }
+//
+//
+//    }
 }

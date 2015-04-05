@@ -17,7 +17,7 @@ return [
             "type"          =>  "entity",
             "entity"         =>  "B",
             "relation"      =>  "hasOne"
-        ]
+        ],
     ]
 
 ];

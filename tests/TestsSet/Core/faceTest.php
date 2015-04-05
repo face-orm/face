@@ -54,23 +54,18 @@ class FaceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("c", $pieces[1]);
         $this->assertEquals("b", $pieces[0]);
     }
-    
-    public function testDefaultMap()
-    {
-        $map=A::faceDefaultMap();
-        $this->assertEquals(['a'=>'a_column'], $map);
-        
-        $map=A::faceDefaultMap(['a']);
-        $this->assertEquals([], $map);
-        
-        $map=A::faceDefaultMap([],['a'=>'onea']);
-        $this->assertEquals(['a'=>'onea'], $map);
-        
-        $map=A::faceDefaultMap([],["b"=>'oneb']);
-        $this->assertEquals(['a'=>'a_column',"b"=>'oneb'], $map);
-        
-        $map=A::faceDefaultMap([],['a'=>'onea',"b"=>'oneb']);
-        $this->assertEquals(['a'=>'onea',"b"=>'oneb'], $map);
+
+    public function testException(){
+
+        $a = new A();
+        try{
+            $a->faceGetter(5);
+            $this->fail("Should throw exception");
+        }catch(\Exception $e){
+            $this->assertInstanceOf("Face\Exception\BadParameterException",$e);
+        }
+
+
     }
  
 

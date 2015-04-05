@@ -9,6 +9,8 @@
 namespace Face\Exception;
 
 
-class BadParameterException extends \Exception{
+use Face\Exception;
+
+class BadParameterException extends Exception{
 
 }

@@ -2,10 +2,10 @@
 
 namespace Face\Exception;
 
+use Face\Exception;
 
-use Exception;
-
-class QueryFailedException extends  \Exception {
+class QueryFailedException extends  Exception
+{
 
     protected $statement;
 
@@ -22,8 +22,4 @@ class QueryFailedException extends  \Exception {
     {
         return $this->statement;
     }
-
-
-
-
 }
