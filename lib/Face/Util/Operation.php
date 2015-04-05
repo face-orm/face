@@ -29,14 +29,6 @@ class Operation
     }
 
     /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
      * @return string
      */
     public function getName()

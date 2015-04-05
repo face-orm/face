@@ -124,7 +124,9 @@ abstract class FQuery
     {
         $stmt = $pdo->prepare($this->getSqlString());
 
-        foreach ($this->valueBinds as $name => $bind) {
+        $bound = $this->getBoundValues();
+
+        foreach ($bound as $name => $bind) {
             $stmt->bindValue($name, $bind[0], $bind[1]);
         }
 
@@ -133,7 +135,7 @@ abstract class FQuery
     
     public function bindValue($parameter, $value, $data_type = \PDO::PARAM_STR)
     {
-        $this->valueBinds[$parameter]=[$value,$data_type];
+        $this->valueBinds[$parameter] = [$value,$data_type];
         
         return $this;
     }
@@ -161,7 +163,7 @@ abstract class FQuery
      */
     public function getBoundValue($name)
     {
-        return $this->valueBinds[$name];
+        return $this->getBoundValues()[$name];
     }
 
     /**
@@ -181,7 +183,7 @@ abstract class FQuery
     {
         $array['this'] = $this->fromQueryFace;
 
-        return array_merge($array, $this->joins);
+        return array_merge($array, $this->getJoins());
     }
     
     /**
@@ -340,37 +342,7 @@ abstract class FQuery
         return $joinSql;
     }
 
-    /**
-     * reserved for internal usage
-     * @param array $columnList list of columns ["path"]="alias";
-     * @param EntityFace $baseFace query baseface
-     * @param string $token the token used for aliases. Null for using the default one
-     * @return string list of columns sql formatted (comma separated) and aliased
-     */
-    public static function __doFQLSelectColumns(array $columnList, EntityFace $baseFace, $token = null)
-    {
 
-        $selectFields="";
-
-        foreach ($columnList as $path => $alias) {
-            try {
-                $face=$baseFace->getElement($path, 1, $piecesOfPath)->getFace();
-
-            } catch (\Face\Exception\RootFaceReachedException $e) {
-                $piecesOfPath[0]="";
-                $piecesOfPath[1]=$path;
-
-                $face=$baseFace;
-            }
-
-
-            $selectFields .= self::__doFQLTableNameStatic($piecesOfPath[0], $token, true) .
-                "." . $face->getElement($piecesOfPath[1])->getSqlColumnName(true) . " AS `" . $alias . "`,";
-
-        }
-
-        return rtrim($selectFields, ",");
-    }
 
     /**
      *

@@ -64,20 +64,6 @@ class SoftPreparedFace {
     }
 
 
-
-    public function makeColumnName(\Face\Core\EntityFaceElement $elm)
-    {
-        $elmName = $elm->getName();
-        $selectColumns = $this->preparedOperation->fQuery->getSelectedColumns();
-        if (isset($selectColumns[ $this->path . ".$elmName"])) {
-            $name = $selectColumns[$this->path . ".$elmName"];
-        } else {
-            $name = $this->preparedOperation->fQuery->_doFQLTableName($this->path . "." . $elmName);
-        }
-        return $name;
-
-    }
-
     protected function _compileRowIdentity(){
 
         $primaries = $this->face->getPrimaries();
