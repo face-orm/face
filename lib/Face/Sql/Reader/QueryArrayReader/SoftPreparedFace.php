@@ -4,6 +4,9 @@ namespace Face\Sql\Reader\QueryArrayReader;
 
 
 use Face\Core\EntityFace;
+use Face\Sql\Query\Clause\Select\Column;
+use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\SelectBuilder\QueryFace;
 
 class SoftPreparedFace {
 
@@ -20,6 +23,11 @@ class SoftPreparedFace {
      */
     protected $face;
 
+    /**
+     * @var QueryFace
+     */
+    protected $queryFace;
+
     protected $path;
 
     /**
@@ -27,23 +35,35 @@ class SoftPreparedFace {
      */
     protected $preparedOperation;
 
-    protected $columnNames;
+    /**
+     * @var Column[]
+     */
+    protected $columns;
     protected $rowIdentityCb;
 
-    function __construct($path, EntityFace $face, PreparedOperations $preparedOperation)
+    function __construct(QueryFace $queryFace, PreparedOperations $preparedOperation)
     {
-        $this->face = $face;
-        $this->path = $path;
+        $this->queryFace = $queryFace;
+        $this->face = $queryFace->getFace();
+        $this->path = $queryFace->getPath();
         $this->preparedOperation = $preparedOperation;
     }
 
     protected function _build()
     {
-        foreach($this->face->getPrimaries() as $e){
-            $this->columnNames[$e->getName()] = $this->makeColumnName($e);
-        }
+        $this->columns = $this->queryFace->getColumnsReal();
         $this->rowIdentityCb = $this->_compileRowIdentity();
     }
+
+    /**
+     * @return QueryFace
+     */
+    public function getQueryFace()
+    {
+        return $this->queryFace;
+    }
+
+
 
     public function makeColumnName(\Face\Core\EntityFaceElement $elm)
     {
@@ -60,16 +80,13 @@ class SoftPreparedFace {
 
     protected function _compileRowIdentity(){
 
-        $primaries=$this->face->getPrimaries();
+        $primaries = $this->face->getPrimaries();
 
         $str = "";
 
         foreach($primaries as $p){
-
-            $name = $this->columnNames[$p->getName()];
-
+            $name = $this->columns[$this->queryFace->makePath($p->getName())]->getAlias();
             $str .= '$row["'. $name .'"].';
-
         }
         // TODO : OK for performances, but should fix security issue
         return create_function('$row','return '. rtrim($str,".") .';');
@@ -82,11 +99,8 @@ class SoftPreparedFace {
 
 
     public function rowIdentity($row){
-
         $cb = $this->rowIdentityCb;
-
         return $cb ($row);
-
     }
 
 

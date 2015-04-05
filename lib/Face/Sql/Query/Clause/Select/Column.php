@@ -21,16 +21,18 @@ class Column implements SqlClauseInterface {
      */
     protected $entityFaceElement;
 
-    function __construct($path, $alias, EntityFaceElement $entityFaceElement)
+    function __construct($parentPath, $alias, EntityFaceElement $entityFaceElement)
     {
-        $this->path = $path;
+        $this->parentPath = $parentPath;
         $this->alias = $alias;
         $this->entityFaceElement = $entityFaceElement;
     }
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(FQuery $fQuery)
     {
-
+        return
+            $fQuery->_doFQLTableName($this->parentPath, null, true) . '.' . $this->entityFaceElement->getSqlColumnName(true)
+            . " AS " . $this->getAlias(true);
     }
 
     /**
@@ -38,15 +40,19 @@ class Column implements SqlClauseInterface {
      */
     public function getPath()
     {
-        return $this->path;
+        return $this->parentPath . "." . $this->entityFaceElement->getName();
     }
 
     /**
      * @return mixed
      */
-    public function getAlias()
+    public function getAlias($escaped = false)
     {
-        return $this->alias;
+        if($escaped){
+            return "`" . $this->alias . "`";
+        }else{
+            return $this->alias;
+        }
     }
 
     /**

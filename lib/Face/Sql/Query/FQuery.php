@@ -8,6 +8,8 @@ use Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
 use Face\Exception\BadParameterException;
 use Face\Exception\QueryFailedException;
+use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Util\StringUtils;
 
 /**
@@ -38,20 +40,16 @@ abstract class FQuery
     
     /**
      * list of face joined to the query
-     * @var array
+     * @var JoinQueryFace[]
      */
     protected $joins;
 
 
-
-
     /**
-     * Only for select queries.
-     * Contains the list of the selected columns formatted as follows :
-     * $selectedColumns["alias-name"]="path"
-     * @var array
+     * @var QueryFace
      */
-    protected $selectedColumns;
+    protected $fromQueryFace;
+
 
     /**
      * list of binds to pass to pdo object
@@ -66,6 +64,7 @@ abstract class FQuery
     {
         $this->dotToken = self::$DOT_TOKEN;
         $this->baseFace = $baseFace;
+        $this->fromQueryFace = new QueryFace("this", $baseFace, $this);
         $this->joins=[];
         $this->valueBinds=[];
     }
@@ -73,6 +72,17 @@ abstract class FQuery
     
     abstract public function getSqlString();
 
+    /**
+     * @return SelectBuilder\JoinQueryFace[]
+     */
+    public function getJoins()
+    {
+        return $this->joins;
+    }
+
+    public function getBaseQueryFace(){
+        return $this->fromQueryFace;
+    }
 
 
     /**
@@ -114,7 +124,6 @@ abstract class FQuery
     {
         $stmt = $pdo->prepare($this->getSqlString());
 
-
         foreach ($this->valueBinds as $name => $bind) {
             $stmt->bindValue($name, $bind[0], $bind[1]);
         }
@@ -128,10 +137,21 @@ abstract class FQuery
         
         return $this;
     }
-    
+
+    /**
+     * array of columns to be selected with their alias in this form : $array["alias"] = "real.path"
+     * @return array
+     */
     public function getSelectedColumns()
     {
-        return $this->selectedColumns;
+        $finalColumns = $this->fromQueryFace->getColumnsReal();
+//
+//        foreach($this->joins as $join){
+//            $finalColumns = array_merge($finalColumns,$join->getColumnsReal());
+//        }
+
+
+        return $finalColumns;
     }
 
 
@@ -157,9 +177,9 @@ abstract class FQuery
      * give all the entities which are part of the FQuery
      * @return EntityFace[] list of the face
      */
-    public function getAvailableFaces()
+    public function getAvailableQueryFaces()
     {
-        $array['this']=$this->baseFace;
+        $array['this'] = $this->fromQueryFace;
 
         return array_merge($array, $this->joins);
     }
@@ -173,8 +193,8 @@ abstract class FQuery
     public function _doFQLTableName($path, $token = null, $escape = false)
     {
 
-        if (null===$token) {
-            $token=$this->dotToken;
+        if (null === $token) {
+            $token = $this->dotToken;
         }
 
         return self::__doFQLTableNameStatic($path, $token, $escape);
@@ -200,9 +220,9 @@ abstract class FQuery
             }
         }
 
-        if (0!==strncmp($path, "this.", 5)) {
-// if doesn't begin with "this." then we prepend "this."
-            $path="this.".$path;
+        if ( ! StringUtils::beginsWith("this.", $path)) {
+            // if doesn't begin with "this." then we prepend "this."
+            $path = "this.".$path;
         }
 
         $name = str_replace(".", $token, $path);
@@ -311,7 +331,7 @@ abstract class FQuery
                     $i++;
                 }
 
-                $joinSql.=" ".$parentJoin."=".$childJoin." ";
+                $joinSql.=" ".$parentJoin." = ".$childJoin." ";
 
             }
             
@@ -344,7 +364,7 @@ abstract class FQuery
             }
 
 
-            $selectFields.=self::__doFQLTableNameStatic($piecesOfPath[0], $token, true) .
+            $selectFields .= self::__doFQLTableNameStatic($piecesOfPath[0], $token, true) .
                 "." . $face->getElement($piecesOfPath[1])->getSqlColumnName(true) . " AS `" . $alias . "`,";
 
         }

@@ -1,6 +1,7 @@
 <?php
 
-use \Face\Sql\Query\SelectBuilder\QueryFace;
+use Face\Sql\Query\SelectBuilder\QueryFace;
+use Face\Sql\Query\Clause\Select\Column;
 
 class queryFaceTest extends Test\PHPUnitTestDb
 {
@@ -66,6 +67,40 @@ class queryFaceTest extends Test\PHPUnitTestDb
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("id"),  $columnsReal["this.id"]->getEntityFaceElement());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("age"), $columnsReal["this.age"]->getEntityFaceElement());
 
+
+        $queryFace->setColumns(["id","age"=>"ega"]);
+        // Exactly the same tests as previously
+        $columnsReal = $queryFace->getColumnsReal();
+        $this->assertEquals(2, count($columnsReal));
+        $this->assertEquals("this.id", $columnsReal["this.id"]->getAlias());
+        $this->assertEquals("ega", $columnsReal["this.age"]->getAlias());
+        $this->assertEquals("this.id", $columnsReal["this.id"]->getPath());
+        $this->assertEquals("this.age", $columnsReal["this.age"]->getPath());
+        $this->assertEquals(Tree::getEntityFace()->getDirectElement("id"),  $columnsReal["this.id"]->getEntityFaceElement());
+        $this->assertEquals(Tree::getEntityFace()->getDirectElement("age"), $columnsReal["this.age"]->getEntityFaceElement());
+
+
+        $queryFace->setColumns(null);
+        $this->assertEquals([], $queryFace->getColumns());
+
+        try{
+            $queryFace->setColumns("test");
+            $this->fail("Exception expected");
+        }catch (\Face\Exception\BadParameterException $e){
+            $this->assertInstanceOf("\Face\Exception\BadParameterException", $e);
+        }
+
+    }
+
+    public function testSelectColmunClauseString(){
+
+        $query = new \Face\Sql\Query\SelectBuilder(Tree::getEntityFace());
+
+        $column = new Column("this", "aliasId", Tree::getEntityFace()->getDirectElement("id"));
+
+        $expected = "`this`.`id` AS `aliasId`";
+
+        $this->assertEquals($expected, $column->getSqlString($query));
 
     }
 

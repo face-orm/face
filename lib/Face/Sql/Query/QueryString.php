@@ -37,11 +37,14 @@ class QueryString extends FQuery
      * @throws \Face\Exception\RootFaceReachedException
      */
     public function setJoin($path, $columns = null){
-        $this->joins[$path] = new JoinQueryFace($path, $this->baseFace->getElement($path)->getFace(), $this);
+
+        $sqlPath = $this->_doFQLTableName($path, ".");
+
+        $this->joins[$sqlPath] = new JoinQueryFace($sqlPath, $this->baseFace->getElement($path)->getFace(), $this);
         if($columns){
-            $this->joins[$path]->setColumns($columns);
+            $this->joins[$sqlPath]->setColumns($columns);
         }
-        return $this->joins[$path];
+        return $this->joins[$sqlPath];
     }
 
     public function getSqlString()

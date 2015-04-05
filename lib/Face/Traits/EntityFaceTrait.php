@@ -149,12 +149,11 @@ trait EntityFaceTrait
         // TODO throw exception on "no way to set element"
 
     }
-    
-    
-    
+
+
+
     /**
-     *
-     * @return \Face\Core\EntityFace
+     * @see EntityInterface::getEntityFace
      */
     public static function getEntityFace(FaceLoader $faceLoader = null)
     {
@@ -251,38 +250,38 @@ trait EntityFaceTrait
     /**
      * shortcut to create a @see \Face\Sql\Query\QueryString
      * @param string $string the SQL query
-     * @param array $options fields to select and
+     * @param array $options fields to select and It doesnt work anymore, to be fixed in 1.0
      */
-    public static function queryString($string, $options)
+    public static function queryString($string, $options = [])
     {
         
         $joins = [];
         $selectedColumns = [];
         
-        if (is_array($options)) {
-            if (isset($options["join"])) {
-                foreach ($options["join"] as $j) {
-                    $joins["this.$j"] = self::getEntityFace()->getElement($j)->getFace();
-                }
-            }
-            
-            if (isset($options["select"])) {
-                foreach ($options["select"] as $k => $j) {
-                    $basePath = is_numeric($k) ? $j : $k;
-                    
-                    if (!StringUtils::beginsWith("this", $basePath)) {
-                        $basePath = "this." . $basePath;
-                    }
-                    
-                    $basePath = substr($basePath, 0, strrpos($basePath, "."));
-                    
-                    self::__queryStringDoColumnRecursive($selectedColumns, $k, $j, $basePath);
-
-                    
-                }
-            }
-            
-        }
+//        if (is_array($options)) {
+//            if (isset($options["join"])) {
+//                foreach ($options["join"] as $j) {
+//                    $joins["this.$j"] = self::getEntityFace()->getElement($j)->getFace();
+//                }
+//            }
+//
+//            if (isset($options["select"])) {
+//                foreach ($options["select"] as $k => $j) {
+//                    $basePath = is_numeric($k) ? $j : $k;
+//
+//                    if (!StringUtils::beginsWith("this", $basePath)) {
+//                        $basePath = "this." . $basePath;
+//                    }
+//
+//                    $basePath = substr($basePath, 0, strrpos($basePath, "."));
+//
+//                    self::__queryStringDoColumnRecursive($selectedColumns, $k, $j, $basePath);
+//
+//
+//                }
+//            }
+//
+//        }
         $qS = new \Face\Sql\Query\QueryString(self::getEntityFace(), $string, $joins, $selectedColumns);
         
         return $qS;

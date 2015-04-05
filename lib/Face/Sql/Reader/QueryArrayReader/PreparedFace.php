@@ -6,29 +6,28 @@ namespace Face\Sql\Reader\QueryArrayReader;
 
 use Face\Config;
 use Face\Core\EntityFace;
+use Face\Core\EntityInterface;
 use Face\Core\InstancesKeeper;
 use Face\Sql\Query\FQuery;
+use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Util\Operation;
 use Face\Util\StringUtils;
 
 class PreparedFace extends SoftPreparedFace{
 
-
+    /**
+     * @var Operation[]
+     */
     protected $operationsList=[];
 
     public function _build()
     {
-        foreach($this->face->getElements() as $e){
-            $this->columnNames[$e->getName()] = $this->makeColumnName($e);
-        }
-
-        $this->rowIdentityCb = $this->_compileRowIdentity();
-
+        parent::_build();
         $this->_prepareOperations(true);
     }
 
 
-    public function runOperations($instance, $array,InstancesKeeper $instanceKeeper, &$unfound){
+    public function runOperations(EntityInterface $instance, $array,InstancesKeeper $instanceKeeper, &$unfound){
 
         foreach($this->operationsList as $k=> $operation) {
 
@@ -53,10 +52,9 @@ class PreparedFace extends SoftPreparedFace{
                     $identity =  $operation->getOptions("relatedPreparedFace")->rowIdentity($array);
                     $element = $operation->getOptions("element");
 
-
                     if (!empty($identity)) {
                         if ($instanceKeeper->hasInstance($element->getClass(), $identity)) {
-                            // if element is already instanciated
+                            // if element is already instanced
                             $childInstance = $instanceKeeper->getInstance($element->getClass(), $identity);
                             $instance->faceSetter($element, $childInstance);
                         } else {
@@ -70,12 +68,12 @@ class PreparedFace extends SoftPreparedFace{
 
                 case self::OPERATION_DO_VALUES:
 
+
                     $cName = $operation->getOptions("columnName");
                     $value = isset($array[$cName]) ? $array[$cName] : null;
 
-                    if ($value) {
-                        $instance->faceSetter($operation->getOptions("element"), $value);
-                    }
+                    $instance->faceSetter($operation->getOptions("element"), $value);
+
 
                     break;
             }
@@ -85,37 +83,31 @@ class PreparedFace extends SoftPreparedFace{
 
     /**
      * search to put children/parent instance as reference of the given entity
-     * @param type $instance
-     * @param \Face\Core\EntityFace $face
-     * @param type $array
-     * @param type $basePath
-     * @param type $faceList
      * @throws \Exception
      */
     protected function _prepareOperations($doValues = false)
-        //protected function instanceHydrateAndForwardEntities($instance, \Face\Core\EntityFace $face, $array, $basePath, $faceList, $doValues = false)
     {
 
         $faceLoader = $this->getFace()->getFaceLoader();
-
         $face = $this->face;
-
-        $faceList = $this->preparedOperation;
+        $faceList = $this->preparedOperation->getPreparedFaces();
 
         foreach ($face->getElements() as $element) {
+            $pathToElement = $this->path . "." . $element->getName();
             if ($element->isEntity()) {
-                $pathToElement=$this->path . "." . $element->getName();
-
-// if element is joined we know what to do
+                // if element is joined we know what to do
                 if (isset($faceList[$pathToElement])) {
+
+                    $queryFace = $faceList[$pathToElement]->getQueryFace();
 
                     $operation = new Operation(self::OPERATION_EXISTING_ENTITY);
                     $operation->setOptions("element",$element);
-                    $softPFace = new SoftPreparedFace($this->path.".".$element->getName(), $element->getFace(), $this->preparedOperation);
+                    $softPFace = new SoftPreparedFace($queryFace, $this->preparedOperation);
                     $softPFace->_build();
                     $operation->setOptions("relatedPreparedFace", $softPFace );
 
                     $this->operationsList[$pathToElement]=$operation;
+
 
 
 
@@ -153,30 +145,30 @@ class PreparedFace extends SoftPreparedFace{
                     // A was the previous step
 
 
+                    $elementFace = $faceLoader->getFaceForClass($element->getClass());
+                    $related = $elementFace->getDirectElement($element->getRelatedBy());
 
-                    $related = $faceLoader->getFaceForClass($element->getClass())->getDirectElement($element->getRelatedBy());
                     if ($related) {
                         // B
                         // this.tree => bad
                         // this.tree.lemon => good
                         if (substr_count($this->path, ".")<1) {
-                            $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
+                            $this->operationsList[$pathToElement] = new Operation(self::OPERATION_PASS);
 
                         } else {
                             // find the related base path and take its face
                             $relatedBasePath = StringUtils::subStringBefore($this->path, ".");
-                            $parentFace = $faceList[$relatedBasePath];
+                            $parentQueryFace = $faceList[$relatedBasePath]->getQueryFace();
 
                             // C
                             // Same class ?
-                            if ($parentFace->getFace()->getClass() != $element->getClass()) {
-                                $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
-
+                            if ($parentQueryFace->getFace()->getClass() != $element->getClass()) {
+                                $this->operationsList[$pathToElement] = new Operation(self::OPERATION_PASS);
                             } else {
-                                /* @var $parentFace \Face\Core\EntityFace */
+                                /* @var $parentQueryFace QueryFace */
                                 // D
                                 // Look if parent and child refer to the same one
-                                if ($parentFace->getFace()->getDirectElement($element->getRelatedBy())->getRelatedBy() == $element->getName()) {
+                                if ($parentQueryFace->getFace()->getDirectElement($element->getRelatedBy())->getRelatedBy() == $element->getName()) {
                                     $relatedBasePath=substr($this->path, 0, strrpos($this->path, '.'));
 
                                     // if $related is not in $facelist, then it means that $related is not a part of the query, ignore it..
@@ -184,7 +176,7 @@ class PreparedFace extends SoftPreparedFace{
                                         $operation = new Operation(self::OPERATION_FORWARD_JOIN);
                                         $operation->setOptions("element",$element);
 
-                                        $softPFace = new SoftPreparedFace($relatedBasePath, $related->getParentFace(), $this->preparedOperation);
+                                        $softPFace = new SoftPreparedFace($parentQueryFace, $this->preparedOperation);
                                         $softPFace->_build();
                                         $operation->setOptions("relatedPreparedFace", $softPFace );
 
@@ -205,19 +197,25 @@ class PreparedFace extends SoftPreparedFace{
 
 
                     } else {
-                        $this->operationsList[$pathToElement]=new Operation(self::OPERATION_PASS);
-
+                        //$this->operationsList[$pathToElement] = new Operation(self::OPERATION_PASS);
                     }
 
                 }
 
-            } elseif ($doValues) {
+            } else {
 
-                $operation = new Operation(self::OPERATION_DO_VALUES);
-                $operation->setOptions("columnName", $this->columnNames[$element->getName()]);
-                $operation->setOptions("element", $element);
 
-                $this->operationsList[$element->getName()] = $operation;
+
+
+                if(isset($this->columns[$pathToElement])){
+                    $column = $this->columns[$pathToElement];
+                    $operation = new Operation(self::OPERATION_DO_VALUES);
+                    $operation->setOptions("columnName", $column->getAlias() );
+                    $operation->setOptions("element", $column->getEntityFaceElement());
+                    $this->operationsList[$element->getName()] = $operation;
+                }
+
+
             }
         }
     }

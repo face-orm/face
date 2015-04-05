@@ -6,11 +6,11 @@ use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\FQuery;
 
-class WhereGroup extends AbstractWhereClause implements SqlClauseInterface
+class WhereGroup extends AbstractWhereClause
 {
 
     /**
-     * @var WhereInterface[]
+     * @var AbstractWhereClause[]
      */
     protected $whereList = [];
 
@@ -37,7 +37,7 @@ class WhereGroup extends AbstractWhereClause implements SqlClauseInterface
         return $str . ")";
     }
 
-    public function addWhere(WhereInterface $where, $logic = null)
+    public function addWhere(AbstractWhereClause $where, $logic = null)
     {
         $this->whereList[] = [$where,$logic];
     }

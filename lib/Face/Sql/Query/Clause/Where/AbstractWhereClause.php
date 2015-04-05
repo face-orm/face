@@ -3,6 +3,8 @@
 namespace Face\Sql\Query\Clause\Where;
 
 
-abstract class AbstractWhereClause {
+use Face\Sql\Query\Clause\SqlClauseInterface;
+
+abstract class AbstractWhereClause implements SqlClauseInterface {
 
 }

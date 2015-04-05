@@ -1,5 +1,7 @@
 <?php
 
+use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\SelectBuilder\QueryFace;
 
 
 class QueryStringTest extends Test\PHPUnitTestDb
@@ -10,7 +12,7 @@ class QueryStringTest extends Test\PHPUnitTestDb
     
     
     CONST QUERY_STRING = 
-           "SELECT tree.id,tree.age,lemon.id as lemon_id,lemon.mature,lemon.tree_id, seed.id as seed_id
+           "SELECT tree.id, tree.age, lemon.id as lemon_id,lemon.mature,lemon.tree_id, seed.id as seed_id
               FROM tree 
               JOIN lemon ON lemon.tree_id=tree.id 
               LEFT JOIN seed ON seed.lemon_id=lemon.id 
@@ -38,30 +40,20 @@ class QueryStringTest extends Test\PHPUnitTestDb
         
         $qS = self::QUERY_STRING;
 
-        $q = new \Face\Sql\Query\QueryString(Tree::getEntityFace(), $qS,
-            [
-                "this.lemons" => Lemon::getEntityFace(),
-                "this.lemons.seeds" => Seed::getEntityFace()
-            ],
-            [
-                "this.id"=>"id",
-                "this.age"=>"age",
-                "this.lemons.id"=>"lemon_id",
-                "this.lemons.mature"=>"mature",
-                "this.lemons.tree_id"=>"tree_id",
-                "this.lemons.seeds.id"=>"seed_id",
-                "this.lemons.seeds.lemon_id"=>"lemon_id",
-                "this.lemons.seeds.fertil"=>"fertil",
-            ]
-        );
-        
+        $q = new \Face\Sql\Query\QueryString(Tree::getEntityFace(), $qS);
+        $q->getBaseQueryFace()->setColumns(["age" => "age", "id" => "id"]);
+        $q->setJoin("lemons", ["tree_id" => "tree_id",  "mature" => "mature", "id" => "lemon_id"]);
+        $q->setJoin("lemons.seeds", ["id" => "seed_id"]);
+
+        $sql = $pdo->prepare($q->getSqlString());
+        $sql->execute();
+
+
         $res = Face\ORM::execute($q, $pdo);
-        
+
         $tree = $res->getInstancesByClass("Tree")[1];
-        
+
         $this->_testAssertion($tree);
-       
-        
         
     }
     
@@ -72,29 +64,10 @@ class QueryStringTest extends Test\PHPUnitTestDb
         
         $pdo = $this->getConnection()->getConnection();
         
-        $q = Tree::queryString(self::QUERY_STRING, [
-            
-            "join"   => ["lemons","lemons.seeds"],
-            "select" => [
-                
-                // TREE
-                "id","this.age",
-                
-                // LEMON
-                "lemons.id"=>"lemon_id",
-                "lemons.mature",
-                "lemons" => [
-                    "tree_id",
-                    "seeds.id"=>"seed_id",
-                    "seeds"=>[
-                        "lemon_id",
-                    ]
-                ],
-                "lemons.seeds.fertil"
-                
-            ]
-            
-        ]);
+        $q = Tree::queryString(self::QUERY_STRING);
+        $q->getBaseQueryFace()->setColumns(["age" => "age", "id" => "id"]);
+        $q->setJoin("lemons", ["tree_id" => "tree_id",  "mature" => "mature", "id" => "lemon_id"]);
+        $q->setJoin("lemons.seeds", ["id" => "seed_id"]);
         
         $res = Face\ORM::execute($q, $pdo);
         

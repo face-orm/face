@@ -43,16 +43,20 @@ class QueryArrayReader implements QueryReaderInterface
         $this->FQuery = $FQuery;
 
         if (!$instancesKeeper) {
-            $this->instancesKeeper=new InstancesKeeper();
+            $this->instancesKeeper = new InstancesKeeper();
         } else {
-            $this->instancesKeeper=$instancesKeeper;
+            $this->instancesKeeper = $instancesKeeper;
         }
 
-        $this->resultSet=new \Face\Sql\Result\ResultSet($FQuery->getBaseFace(), $this->instancesKeeper);
+        $this->resultSet = new \Face\Sql\Result\ResultSet($FQuery->getBaseFace(), $this->instancesKeeper);
         
     }
 
-
+    /**
+     * parse the pdo statement of the fquery
+     * @param \PDOStatement $stmt
+     * @return \Face\Sql\Result\ResultSet
+     */
     public function read(\PDOStatement $stmt)
     {
 
@@ -63,7 +67,7 @@ class QueryArrayReader implements QueryReaderInterface
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // loop over joined faces
-            foreach ($preparedReader as $basePath => $preparedFace) {
+            foreach ($preparedReader->getPreparedFaces() as $basePath => $preparedFace) {
 
                 $identity = $preparedFace->rowIdentity($row, $basePath);
 
@@ -121,7 +125,7 @@ class QueryArrayReader implements QueryReaderInterface
      * @param array $array the array of data
      * @param string $basePath
      * @param array $faceList
-     * @return \Face\Sql\Reader\className
+     * @return object the new instance of the element
      */
     protected function createInstance(\Face\Core\EntityFace $face)
     {
@@ -130,10 +134,4 @@ class QueryArrayReader implements QueryReaderInterface
 
         return $instance;
     }
-
-
-
-
-
-
 }

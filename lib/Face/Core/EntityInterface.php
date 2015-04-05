@@ -17,8 +17,10 @@ interface EntityInterface{
      */
     public function faceSetter($path, $value, FaceLoader $faceLoader = null);
 
+
     /**
-     * @see EntityFaceTrait::getEntityFace
+     *
+     * @return \Face\Core\EntityFace
      */
     public static function getEntityFace(FaceLoader $faceLoader = null);
 

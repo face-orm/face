@@ -71,13 +71,34 @@ class QueryFace {
      */
     public function setColumns($columns)
     {
+        $this->columns = [];
 
         if(null === $columns){
-            $this->columns = [];
+            return $this;
         }else if(!is_array($columns)){
             throw new BadParameterException("First parameter of Queryface should be an array. " . gettype($columns) . " given");
         }else{
-            $this->columns = $columns;
+
+
+            foreach($columns as $k=>$v){
+
+                if($v{0} == '!' || $v == "*"){
+                    $this->addColumn($v);
+                }else{
+
+                    if(is_int($k)){
+                        $alias = null;
+                        $column = $v;
+                    }else{
+                        $alias = $v;
+                        $column = $k;
+                    }
+
+                    $this->addColumn($column, $alias);
+                }
+
+            }
+
         }
 
         return $this;
@@ -88,7 +109,11 @@ class QueryFace {
      * @return $this
      */
     public function addColumn($column, $alias = null){
-        $this->columns[] = ["column" => $column, "alias" => $alias];
+        if(null === $alias){
+            $this->columns[] = $column;
+        }else{
+            $this->columns[] = ["column" => $column, "alias" => $alias];
+        }
         return $this;
     }
 
@@ -131,19 +156,18 @@ class QueryFace {
                         $column = $column["column"];
                     }else{
                         $alias = null;
-                        $column = $column["column"];
                     }
 
                     if ($column{0} == "!") {
-                        $realPath = $this->_makePath(substr($column, 1));
+                        $realPath = $this->makePath(substr($column, 1));
                         unset($finalColumns[$realPath]);
                     } else {
                         $elm = $this->getFace()->getDirectElement($column);
-                        $realPath = $this->_makePath($column);
+                        $realPath = $this->makePath($column);
                         if(!$alias){
                             $alias = $realPath;
                         }
-                        $finalColumns[$realPath] = new Column($realPath, $alias, $elm);
+                        $finalColumns[$realPath] = new Column($this->getPath(), $alias, $elm);
                     }
 
                 }
@@ -162,9 +186,9 @@ class QueryFace {
     protected function _includeIdentifiers(&$columns){
         foreach($this->face->getElements() as $elm){
             if($elm->isValue() && $elm->isIdentifier()){
-                $realPath = $this->_makePath($elm->getName());
+                $realPath = $this->makePath($elm->getName());
                 if(!isset($columns[$realPath])) {
-                    $columns[$realPath] = new Column($realPath, $realPath, $elm);
+                    $columns[$realPath] = new Column($this->getPath(), $realPath, $elm);
                 }
             }
         }
@@ -174,15 +198,15 @@ class QueryFace {
 
         foreach($this->face->getElements() as $elm){
             if($elm->isValue()){
-                $realPath = $this->_makePath($elm->getName());
-                $columns[$realPath] = new Column($realPath, $realPath, $elm);
+                $realPath = $this->makePath($elm->getName());
+                $columns[$realPath] = new Column($this->getPath(), $realPath, $elm);
             }
         }
 
     }
 
-    protected function _makePath($columnName){
-        return $this->basePath . "." . $columnName; // TODO  : dot token
+    public function makePath($columnName){
+        return $this->basePath . "." . $columnName;
     }
 
 
