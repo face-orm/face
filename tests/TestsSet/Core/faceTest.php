@@ -3,7 +3,6 @@
 
 class FaceTest extends PHPUnit_Framework_TestCase
 {
-
     
     public function testGetter()
     {
@@ -65,8 +64,42 @@ class FaceTest extends PHPUnit_Framework_TestCase
             $this->assertInstanceOf("Face\Exception\BadParameterException",$e);
         }
 
+        try{
+            $a->getEntityFace()->getElement("b",-1);
+            $this->fail("Should throw exception");
+        }catch(\Exception $e){
+            $this->assertInstanceOf("Face\Exception\BadParameterException",$e);
+        }
+
+        try{
+            $a->getEntityFace()->getElement("bb");
+            $this->fail("Should throw exception");
+        }catch(\Exception $e){
+            // todo  check error message items
+            $this->assertInstanceOf("Face\Exception\FaceElementDoesntExistsException",$e);
+        }
+
+        try{
+            $a->getEntityFace()->getElement("ab");
+            $this->fail("Should throw exception");
+        }catch(\Exception $e){
+            // todo  check error message items
+            $this->assertInstanceOf("Face\Exception\FaceElementDoesntExistsException",$e);
+        }
+
 
     }
+
+
+    public function testConstruction(){
+
+        $face = new \Face\Core\EntityFace();
+
+        $face->setClass("testClass");
+        $this->assertEquals("testClass", $face->getClass());
+
+    }
+
  
 
 }

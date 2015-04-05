@@ -2,6 +2,9 @@
 
 namespace Face\Core;
 
+use Face\Exception\BadParameterException;
+use Face\Exception\FaceElementDoesntExistsException;
+use Face\Util\ArrayUtils;
 use Face\Util\StringUtils;
 
 class EntityFace implements \IteratorAggregate
@@ -31,8 +34,8 @@ class EntityFace implements \IteratorAggregate
         $this->primaries = array();
         $this->relatedTable = array();
         
-        $this->class = $params["class"];
-        $this->name = $params["name"];
+        $this->class = ArrayUtils::getIfArrayKey($params, "class");
+        $this->name = ArrayUtils::getIfArrayKey($params, "name");;
 
         if (isset($params['elements'])) {
             foreach ($params['elements'] as $k => $elmParams) {
@@ -116,7 +119,7 @@ class EntityFace implements \IteratorAggregate
         
         if (null!==$offset) {
             if ($offset<0) {
-                throw new \Exception("\$offset can't be negative. ".$offset." given");
+                throw new BadParameterException("\$offset can't be negative. ".$offset." given");
             }
 
             $lastPath="";
@@ -146,18 +149,8 @@ class EntityFace implements \IteratorAggregate
         }
         
         if (!isset($this->elements[$name])) {
-            $names = $this->debugGetRelatedName($name);
 
-
-            if (count($names)>0) {
-                $relatedStr  = "Did you mean '";
-                $relatedStr .= implode("' , '", $names);
-                $relatedStr .= "' ?";
-            } else {
-                $relatedStr ="";
-            }
-
-            throw new \Exception( "Face : '" . $this->getName() . "' has no element called '$name' $relatedStr");
+            throw new FaceElementDoesntExistsException($name, $this);
         }
 
 
@@ -228,31 +221,5 @@ class EntityFace implements \IteratorAggregate
         }
         
         throw new \Exception("Element '$node' doesnt exist in face '".$this->getName() ."'");
-    }
-
-    /**
-     * Allows to debug typos etc..
-     *
-     * For instance if someone writes 'lemon' instead of 'lemons' we will say "hey ! did you means 'lemons' ? "
-     *
-     * @param $e
-     * @return array
-     */
-    protected function debugGetRelatedName($e)
-    {
-
-        $names=[];
-
-        foreach ($this as $elm) {
-            if (StringUtils::beginsWith($e, $elm->getName())) {
-                $names[] = $elm->getName();
-            }else if (StringUtils::endsWith($e,$elm->getName())){
-                $names[] = $elm->getName();
-            }
-
-            // TODO more global matches
-        }
-
-        return $names;
     }
 }
