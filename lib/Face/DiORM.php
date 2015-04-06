@@ -80,16 +80,22 @@ class DiORM
      * @param \Face\Sql\Query\FQuery $fQuery
      * @return Sql\Result\ResultSet
      */
-    public function select(Sql\Query\FQuery $fQuery)
+    public function select(Sql\Query\FQuery $fQuery, $useGlobalInstanceKeeper = false)
     {
         $j=$fQuery->execute($this->config->getPdo());
 
-        if (!$j->rowCount()) {
-            return new ResultSet($fQuery->getBaseFace(), $this->instancesKeeper);
+        if($useGlobalInstanceKeeper){
+            $instanceKeeper = $this->instancesKeeper;
+        }else{
+            $instanceKeeper = new InstancesKeeper();
         }
 
-        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery, $this->instancesKeeper);
-        $rs=$reader->read($j);
+        if (!$j->rowCount()) {
+            return new ResultSet($fQuery->getBaseFace(), $instanceKeeper);
+        }
+
+        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery, $instanceKeeper);
+        $rs = $reader->read($j);
         return $rs;
     }
 

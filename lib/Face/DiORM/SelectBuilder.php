@@ -21,10 +21,11 @@ class SelectBuilder extends baseSelectBuilder {
     }
 
     /**
+     * @param $useGlobalInstanceKeeper bool true to use the global instance keeper
      * @return \Face\Sql\Result\ResultSet
      */
-    public function results()
+    public function results($useGlobalInstanceKeeper = false)
     {
-        return $this->diOrm->select($this);
+        return $this->diOrm->select($this, $useGlobalInstanceKeeper);
     }
 }
