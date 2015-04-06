@@ -157,7 +157,7 @@ class PreparedFace extends SoftPreparedFace{
 
                         } else {
                             // find the related base path and take its face
-                            $relatedBasePath = StringUtils::subStringBefore($this->path, ".");
+                            $relatedBasePath = StringUtils::subStringBeforeLast($this->path, ".");
                             $parentQueryFace = $faceList[$relatedBasePath]->getQueryFace();
 
                             // C

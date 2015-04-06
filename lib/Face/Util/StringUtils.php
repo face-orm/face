@@ -1,8 +1,6 @@
 <?php
 /**
  * @author Soufiane GHZAL
- * @copyright Laemons
- * @license BSD3
  */
 
 
@@ -12,12 +10,17 @@ class StringUtils
 {
 
 
-
-
-    public static function subStringBefore($haystack, $needle, $n = 1)
+    /**
+     * Get the substring before the last occurence of a character
+     * @param $haystack
+     * @param $needle
+     * @param int $n
+     * @return string
+     */
+    public static function subStringBeforeLast($haystack, $needle, $n = 1)
     {
         while ($n>0) {
-            $haystack=substr($haystack, 0, strrpos($haystack, $needle));
+            $haystack = substr($haystack, 0, strrpos($haystack, $needle));
             $n--;
         }
         return $haystack;
