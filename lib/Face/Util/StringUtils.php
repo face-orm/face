@@ -27,6 +27,28 @@ class StringUtils
     }
 
     /**
+     * Get the substring after the last occurrence of a character
+     * @param $haystack
+     * @param $needle
+     * @param int $n
+     * @return string
+     * TODO : tests suit
+     */
+    public static function subStringAfterLast($haystack, $needle, $n = 1)
+    {
+        $string = "";
+        while ($n>0) {
+            $string .= substr($haystack, strrpos($haystack, $needle) + 1);
+            if($n>1){
+                $string = $needle . $string;
+            }
+            $n--;
+        }
+        return $string;
+    }
+
+
+    /**
      * look if $subject begins with $search
      * @param string $search the string that we want to find in $subject
      * @param string $subject the string in which we search
