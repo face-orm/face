@@ -146,7 +146,13 @@ class PreparedFace extends SoftPreparedFace{
 
 
                     $elementFace = $faceLoader->getFaceForClass($element->getClass());
-                    $related = $elementFace->getDirectElement($element->getRelatedBy());
+
+                    $relatedBy = $element->getRelatedBy();
+                    if($relatedBy){
+                        $related = $elementFace->getDirectElement($relatedBy);
+                    }else{
+                        $related = null;
+                    }
 
                     if ($related) {
                         // B
