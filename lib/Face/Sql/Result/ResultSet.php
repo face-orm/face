@@ -66,6 +66,13 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonSe
     {
         return isset($this->instancesByPathIdentity[$path][$identity]);
     }
+
+    /**
+     * @return array list of existing pathes
+     */
+    public function getPathes(){
+        return array_keys($this->instancesByPathIdentity);
+    }
     
     public function getBaseInstances()
     {
