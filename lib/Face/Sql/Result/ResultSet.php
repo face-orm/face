@@ -96,38 +96,6 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonSe
         return isset($this[$i]) ? $this[$i] : null;
     }
 
-    public function jsonSerialize(){
-
-        $output = [];
-
-        // TODO : children items are not serialized
-        // TODO : use serializable item (related to issue #40) to make this task painless
-
-        $baseFace = $this->baseFace;
-
-        foreach($this->getBaseInstances() as $instance){
-
-            $currentItem = [];
-
-            foreach($baseFace->getElements() as $eElement){
-
-                if($eElement->isValue()){
-
-                    $currentItem[$eElement->getName()] = $instance->faceGetter($eElement);
-
-                }
-
-            }
-
-            $output['items'][] = $currentItem;
-
-        }
-
-        return $output;
-
-    }
-
-
     /**
      * @param EntityFace $join
      * @param EntityFace $from
