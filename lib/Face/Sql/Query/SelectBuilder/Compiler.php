@@ -2,7 +2,11 @@
 
 namespace Face\Sql\Query\SelectBuilder;
 use Face\Sql\Query\Clause\From;
+use Face\Sql\Query\Clause\Group;
+use Face\Sql\Query\Clause\Join;
+use Face\Sql\Query\Clause\OrderBy;
 use Face\Sql\Query\Clause\Select;
+use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\SelectBuilder;
 use Face\Sql\Query\FQuery;
 
@@ -39,33 +43,55 @@ class Compiler {
             }
         }
 
+        $queryBuilder = new Group();
+
+        // SELECT
         $selectClause = new Select($columns);
+        $queryBuilder->addItem($selectClause);
+
+
+        // FROM
         $fromClause = new From($this->selectBuilder->getBaseFace());
+        $queryBuilder->addItem($fromClause);
 
 
-
-
-        $sqlQ = $selectClause->getSqlString($this->selectBuilder) . " " . $fromClause->getSqlString($this->selectBuilder) ;
-
-        $join = $this->prepareJoinClause();
-        if($join){
-            $sqlQ.=" " . $join;
+        // JOINs
+        foreach ($this->selectBuilder->getJoins() as $joinQueryFace) {
+            $join = new Join($this->selectBuilder->getBaseFace(), $joinQueryFace);
+            $queryBuilder->addItem($join);
         }
 
-        $where = $this->prepareWhereClause();
-        if($where){
-            $sqlQ.=" " . $where;
+
+        // SOFT THROUGH JOINs
+        // Soft join
+        if (is_array($this->selectBuilder->getSoftThroughJoin())) {
+            foreach ($this->selectBuilder->getSoftThroughJoin() as $path => $joinQueryFace) {
+                if (!$this->selectBuilder->isJoined($path)) {
+                    $join = new Join($this->selectBuilder->getBaseFace(), $joinQueryFace);
+                    $queryBuilder->addItem($join);
+                }
+            }
         }
 
-        $order = $this->prepareOrderByClause();
-        if($order){
-            $sqlQ.=" " . $order;
+        $whereGroup = $this->selectBuilder->getWhere();
+        if ($whereGroup) {
+            $where = new Where($whereGroup);
+            $queryBuilder->addItem($where);
         }
 
-        $sqlQ = rtrim($sqlQ);
 
-        $fromLimit = $this->selectBuilder->getBaseQueryFace()->getLimit();
-        $fromOffset = $this->selectBuilder->getBaseQueryFace()->getOffset();
+        $orders = $this->selectBuilder->getOrderBy();
+        $orderByClause = new OrderBy();
+        foreach($orders as $order){
+            $orderByClause->addItem($order);
+        }
+        $queryBuilder->addItem($orderByClause);
+
+
+        $sqlQ = $queryBuilder->getSqlString($this->selectBuilder);
+
+//        $fromLimit = $this->selectBuilder->getBaseQueryFace()->getLimit();
+//        $fromOffset = $this->selectBuilder->getBaseQueryFace()->getOffset();
 
         return $sqlQ;
     }
@@ -83,97 +109,6 @@ class Compiler {
     }
 
 
-    public function prepareJoinClause()
-    {
-        $sql = "";
-        foreach ($this->selectBuilder->getJoins() as $path => $joinQueryFace) {
-            $sql .= $this->__prepareJoinClauseFor( $joinQueryFace, false);
-        }
 
-
-
-        // Soft join
-        if (is_array($this->selectBuilder->getSoftThroughJoin())) {
-            foreach ($this->selectBuilder->getSoftThroughJoin() as $path => $joinQueryFace) {
-                if (!$this->selectBuilder->isJoined($path)) {
-                    $sql.=$this->__prepareJoinClauseFor( $joinQueryFace, true);
-                }
-            }
-        }
-
-        return $sql;
-    }
-
-    private function __prepareJoinClauseFor(JoinQueryFace $joinQueryFace, $isSoft)
-    {
-
-        $face = $joinQueryFace->getFace();
-        $path = $joinQueryFace->getPath();
-
-        $joinSql = "";
-        try {
-            $parentFace = $this->selectBuilder->getBaseFace()->getElement($path, 1, $pieceOfPath)->getFace();
-        } catch (\Face\Exception\RootFaceReachedException $e) {
-            $pieceOfPath[0] = "";
-            $pieceOfPath[1] = $path;
-            $parentFace = $this->selectBuilder->getBaseFace();
-        }
-
-        $childElement = $parentFace->getElement($pieceOfPath[1]);
-
-        $joinSql = FQuery::__doFQLJoinTable($path, $face, $parentFace, $childElement, $pieceOfPath[0], $this->selectBuilder->getDotToken(), $isSoft);
-
-        return $joinSql;
-    }
-
-
-    public function prepareWhereClause()
-    {
-        if (null === $this->selectBuilder->getWhere()) {
-            return "";
-        }
-
-        $w = $this->selectBuilder->getWhere()->getSqlString($this->selectBuilder);
-
-        if (empty($w)) {
-            return "";
-        }
-
-
-        return "WHERE " . $w;
-    }
-
-    public function prepareOrderByClause()
-    {
-
-        if (count($this->selectBuilder->getOrderBy()) > 0) {
-            $str = "ORDER BY";
-            $i = 0;
-            foreach($this->selectBuilder->getOrderBy() as $orderBy){
-
-                try {
-                    $parentFace = $this->selectBuilder->getBaseFace()->getElement($orderBy[0], 1, $pieceOfPath)->getFace();
-                } catch (\Face\Exception\RootFaceReachedException $e) {
-                    $pieceOfPath[0] = "";
-                    $pieceOfPath[1] = $orderBy[0];
-                    $parentFace = $this->selectBuilder->getBaseFace();
-                }
-                $childElement = $parentFace->getElement($pieceOfPath[1]);
-
-                if($i>0){
-                    $str.=",";
-                }
-
-                $str .= " " . $this->selectBuilder->_doFQLTableName($pieceOfPath[0], null, true) . "." . $childElement->getSqlColumnName(true) . " " . $orderBy[1];
-                $i++;
-            }
-
-            return $str;
-        }else{
-            return "";
-        }
-
-
-    }
 
 }

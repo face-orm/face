@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: bob
- * Date: 4/8/15
- * Time: 1:33 PM
- */
 
 namespace Face\Sql\Query\Clause;
 

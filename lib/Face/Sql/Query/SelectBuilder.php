@@ -5,6 +5,7 @@ namespace Face\Sql\Query;
 use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
 use Face\Debugger;
+use Face\Sql\Query\Clause\OrderBy;
 use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\SelectBuilder\Compiler;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
@@ -170,7 +171,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
                 throw new \Exception("Value '$direction' for direction is not valid. Please use '" . self::ORDER_ASC . "' or '" . self::ORDER_DESC . "' ");
             }
 
-            $this->orderBy[] = [$field, $directionUpper];
+            $this->orderBy[] = new OrderBy\Field($this->baseFace, $field, $direction);
         }
 
         return $this;
@@ -293,6 +294,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
                 $sqlPath = $this->_doFQLTableName($nsrelation, ".");
 
                 $this->softThroughJoin[$sqlPath] = new JoinQueryFace($sqlPath, $relatedElement->getFace(), $this);
+                $this->softThroughJoin[$sqlPath]->setIsSoft(true);
                 $values = $this->__whereINRelationOneIdentifierGetValues($entities, null, $relatedElement);
                 $this->_whereInRaw($this->_doFQLTableName("$relation.through", null, true) . ".`$itsColumn`", $values);
             } else {
