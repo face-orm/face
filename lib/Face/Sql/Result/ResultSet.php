@@ -13,7 +13,7 @@ use Face\Core\InstancesKeeper;
  *
  * @author sghzal
  */
-class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate, \JsonSerializable
+class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     
     /**

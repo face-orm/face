@@ -6,6 +6,7 @@ use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
 use Face\Debugger;
 use Face\Sql\Query\Clause\Where;
+use Face\Sql\Query\SelectBuilder\Compiler;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
 use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Traits\ContextAwareTrait;
@@ -60,47 +61,47 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
     public function getSqlString()
     {
 
-        $sqlQ=$this->prepareSelectClause();
-        $sqlQ.=" ".$this->prepareFromClause();
-
-        $join = $this->prepareJoinClause();
-        if($join){
-            $sqlQ.=" " . $join;
-        }
-
-        $where = $this->prepareWhereClause();
-        if($where){
-            $sqlQ.=" " . $where;
-        }
-
-        $order = $this->prepareOrderByClause();
-        if($order){
-            $sqlQ.=" " . $order;
-        }
-
-        $sqlQ = rtrim($sqlQ);
-
-        $fromLimit = $this->fromQueryFace->getLimit();
-        $fromOffset = $this->fromQueryFace->getOffset();
-
-        if( ($fromLimit > 0 || $fromOffset > 0) && count($this->joins) == 0) {
-
-            if ($fromLimit > 0) {
-                $sqlQ .= " LIMIT " . $fromLimit;
-            }
-
-
-            if ($fromOffset > 0) {
-                $sqlQ .= " OFFSET " . $fromOffset;
-            }
-        }
-
-        return $sqlQ;
+        $compiler = new Compiler($this);
+        return $compiler->compile();
 
     }
 
     /**
-     * Be aware that this method wont use the global offset, instead it will be used into the FROM clause
+     * @return array
+     */
+    public function getSoftThroughJoin()
+    {
+        return $this->softThroughJoin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDotToken()
+    {
+        return $this->dotToken;
+    }
+
+    /**
+     * @return Where\WhereGroup
+     */
+    public function getWhere()
+    {
+        return $this->where;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderBy()
+    {
+        return $this->orderBy;
+    }
+
+
+
+    /**
+     * Be aware that this method wont use the global offset, it will offset on the FROM table only
      * @param int $offset the offset used for the OFFSET clause of the FROM table
      * @return SelectBuilder
      */
@@ -112,9 +113,8 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
 
     /**
-     * Be aware that this method wont use the global limit, instead it will be used into the FROM clause
-     *
-     *
+     * Be aware that this method wont use the global limit, it will offset on the FROM table only
+
      * @param int $limit limit used for the LIMIT clause
      * @param int $offset optionally you can pass the offset in this method. It's aimed to mimic the ``LIMIT 2,10`` syntax
      * @return SelectBuilder
@@ -337,146 +337,5 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
         return $values;
     }
 
-    public function prepareSelectClause()
-    {
 
-        /* @var $facesToSelect QueryFace[] */
-        $facesToSelect["this"] = $this->fromQueryFace;
-        $facesToSelect = array_merge($facesToSelect, $this->joins);
-
-        $selectFields = [];
-
-        foreach ($facesToSelect as $path => $queryFace) {
-            $truePath = $this->_doFQLTableName($path, null, true);
-            foreach ($queryFace->getColumnsReal() as $column) {
-                $selectFields[] = $column->getSqlString($this);
-            }
-        }
-
-        $sql="SELECT ";
-        $sql.=implode(", ", $selectFields);
-
-
-        return $sql;
-    }
-
-    public function prepareFromClause()
-    {
-
-        $baseTable = $this->baseFace->getSqlTable(true);
-
-        $table = "";
-
-        $fromLimit = $this->fromQueryFace->getLimit();
-        $fromOffset = $this->fromQueryFace->getOffset();
-
-        if( ($fromLimit > 0 || $fromOffset > 0) && count($this->joins)>0){
-
-                $table = "SELECT * FROM $baseTable";
-                if($fromLimit>0){
-                    $table .= " LIMIT " . $fromLimit;
-                }
-                if($fromOffset>0){
-                    $table .= " OFFSET " . $fromOffset;
-                }
-
-                $table = "($table)";
-
-        }else{
-            $table = $baseTable;
-        }
-
-        return "FROM " . $table . " AS `this`";
-    }
-
-    public function prepareJoinClause()
-    {
-        $sql = "";
-        foreach ($this->joins as $path => $joinQueryFace) {
-            $sql .= $this->__prepareJoinClauseFor( $joinQueryFace, false);
-        }
-
-        // Soft join
-        if (is_array($this->softThroughJoin)) {
-            foreach ($this->softThroughJoin as $path => $joinQueryFace) {
-                if (!$this->isJoined($path)) {
-                    $sql.=$this->__prepareJoinClauseFor( $joinQueryFace, true);
-                }
-            }
-        }
-
-        return $sql;
-    }
-
-    private function __prepareJoinClauseFor(JoinQueryFace $joinQueryFace, $isSoft)
-    {
-
-        $face = $joinQueryFace->getFace();
-        $path = $joinQueryFace->getPath();
-
-        $joinSql = "";
-        try {
-            $parentFace = $this->baseFace->getElement($path, 1, $pieceOfPath)->getFace();
-        } catch (\Face\Exception\RootFaceReachedException $e) {
-            $pieceOfPath[0] = "";
-            $pieceOfPath[1] = $path;
-            $parentFace = $this->baseFace;
-        }
-
-        $childElement = $parentFace->getElement($pieceOfPath[1]);
-
-        $joinSql = FQuery::__doFQLJoinTable($path, $face, $parentFace, $childElement, $pieceOfPath[0], $this->dotToken, $isSoft);
-
-        return $joinSql;
-    }
-
-
-    public function prepareWhereClause()
-    {
-        if (null===$this->where) {
-            return "";
-        }
-
-        $w = $this->where->getSqlString($this);
-
-        if (empty($w)) {
-            return "";
-        }
-
-
-        return "WHERE " . $w;
-    }
-
-    public function prepareOrderByClause()
-    {
-
-        if (count($this->orderBy) > 0) {
-            $str = "ORDER BY";
-            $i = 0;
-            foreach($this->orderBy as $orderBy){
-
-                try {
-                    $parentFace = $this->baseFace->getElement($orderBy[0], 1, $pieceOfPath)->getFace();
-                } catch (\Face\Exception\RootFaceReachedException $e) {
-                    $pieceOfPath[0] = "";
-                    $pieceOfPath[1] = $orderBy[0];
-                    $parentFace = $this->baseFace;
-                }
-                $childElement = $parentFace->getElement($pieceOfPath[1]);
-
-                if($i>0){
-                    $str.=",";
-                }
-
-                $str .= " " . $this->_doFQLTableName($pieceOfPath[0], null, true) . "." . $childElement->getSqlColumnName(true) . " " . $orderBy[1];
-                $i++;
-            }
-
-            return $str;
-        }else{
-            return "";
-        }
-
-
-    }
 }
