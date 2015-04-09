@@ -4,6 +4,8 @@ namespace Face\Sql\Query\SelectBuilder;
 use Face\Sql\Query\Clause\From;
 use Face\Sql\Query\Clause\Group;
 use Face\Sql\Query\Clause\Join;
+use Face\Sql\Query\Clause\Limit;
+use Face\Sql\Query\Clause\Offset;
 use Face\Sql\Query\Clause\OrderBy;
 use Face\Sql\Query\Clause\Select;
 use Face\Sql\Query\Clause\Where;
@@ -18,7 +20,7 @@ use Face\Sql\Query\FQuery;
  *
  * @package Face\Sql\Query\SelectBuilder
  */
-class Compiler {
+class StandardCompiler {
 
     /**
      * @var SelectBuilder
@@ -62,8 +64,7 @@ class Compiler {
         }
 
 
-        // SOFT THROUGH JOINs
-        // Soft join
+        // SOFT JOINs
         if (is_array($this->selectBuilder->getSoftThroughJoin())) {
             foreach ($this->selectBuilder->getSoftThroughJoin() as $path => $joinQueryFace) {
                 if (!$this->selectBuilder->isJoined($path)) {
@@ -73,13 +74,14 @@ class Compiler {
             }
         }
 
+        // WHERE
         $whereGroup = $this->selectBuilder->getWhere();
         if ($whereGroup) {
             $where = new Where($whereGroup);
             $queryBuilder->addItem($where);
         }
 
-
+        // ORDER
         $orders = $this->selectBuilder->getOrderBy();
         $orderByClause = new OrderBy();
         foreach($orders as $order){
@@ -87,28 +89,19 @@ class Compiler {
         }
         $queryBuilder->addItem($orderByClause);
 
+        // LIMIT
+        $limit = new Limit($this->selectBuilder->getLimit());
+        $queryBuilder->addItem($limit);
+
+        // OFFSET
+        $offset = new Offset($this->selectBuilder->getOffset());
+        $queryBuilder->addItem($offset);
+
 
         $sqlQ = $queryBuilder->getSqlString($this->selectBuilder);
 
-//        $fromLimit = $this->selectBuilder->getBaseQueryFace()->getLimit();
-//        $fromOffset = $this->selectBuilder->getBaseQueryFace()->getOffset();
 
         return $sqlQ;
     }
-
-
-
-    /**
-     * @param string $path
-     * @param string $token the token to use for separate elements of the path. Default  $this->getDotToken() will be used
-     * @return string
-     */
-    public function _doFQLTableName($path, $escape = false)
-    {
-        return FQuery::__doFQLTableNameStatic($path, ".", $escape);
-    }
-
-
-
 
 }

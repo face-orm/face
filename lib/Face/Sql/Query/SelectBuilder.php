@@ -10,6 +10,7 @@ use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\SelectBuilder\Compiler;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
 use Face\Sql\Query\SelectBuilder\QueryFace;
+use Face\Sql\Query\SelectBuilder\StandardCompiler;
 use Face\Traits\ContextAwareTrait;
 use Face\Traits\EntityFaceTrait;
 
@@ -42,6 +43,9 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
      */
     protected $softThroughJoin;
 
+    protected $limit;
+    protected $offset;
+
 
     /**
      * used to generate unique bound params for whereIn method
@@ -62,7 +66,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
     public function getSqlString()
     {
 
-        $compiler = new Compiler($this);
+        $compiler = new StandardCompiler($this);
         return $compiler->compile();
 
     }
@@ -108,7 +112,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
      */
     public function offset($offset)
     {
-        $this->fromQueryFace->setOffset(intval($offset));
+        $this->offset = $offset;
         return $this;
     }
 
@@ -122,12 +126,30 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
      */
     public function limit($limit, $offset=null)
     {
-        $this->fromQueryFace->setLimit(intval($limit));
+        $this->limit = $limit;
         if(null !== $offset){
-            $this->offset($offset);
+            $this->offset = $offset;
         }
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+
 
 
     /**

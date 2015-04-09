@@ -3,10 +3,11 @@
 namespace Face\Sql\Query\Clause;
 
 
+use Face\Core\EntityFace;
 use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\FQuery;
 
-class Select implements SqlClauseInterface {
+class GroupBy implements SqlClauseInterface{
 
     /**
      * @var Column[]
@@ -18,21 +19,21 @@ class Select implements SqlClauseInterface {
         $this->columns = $columns;
     }
 
-
     public function getSqlString(FQuery $q)
     {
-        $sql="SELECT ";
+        $string = "GROUP BY ";
 
-
-        $selectFields = [];
-
-        foreach ($this->columns as $column) {
-            $selectFields[] = $column->getSqlString($q);
+        $i=0;
+        foreach($this->columns as $column){
+            if($i>0){
+                $string .= ", ";
+            }
+            $string .= $column->getSqlPath();
+            $i++;
         }
-        $sql .= implode(", ", $selectFields);
 
+        return $string;
 
-        return $sql;
     }
 
 

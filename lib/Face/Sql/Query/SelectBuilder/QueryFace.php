@@ -12,8 +12,6 @@ class QueryFace {
      * @var EntityFace
      */
     protected $face;
-    protected $limit;
-    protected $offset;
     protected $columns = [];
 
     protected $basePath;
@@ -23,38 +21,6 @@ class QueryFace {
     {
         $this->face = $face;
         $this->basePath = $basePath;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    /**
-     * @param mixed $limit
-     */
-    public function setLimit($limit)
-    {
-        $this->limit = $limit;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @param mixed $offset
-     */
-    public function setOffset($offset)
-    {
-        $this->offset = $offset;
     }
 
     /**

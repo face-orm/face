@@ -31,8 +31,11 @@ class Column implements SqlClauseInterface {
     public function getSqlString(FQuery $fQuery)
     {
         return
-            $fQuery->_doFQLTableName($this->parentPath, null, true) . '.' . $this->entityFaceElement->getSqlColumnName(true)
-            . " AS " . $this->getAlias(true);
+            $this->getSqlPath() . " AS " . $this->getAlias(true);
+    }
+
+    public function getSqlPath(){
+        return FQuery::__doFQLTableNameStatic($this->parentPath, null, true) . '.' . $this->entityFaceElement->getSqlColumnName(true);
     }
 
     /**
