@@ -36,6 +36,16 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
         $this->baseFace = $baseFace;
     }
 
+    /**
+     * @return EntityFace
+     */
+    public function getBaseFace()
+    {
+        return $this->baseFace;
+    }
+
+
+
     public function getInstanceKeeper()
     {
         return $this->instanceKeeper;
