@@ -51,6 +51,8 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     public function testSelectBuilderString(){
 
+        $this->markTestSkipped("Should be reviewed for v1");
+
         $query = new \Face\Sql\Query\SelectBuilder(Lemon::getEntityFace(), ["id","tree_id" => "treeid"]);
         $query->join("tree", ["id"]);
         $query->where("~tree.age = :age");
@@ -88,6 +90,8 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     public function testOrderBy(){
 
+        $this->markTestSkipped("Should be reviewed for v1");
+
         $q=Tree::faceQueryBuilder();
         $q->orderBy("id", \Face\Sql\Query\SelectBuilder::ORDER_ASC);
         $sqlString = $q->getSqlString();
@@ -112,6 +116,8 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
 
     public function testLimitAndOffsetWithJoin(){
+
+        $this->markTestSkipped("Should be reviewed for v1");
 
         $q=Tree::faceQueryBuilder();
         $q->getBaseQueryFace()->setColumns(["id"]);

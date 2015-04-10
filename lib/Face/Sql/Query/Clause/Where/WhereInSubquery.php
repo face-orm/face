@@ -40,7 +40,7 @@ class WhereInSubquery extends AbstractWhereClause
             $i++;
         }
 
-        $string .= ") IN (" . $this->subquery->getSqlString($q) . ")";
+        $string .= ") IN ( SELECT * FROM ( " . $this->subquery->getSqlString($q) . ") as ___ )";
 
         return $string;
     }

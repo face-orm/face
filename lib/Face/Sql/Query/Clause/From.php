@@ -4,23 +4,38 @@ namespace Face\Sql\Query\Clause;
 
 
 use Face\Core\EntityFace;
+use Face\Exception\BadParameterException;
 use Face\Sql\Query\FQuery;
 
 class From implements SqlClauseInterface{
 
     /**
-     * @var EntityFace
+     * @var string|SqlClauseInterface|EntityFace
      */
-    protected $face;
+    protected $fromItem;
 
-    function __construct(EntityFace $face)
+    function __construct($what)
     {
-        $this->face = $face;
+        $this->fromItem = $what;
     }
 
     public function getSqlString(FQuery $q)
     {
-        $table = $this->face->getSqlTable(true);
+        $table = null;
+        if(is_string($this->fromItem)){
+            $table = $this->fromItem;
+        }else if(is_object($this->fromItem)){
+            if($this->fromItem instanceof EntityFace){
+                $table = $this->fromItem->getSqlTable(true);
+            }else if($this->fromItem instanceof SqlClauseInterface){
+                $table = $this->fromItem->getSqlString($q);
+            }
+        }
+
+        if(null === $table){
+            throw new BadParameterException("Bad parameter for From clause");
+        }
+
         return "FROM " . $table . " AS `this`";
     }
 

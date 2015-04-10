@@ -96,20 +96,6 @@ class LimitOnSubQueryCompiler {
         $groupBySubquery = new GroupBy($primariesColumns);
 
 
-        // BUILD SUBQUERY
-        $subqueryGroup = new Group();
-        $subqueryGroup->addItem($selectClauseSubquery);
-        $subqueryGroup->addItem($fromClause);
-        $subqueryGroup->addItem($joinGroup);
-        if($whereSubquery) {
-            $subqueryGroup->addItem($whereSubquery);
-        }
-        $subqueryGroup->addItem($groupBySubquery);
-
-
-
-
-
         // ORDER
         $orders = $this->selectBuilder->getOrderBy();
         $orderByClause = new OrderBy();
@@ -123,6 +109,25 @@ class LimitOnSubQueryCompiler {
         // OFFSET
         $offset = new Offset($this->selectBuilder->getOffset());
 
+        // BUILD SUBQUERY
+        $subqueryGroup = new Group();
+        $subqueryGroup->addItem($selectClauseSubquery);
+        $subqueryGroup->addItem($fromClause);
+        $subqueryGroup->addItem($joinGroup);
+        if($whereSubquery) {
+            $subqueryGroup->addItem($whereSubquery);
+        }
+        $subqueryGroup->addItem($groupBySubquery);
+        $subqueryGroup->addItem($orderByClause);
+        $subqueryGroup->addItem($limit);
+        $subqueryGroup->addItem($offset);
+
+
+
+
+
+
+
 
         // WHERE QUERY
         $whereIn = new Where\WhereInSubquery($subqueryGroup, $primariesColumns);
@@ -135,15 +140,10 @@ class LimitOnSubQueryCompiler {
         $queryGroup->addItem($joinGroup);
         $queryGroup->addItem($whereQuery);
         $queryGroup->addItem($orderByClause);
-        $queryGroup->addItem($limit);
-        $queryGroup->addItem($offset);
-
-
 
 
 
         $sqlQ = $queryGroup->getSqlString($this->selectBuilder);
-
 
         return $sqlQ;
     }

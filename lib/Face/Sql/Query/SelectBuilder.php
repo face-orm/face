@@ -81,15 +81,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
             if($element->hasManyRelationship() || $element->hasManyThroughRelationship()){
                 return true;
             }else{
-                if($element->relationIsBelongsTo()){
-                    $relatedBy = $element->getRelatedBy();
-                    if($relatedBy){
-                        $otherElement = $element->getFace()->getDirectElement($relatedBy);
-                        if($otherElement->hasManyRelationship() || $otherElement->hasManyThroughRelationship()){
-                            return true;
-                        }
-                    }
-                }
+                return false;
             }
         }
         return false;
