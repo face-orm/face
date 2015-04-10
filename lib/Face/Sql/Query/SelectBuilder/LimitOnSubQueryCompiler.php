@@ -35,7 +35,6 @@ class LimitOnSubQueryCompiler {
         $facesToSelect["this"] = $this->selectBuilder->getBaseQueryFace();
         $facesToSelect = array_merge($facesToSelect, $this->selectBuilder->getJoins());
 
-        $queryBuilder = new Group();
 
         // SELECT
         // columns
@@ -96,6 +95,8 @@ class LimitOnSubQueryCompiler {
         // GROUP BY SUBQUERY
         $groupBySubquery = new GroupBy($primariesColumns);
 
+
+        // BUILD SUBQUERY
         $subqueryGroup = new Group();
         $subqueryGroup->addItem($selectClauseSubquery);
         $subqueryGroup->addItem($fromClause);
@@ -106,8 +107,7 @@ class LimitOnSubQueryCompiler {
         $subqueryGroup->addItem($groupBySubquery);
 
 
-        var_dump($subqueryGroup->getSqlString($this->selectBuilder));
-        die();
+
 
 
         // ORDER
@@ -124,10 +124,25 @@ class LimitOnSubQueryCompiler {
         $offset = new Offset($this->selectBuilder->getOffset());
 
 
+        // WHERE QUERY
+        $whereIn = new Where\WhereInSubquery($subqueryGroup, $primariesColumns);
+        $whereQuery = new Where($whereIn);
+
+        // BUILDER QUERY
+        $queryGroup = new Group();
+        $queryGroup->addItem($selectClause);
+        $queryGroup->addItem($fromClause);
+        $queryGroup->addItem($joinGroup);
+        $queryGroup->addItem($whereQuery);
+        $queryGroup->addItem($orderByClause);
+        $queryGroup->addItem($limit);
+        $queryGroup->addItem($offset);
 
 
 
-        $sqlQ = $queryBuilder->getSqlString($this->selectBuilder);
+
+
+        $sqlQ = $queryGroup->getSqlString($this->selectBuilder);
 
 
         return $sqlQ;

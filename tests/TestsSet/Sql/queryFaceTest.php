@@ -11,13 +11,6 @@ class queryFaceTest extends Test\PHPUnitTestDb
 
         $queryFace = new QueryFace("this", Tree::getEntityFace());
 
-        $queryFace->setLimit(5);
-        $queryFace->setOffset(8);
-
-
-
-        $this->assertEquals(5, $queryFace->getLimit());
-        $this->assertEquals(8, $queryFace->getOffset());
         $this->assertEquals("this", $queryFace->getPath());
         $this->assertEquals(Tree::getEntityFace(), $queryFace->getFace());
         $this->assertEquals([], $queryFace->getColumns());

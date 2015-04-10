@@ -7,7 +7,7 @@ use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\FQuery;
 
-class WhereGroup extends AbstractWhereClause
+class WhereInSubquery extends AbstractWhereClause
 {
 
     /**
@@ -40,7 +40,7 @@ class WhereGroup extends AbstractWhereClause
             $i++;
         }
 
-        $string .= ") IN " . $this->subquery->getSqlString($q);
+        $string .= ") IN (" . $this->subquery->getSqlString($q) . ")";
 
         return $string;
     }

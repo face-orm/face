@@ -9,6 +9,7 @@ use Face\Sql\Query\Clause\OrderBy;
 use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\SelectBuilder\Compiler;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\SelectBuilder\LimitOnSubQueryCompiler;
 use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Sql\Query\SelectBuilder\StandardCompiler;
 use Face\Traits\ContextAwareTrait;
@@ -65,10 +66,33 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
     public function getSqlString()
     {
+        if( ($this->limit > 0 || $this->offset > 0) && $this->_hasJoinMany() ){
+            $compiler = new LimitOnSubQueryCompiler($this);
+        }else{
+            $compiler = new StandardCompiler($this);
+        }
 
-        $compiler = new StandardCompiler($this);
         return $compiler->compile();
+    }
 
+    private function _hasJoinMany(){
+        foreach($this->joins as $join){
+            $element = $this->baseFace->getElement($join->getPath());
+            if($element->hasManyRelationship() || $element->hasManyThroughRelationship()){
+                return true;
+            }else{
+                if($element->relationIsBelongsTo()){
+                    $relatedBy = $element->getRelatedBy();
+                    if($relatedBy){
+                        $otherElement = $element->getFace()->getDirectElement($relatedBy);
+                        if($otherElement->hasManyRelationship() || $otherElement->hasManyThroughRelationship()){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

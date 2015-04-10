@@ -11,7 +11,7 @@ class Limit implements SqlClauseInterface {
 
     function __construct($limit)
     {
-        $this->$limit = $limit;
+        $this->limit = $limit;
     }
 
 
