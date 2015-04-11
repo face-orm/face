@@ -20,7 +20,7 @@ class OrderBy implements SqlClauseInterface {
      */
     public function addItem(Field $field)
     {
-        $this->fields = $field;
+        $this->fields[] = $field;
     }
 
 
