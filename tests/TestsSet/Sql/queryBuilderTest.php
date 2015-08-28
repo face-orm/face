@@ -303,10 +303,10 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $fQuery= Tree::faceQueryBuilder();
 
         $fQuery->join("childrenTrees");
+        $fQuery->orderBy("this.id","ASC");
 
-        $trees=  Face\ORM::execute($fQuery, $pdo);
+        $trees =  Face\ORM::execute($fQuery, $pdo);
         $children = $trees->getInstancesByPath("this.childrenTrees");
-
 
         $this->assertEquals(4,count($trees));
 
