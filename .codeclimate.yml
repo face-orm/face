@@ -1,3 +1,7 @@
+languages:
+  Ruby: false
+  JavaScript: false
+  PHP: true
 exclude_paths:
 - "tests/*"
 - "vendor/*"
