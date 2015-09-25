@@ -1,0 +1,19 @@
+language: php
+
+sudo: true
+
+matrix:
+  include:
+    - php: 5.4
+      env: PROCESS_CODECLIMAE=true
+    - php: 5.5
+    - php: 5.6
+    - php: nightly
+    - php: hhvm
+
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer install --dev
+  - sudo sh -c 'echo "date.timezone = Europe/Paris" >> /etc/php5/cli/php.ini'
+
+script: ./tests/bin/test.bash

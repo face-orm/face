@@ -3,5 +3,5 @@ languages:
   JavaScript: false
   PHP: true
 exclude_paths:
-- "tests/*"
-- "vendor/*"
+- "tests/**/*"
+- "vendor/**/*"
