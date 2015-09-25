@@ -14,6 +14,6 @@ matrix:
 before_script:
   - travis_retry composer self-update
   - travis_retry composer install --dev
-  - sudo sh -c 'echo "date.timezone = Europe/Paris" >> /etc/php5/cli/php.ini'
+  - echo "date.timezone = Europe/Paris" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 script: ./tests/bin/test.bash
