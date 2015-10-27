@@ -66,7 +66,7 @@ abstract class NamespaceAwareCache implements CacheInterface {
      */
     public function exists($key)
     {
-        $this->_exists($this->useNamespace($key));
+        return $this->_exists($this->useNamespace($key));
     }
 
     public function deleteAll(){

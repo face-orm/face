@@ -104,7 +104,7 @@ class QueryFace {
      * @param bool $userPrefix
      * @return Column[] list of joined columns with this format :   $array["real.path"] = @see Face\Sql\Query\Clause\Select\Column;
      */
-    public function getColumnsReal($userPrefix = false){
+    public function getColumnsReal(){
 
         $finalColumns = [];
 

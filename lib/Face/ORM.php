@@ -3,11 +3,12 @@
 namespace Face;
 
 use Face\Core\InstancesKeeper;
+use Face\Sql\Hydrator\Generated\ArrayHydrator;
 use Face\Sql\Result\ResultSet;
 use Face\Util\OOPUtils;
 
 /**
- * Face\ORM is a class that interfaces comon calls of the Face API
+ * Face\ORM is a class that interfaces common calls of the Face API
  *
  * This abstract is made to be call everywhere in the application.
  * An alternative for dependency injection lives at Face\DiOrm
@@ -25,17 +26,16 @@ abstract class ORM
      */
     public static function execute(Sql\Query\FQuery $fQuery, \PDO $pdo)
     {
-        $j=$fQuery->execute($pdo);
+        $statement = $fQuery->execute($pdo);
 
-        if (!$j->rowCount()) {
+        if (!$statement->rowCount()) {
             return new ResultSet($fQuery->getBaseFace(), new InstancesKeeper());
         }
 
-        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery);
+        $hydrator = new ArrayHydrator();
 
-        $rs=$reader->read($j);
-        
-        return $rs;
+        $rs = $hydrator->hydrate($fQuery, $statement);
+        return $rs["this"];
     }
 
 }

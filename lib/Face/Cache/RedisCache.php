@@ -17,6 +17,10 @@ class RedisCache extends NamespaceAwareCache{
         parent::__construct($namespace);
     }
 
+    public function getRedis(){
+        return $this->redis;
+    }
+
     protected function _get($key)
     {
         return $this->redis->get($key);
@@ -34,7 +38,7 @@ class RedisCache extends NamespaceAwareCache{
 
     protected function _exists($key)
     {
-        $this->redis->exists($key);
+        return $this->redis->exists($key);
     }
 
     protected function _deleteAll($namespace)

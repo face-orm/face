@@ -30,14 +30,14 @@ abstract class FQuery
     // alias that can be replaced from an instance
     protected $dotToken;
 
-    
-    
+
+
     /**
      *
      * @var EntityFace
      */
     protected $baseFace;
-    
+
     /**
      * list of face joined to the query
      * @var JoinQueryFace[]
@@ -69,7 +69,7 @@ abstract class FQuery
         $this->valueBinds=[];
     }
 
-    
+
     abstract public function getSqlString();
 
     /**
@@ -104,10 +104,10 @@ abstract class FQuery
         }
 
         $stmt = $this->getPdoStatement($pdo);
-        
+
         if ($stmt->execute()) {
             return $stmt;
-            
+
         } else {
             // TODO : handle errors ".__FILE__.":".__LINE__;
             throw new QueryFailedException($stmt);
@@ -132,11 +132,11 @@ abstract class FQuery
 
         return $stmt;
     }
-    
+
     public function bindValue($parameter, $value, $data_type = \PDO::PARAM_STR)
     {
         $this->valueBinds[$parameter] = [$value,$data_type];
-        
+
         return $this;
     }
 
@@ -177,7 +177,7 @@ abstract class FQuery
 
     /**
      * give all the entities which are part of the FQuery
-     * @return EntityFace[] list of the face
+     * @return QueryFace[] list of the face
      */
     public function getAvailableQueryFaces()
     {
@@ -185,7 +185,7 @@ abstract class FQuery
 
         return array_merge($array, $this->getJoins());
     }
-    
+
     /**
      * convention for having the same table alias every where. E.G  "a.b" will become "this__dot_a__dot__b"
      * @param string $path
