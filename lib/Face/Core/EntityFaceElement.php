@@ -18,22 +18,22 @@ class EntityFaceElement
      * @var EntityFace
      */
     protected $parentFace;
-    
+
     //entity properties
     protected $name;
     protected $propertyName;
     protected $setter;
     protected $getter;
-   
+
     protected $defaultMap;
 
 
     protected $type;
     protected $entityName;
     protected $_class;
-    
+
     protected $isIdentifier;
-    
+
     ////////////////////////////
     // relation properties
     /**
@@ -44,11 +44,14 @@ class EntityFaceElement
      * @var string name of the property referencing to this entity on the related entity (e.g helps to define how to set instance reference on the parent)
      */
     protected $relatedBy;
-    
-    
-    
+
+
+
     ////////////////////////////
     // SQL properties
+    /**
+     * @var string
+     */
     protected $sqlColumnName;
     protected $sqlIsPrimary;
     protected $sqlJoin;
@@ -64,7 +67,7 @@ class EntityFaceElement
     function __construct($name = "", $params = array())
     {
         $this->name         =  $name;
-        
+
         $this->propertyName =  ArrayUtils::getIfArrayKey($params, "propertyName", $name);
         $this->setter       =  ArrayUtils::getIfArrayKey($params, "setter");
         $this->getter       =  ArrayUtils::getIfArrayKey($params, "getter");
@@ -86,8 +89,8 @@ class EntityFaceElement
         $this->sqlJoin       =   ArrayUtils::getIfArrayKey($params['sql'], "join");
         $this->sqlAutoIncrement= ArrayUtils::getIfArrayKey($params['sql'], "autoIncrement", $this->isPrimary());
     }
-    
-    
+
+
     public function getName()
     {
         return $this->name;
@@ -108,7 +111,7 @@ class EntityFaceElement
     {
         return $this->setter;
     }
-    
+
     public function hasSetter()
     {
         return null !== $this->setter;
@@ -123,7 +126,7 @@ class EntityFaceElement
     {
         return $this->getter;
     }
-    
+
     public function hasGetter()
     {
         return null !== $this->getter;
@@ -144,7 +147,7 @@ class EntityFaceElement
         $this->sqlThrough = $sqlThrough;
     }
 
-    
+
     public function getType()
     {
         return $this->type;
@@ -155,6 +158,10 @@ class EntityFaceElement
         $this->type = $type;
     }
 
+    /**
+     * @return string
+     * @throws Exception\FaceNameDoesntExistsException
+     */
     public function getClass()
     {
 
@@ -176,12 +183,12 @@ class EntityFaceElement
     {
         return "entity"===$this->getType();
     }
-    
+
     public function isValue()
     {
         return "value"===$this->getType();
     }
-    
+
     public function isIdentifier()
     {
         return true===$this->isIdentifier;
@@ -232,7 +239,7 @@ class EntityFaceElement
     }
 
 
-    
+
     public function getSqlAutoIncrement()
     {
         return $this->sqlAutoIncrement;
@@ -253,7 +260,7 @@ class EntityFaceElement
     {
         $this->relation = $relation;
     }
-    
+
     public function hasManyRelationship()
     {
         return $this->relation=="hasMany";
@@ -282,7 +289,7 @@ class EntityFaceElement
     {
         $this->relatedBy = $relatedBy;
     }
-    
+
     /**
      *
      * @return EntityFace the face this element belongs to
@@ -297,7 +304,7 @@ class EntityFaceElement
         $this->parentFace = $parentFace;
     }
 
-            
+
     /**
      *
      * if this is a value type, it means it cant have a face
@@ -308,10 +315,8 @@ class EntityFaceElement
     public function getFace()
     {
         if ($this->isEntity()) {
-
             $faceLoader = $this->parentFace->getFaceLoader();
-
-            return call_user_func($this->getClass()."::getEntityFace",$faceLoader);
+            return call_user_func($this->getClass() . "::getEntityFace",$faceLoader);
         } else {
             throw new Exception("A value Element has no face. Only entity with an associed class can have a face. Call on " . $this->getName());
         }

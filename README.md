@@ -26,6 +26,9 @@ Why this ORM? I tryed many ORM and I wanted something that is:
 Taking this in consideration I built something with as few layers as possible but that still uses adapters and interfaces,
 that can manage 1:1, 1:n, n:n relations, and that remains performant.
 
+Face is per query oriented. That means it does not implement an instance keeper that would keep one instance 
+of each identical element. While this feature looks amazing it is not necessary in real usage. 
+Face could be considered as an advanced query builder.
 
 
 

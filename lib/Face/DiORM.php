@@ -3,6 +3,7 @@
 namespace Face;
 
 use Face\Core\InstancesKeeper;
+use Face\Sql\Hydrator\Generated\ArrayHydrator;
 use Face\Sql\Query\FQuery;
 use Face\Sql\Query\SelectBuilder;
 use Face\Sql\Query\SimpleDelete;
@@ -20,7 +21,7 @@ use Face\DiORM\SelectBuilder as DiSelectBuilder;
  */
 class DiORM
 {
-    
+
     /**
      *
      * @var Config
@@ -74,7 +75,7 @@ class DiORM
     public function selectBuilder($name){
         return new DiSelectBuilder($this->getFace($name), $this);
     }
-    
+
     /**
      * Execute a select query, parse the result and returns a resultSet
      * @param \Face\Sql\Query\FQuery $fQuery
@@ -82,7 +83,7 @@ class DiORM
      */
     public function select(Sql\Query\FQuery $fQuery, $useGlobalInstanceKeeper = false)
     {
-        $j=$fQuery->execute($this->config->getPdo());
+        $statement=$fQuery->execute($this->config->getPdo());
 
         if($useGlobalInstanceKeeper){
             $instanceKeeper = $this->instancesKeeper;
@@ -90,12 +91,12 @@ class DiORM
             $instanceKeeper = new InstancesKeeper();
         }
 
-        if (!$j->rowCount()) {
+        if (!$statement->rowCount()) {
             return new ResultSet($fQuery->getBaseFace(), $instanceKeeper);
         }
 
-        $reader=new \Face\Sql\Reader\QueryArrayReader($fQuery, $instanceKeeper);
-        $rs = $reader->read($j);
+        $hydrator = new ArrayHydrator();
+        $rs = $hydrator->hydrate($fQuery, $statement);
         return $rs;
     }
 

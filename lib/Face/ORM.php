@@ -35,7 +35,7 @@ abstract class ORM
         $hydrator = new ArrayHydrator();
 
         $rs = $hydrator->hydrate($fQuery, $statement);
-        return $rs["this"];
+        return $rs;
     }
 
 }

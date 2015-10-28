@@ -6,6 +6,7 @@ use Face\Cache\CacheInterface;
 use Face\Cache\NoCache;
 use Face\Exception;
 use Face\Sql\Query\FQuery;
+use Face\Sql\Result\ResultSet;
 
 abstract class GeneratedHydrator extends AbstractHydrator
 {
@@ -24,6 +25,12 @@ abstract class GeneratedHydrator extends AbstractHydrator
         }
     }
 
+    /**
+     * @param FQuery $FQuery
+     * @param \PDOStatement $statement
+     * @return ResultSet
+     * @throws Exception
+     */
     public function hydrate(FQuery $FQuery, \PDOStatement $statement)
     {
 //        $key = $this->getquerykey($FQuery);
@@ -42,15 +49,31 @@ abstract class GeneratedHydrator extends AbstractHydrator
 //            $code = eval($code);
 //        }
 
-        $code = $this->generatecode($FQuery);
-        $code = eval($code);
+
+        if($this->debugInFile){
+            $code = $this->generatecode($FQuery);
+            $filePath = sys_get_temp_dir() . "/face_QH_" . $this->getQueryKey($FQuery) . ".php" ;
+            file_put_contents($filePath,  "<?php" . $code);
+            $code = include $filePath;
+        }else{
+//            $code = $this->generatecode($FQuery);
+//            file_put_contents("/tmp/FQ_" . $this->getQueryKey($FQuery) . ".php",  "<?php" . $code);
+//            $code = eval($code);
+            $code = include "/tmp/FQ_" . $this->getQueryKey($FQuery) . ".php";
+        }
+
 
 
         if(!is_callable($code)){
             throw new Exception("Invalide code from hydrator");
         }
 
-        return $code($statement);
+        $data = $code($statement);
+
+        $resultset = new ResultSet($FQuery->getBaseFace());
+        $resultset->setInstances($data);
+
+        return $resultset;
 
     }
 

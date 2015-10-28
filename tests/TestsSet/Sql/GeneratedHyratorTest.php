@@ -16,7 +16,16 @@ class GeneratedHyratorTest extends Test\PHPUnitTestDb
 
         $data = $hydrator->hydrate($fQuery, $statement);
 
-        var_dump($data);
+
+        $data->getAt(0)
+            ->getLemons()[0]
+            ->getTree()
+            ->getLemons()[0]
+            ->getTree()
+            ->getLemons()[0]
+            ->getTree()
+        ;
+
     }
 
 }
