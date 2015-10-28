@@ -1,23 +1,32 @@
 face
 ====
-[![Build Status](https://drone.io/github.com/face-orm/face/status.png)](https://drone.io/github.com/face-orm/face/latest)
+[![Build Status](https://travis-ci.org/face-orm/face.svg?branch=develop)](https://travis-ci.org/face-orm/face)
 [![Test Coverage](https://codeclimate.com/github/face-orm/face/badges/coverage.svg)](https://codeclimate.com/github/face-orm/face)
 [![Code Climate](https://codeclimate.com/github/face-orm/face/badges/gpa.svg)](https://codeclimate.com/github/face-orm/face)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/face-orm/face?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-Be aware that face is under active development. The current master branch has broken compatibilities with versiosn ``0.1.1-BETA``
+Be aware that face is under active development. The current development phase breaks compatibilities very often.
 
-The documentation and the site are under refactoring.
-
-Face is an ORM built under a few purposes :
- * Performances : unlike some ORM, it tries to add as few layers as possible and doesn't impact performances, but it tries to keep enough flexibility to fit all cases.
- * Ease of use  : Face is an ORM. That means that it aims to speed up application development and
- makes developers experience more comfortable with database interactions.
- * Understandable : Face is very transparent. It wont run hidden queries, or other hidden task.
- * Feature Rich : performances are something, but it still thinks about strength and functionalities. 
-Face includes powerful workflow to deal with relation and complex requests. 
+The documentation and the site are under refactoring until a stable version is published
 
 
-Face is tested and safe enough for production. Right now it is perfectly suited for little and medium projects but it mays lack of maturity for biggest projects.
+Why an other ORM?
+-----------------
+
+For years I have been working with no ORM and I can say I hate ORM because they are heavy, longer to learn, slower...
+but i love them because it makes your development much more easy and reliable.
+
+Why this ORM? I tryed many ORM and I wanted something that is:
+- easy to learn: take the example of doctrine, the doc is really, really, really vast and it takes times to learn.
+- powerfull: If I use an ORM, I dont want to define join columns on every query. Small ORMs use to be bad at this
+- flexible: Flexible means configurable, it means adaptable, that can fit most of use cases. Something that is not static
+- performant: big ORM are cool, really, but they are bad for big and loaded applications
+- transparent: Transparent means "do not run query that I dont want you to run, just run what I explicitly ask you to run"
+
+Taking this in consideration I built something with as few layers as possible but that still uses adapters and interfaces,
+that can manage 1:1, 1:n, n:n relations, and that remains performant.
+
+
 
 
 Quick Overview
@@ -26,37 +35,13 @@ Quick Overview
 
 ### SelectBuilder
 
-An api is available to select datas from the db
-
-```php
-$fQuery = Tree::faceQueryBuilder();
-// execute the query through the pdo object
-$trees = Face\ORM::execute($fQuery, $pdo);
-// => $trees is an array of Tree from the DB
-```
-
-
-```php
-$fQuery = Tree::faceQueryBuilder();
-$fQuery->join("Lemon"); // now join some lemons
-$fQuery->where("~age >= 5 AND ~Lemon.mature = 1 "); // only mature lemons and trees aged of  5 years or more
-
-$trees = Face\ORM::execute($fQuery, $pdo);
-// => $trees is an array of Tree and each Tree contains the joined Lemon
-
-foreach($trees as $tree){
-    $lemons = $tree->getLemons();
-    echo "Tree aged of " $tree->getAge() . " years has " . count($lemons) . " mature lemons <br/>";
-}
-
-// Tree aged of 10 years has 20 lemons
-// Tree aged of 6 years has 7 lemons
-```
-
+**That was not up to date anymore, doc needs to be rewritten**
 
 ### FaceQL
 
-FaceQL is an important feature of Face. That's a Query language that is a mix between SQL and Face notation. 
+**CURRENT STATE**: refactoring in order to use a real parser.
+
+FaceQL is an important feature of Face. That's a Query language that is a mix between SQL and Face notation.
 
 It allows you to create complex queries that the Select Builder can't build. 
 Actually everything that you can do with SQL is possible with FaceQL.
@@ -74,7 +59,7 @@ $fql=FaceQL::parse(
 );
 ```
 
-That is equivalent to the following request ( + hydration) : 
+That is equivalent to the following request ( + hydration): 
 
 
 ```sql
@@ -88,34 +73,7 @@ SELECT * FROM keyword
 
 ### Insertions and Updates
 
-```php
-use \Face\Sql\Query\SimpleInsert;
-
-// prepare a tree
-$tree = new Tree();
-$tree->setAge(20);
-
-// Insert it
-$insert = new SimpleInsert($parsing);
-$insert->execute($pdo);
-// Get the generated id
-$insertId = $pdo->lastInsertId();
-```
-
-```php
-use \Face\Sql\Query\SimpleUpdate;
-
-// prepare an existing tree (assuming that tree with id 1 exists in the db)
-$tree = new Tree();
-$tree->setId(1);
-$tree->setAge(20);
-
-// update it
-$update = new SimpleUpdate($parsing);
-$update->execute($pdo);
-```
-
-
+**That was not up to date anymore, doc needs to be rewritten**
 
 Configure the orm
 -----------------
@@ -127,7 +85,6 @@ Configure the orm
 // prepare the cache
 $redis = new Redis();
 $redis->connect("127.0.0.1");
-$redis->flushAll();
 $cache = new \Face\Cache\RedisCache($redis);
 
 // the loader
@@ -138,8 +95,10 @@ $cacheableLoader->setCache($cache);
 $config = new \Face\Config();
 $config->setFaceLoader($cacheableLoader);
 
-// set it as default
+// Most of time we want to make this simple by using a global config
 $config::setDefault($config);
+
+// TODO: not global config
 
 ```
 
@@ -255,19 +214,23 @@ class Tree {
 Support
 -------
 
-The best place to get support is to [open an issue](https://github.com/laemons/face/issues)
+You found a bug or weird behaviours ? Issue tracker is where you have to go: 
+[open an issue](https://github.com/face-orm/face/issues)
+
+You want need some help to understand something, need some advices, or you just want to discuss, 
+[join the gitter room](https://gitter.im/face-orm/face?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
 
 Documentation
 -------------
 
-Documentation is under renovation. It is coming back very soon.
+Documentation is under renovation. It is coming back as soon as it's ready.
 
 
 Benchmarking
 ------------
 
-simple benchmark is available at : https://github.com/laemons/ORM-benchmark
+simple benchmark is available at : [https://github.com/laemons/ORM-benchmark](https://github.com/laemons/ORM-benchmark)
 
 
 Roadmap
