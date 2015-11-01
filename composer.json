@@ -13,7 +13,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "face/parser": "dev-master"
     },
     "autoload": {
         "psr-0" : {
