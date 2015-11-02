@@ -4,9 +4,9 @@ namespace Face\Sql\Query;
 
 
 use Face\Config;
+use Face\Sql\Query\SelectBuilder;
 use Face\Exception;
 use Face\Exception\FQLParseException;
-use Face\Parser\ParsingException;
 use Face\Parser\RegexpLexer;
 use Face\Parser\TokenNavigation;
 
@@ -19,6 +19,7 @@ class FaceQL
     const T_START_QUERY     = "T_START_QUERY";
     const T_IDENTIFIER      = "T_IDENTIFIER";
     const T_WHITESPACE      = "T_WHITESPACE";
+    const T_JOIN            = "T_JOIN";
 
     public function __construct(Config $config = null){
 
@@ -32,6 +33,7 @@ class FaceQL
         $this->lexer->setTokens([
 
             "SELECT FROM"               => static::T_START_QUERY,
+            "JOIN"                      => static::T_JOIN,
             "[a-zA-Z][a-zA-Z0-9_.]*"    => static::T_IDENTIFIER,
             "\\s+"                      => static::T_WHITESPACE
 
@@ -59,7 +61,7 @@ class FaceQL
 
             default:
 
-                throw new ParsingException("Unknown operation: " . $tokens->current()->getTokenValue());
+                throw new FQLParseException("Unknown operation: " . $tokens->current()->getTokenValue());
 
         }
 
@@ -75,8 +77,33 @@ class FaceQL
             throw new FQLParseException("Unable to find entity $name in FROM clause", 0, $e);
         }
         $select = new SelectBuilder($face);
+
+        $this->parseJoin($select, $tokens);
+
+        if($tokens->hasNext()){
+            throw new FQLParseException("Unexpected token " . $tokens->getTokenName());
+        }
+
         return $select;
 
+    }
+
+    private function parseJoin(SelectBuilder $selectBuilder, TokenNavigation $tokens){
+        while ($tokens->hasNext() && $tokens->look(1)->is(static::T_JOIN)) {
+            $tokens->next();
+            $tokens->next();
+            $tokens->expectToBe(static::T_IDENTIFIER);
+            $name = $tokens->getTokenValue();
+
+            try {
+                $selectBuilder->join($name);
+            } catch (Exception $e) {
+                throw new FQLParseException("Unable to find parse $name in JOIN clause", 0, $e);
+            }
+
+
+
+        }
     }
 
 }

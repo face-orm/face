@@ -24,8 +24,12 @@ abstract class ORM
      * @param \PDO $pdo
      * @return Sql\Result\ResultSet
      */
-    public static function execute(Sql\Query\FQuery $fQuery, \PDO $pdo)
+    public static function execute(Sql\Query\FQuery $fQuery, \PDO $pdo = null)
     {
+        if(null == $pdo){
+            $pdo = Config::getDefault()->getPdo();
+        }
+
         $statement = $fQuery->execute($pdo);
 
         if (!$statement->rowCount()) {

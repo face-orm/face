@@ -56,10 +56,8 @@ abstract class GeneratedHydrator extends AbstractHydrator
             file_put_contents($filePath,  "<?php" . $code);
             $code = include $filePath;
         }else{
-//            $code = $this->generatecode($FQuery);
-//            file_put_contents("/tmp/FQ_" . $this->getQueryKey($FQuery) . ".php",  "<?php" . $code);
-//            $code = eval($code);
-            $code = include "/tmp/FQ_" . $this->getQueryKey($FQuery) . ".php";
+            $code = $this->generatecode($FQuery);
+            $code = eval($code);
         }
 
 

@@ -175,9 +175,10 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
      */
     public function join($path, $select = null)
     {
+
         $path = $this->getNameInContext($path);
 
-        $face =  $this->baseFace
+        $face = $this->baseFace
             ->getElement($path)
             ->getFace();
 
