@@ -20,7 +20,7 @@ use Face\Traits\EntityFaceTrait;
  *
  * @author bobito
  */
-class SelectBuilder extends \Face\Sql\Query\FQuery implements SelectInterface
+class SelectBuilder extends SelectQuery
 {
 
     use ContextAwareTrait;
@@ -32,21 +32,6 @@ class SelectBuilder extends \Face\Sql\Query\FQuery implements SelectInterface
     const ORDER_ASC  = "ASC";
     const ORDER_DESC = "DESC";
 
-    /**
-     *
-     * @var Where\WhereGroup
-     */
-    protected $where;
-
-    /**
-     * used by whereINRelation() to add join to the final query without parsing them
-     * @var JoinQueryFace[]
-     */
-    protected $softThroughJoin = [];
-
-    protected $limit;
-    protected $offset;
-
 
     /**
      * used to generate unique bound params for whereIn method
@@ -55,44 +40,11 @@ class SelectBuilder extends \Face\Sql\Query\FQuery implements SelectInterface
     private $whereInCount=0;
 
 
-    protected $orderBy = [];
 
     function __construct(EntityFace $baseFace, $columns = [])
     {
         parent::__construct($baseFace);
         $this->fromQueryFace->setColumns($columns);
-    }
-
-
-    public function getSqlString()
-    {
-        if( ($this->limit > 0 || $this->offset > 0) && $this->_hasJoinMany() ){
-            $compiler = new LimitOnSubQueryCompiler($this);
-        }else{
-            $compiler = new StandardCompiler($this);
-        }
-
-        return $compiler->compile();
-    }
-
-    private function _hasJoinMany(){
-        foreach($this->joins as $join){
-            $element = $this->getBaseFace()->getElement($join->getPath());
-            if($element->hasManyRelationship() || $element->hasManyThroughRelationship()){
-                return true;
-            }else{
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSoftThroughJoin()
-    {
-        return $this->softThroughJoin;
     }
 
     /**
@@ -102,69 +54,6 @@ class SelectBuilder extends \Face\Sql\Query\FQuery implements SelectInterface
     {
         return $this->dotToken;
     }
-
-    /**
-     * @return Where\WhereGroup
-     */
-    public function getWhere()
-    {
-        return $this->where;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderBy()
-    {
-        return $this->orderBy;
-    }
-
-
-
-    /**
-     * Be aware that this method wont use the global offset, it will offset on the FROM table only
-     * @param int $offset the offset used for the OFFSET clause of the FROM table
-     * @return SelectBuilder
-     */
-    public function offset($offset)
-    {
-        $this->offset = $offset;
-        return $this;
-    }
-
-
-    /**
-     * Be aware that this method wont use the global limit, it will limit on the FROM table only
-
-     * @param int $limit limit used for the LIMIT clause
-     * @param int $offset optionally you can pass the offset in this method. It's aimed to mimic the ``LIMIT 2,10`` syntax
-     * @return SelectBuilder
-     */
-    public function limit($limit, $offset=null)
-    {
-        $this->limit = $limit;
-        if(null !== $offset){
-            $this->offset = $offset;
-        }
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
 
     /**
      * add a join clause to the query
@@ -195,43 +84,21 @@ class SelectBuilder extends \Face\Sql\Query\FQuery implements SelectInterface
 
 
     public function orderBy($field, $direction = null){
+        $directionUpper = strtoupper($direction);
 
-        if(null === $field){
-            $this->orderBy = [];
-        }else{
-
-            $directionUpper = strtoupper($direction);
-
-            if(null == $direction){
-                $directionUpper = self::ORDER_ASC;
-            }else if($directionUpper !== self::ORDER_DESC && $directionUpper !== self::ORDER_ASC){
-                throw new \Exception("Value '$direction' for direction is not valid. Please use '" . self::ORDER_ASC . "' or '" . self::ORDER_DESC . "' ");
-            }
-
-            $this->orderBy[] = new OrderBy\Field($this->getBaseFace(), $field, $direction);
+        if(null == $direction){
+            $directionUpper = self::ORDER_ASC;
+        }else if($directionUpper !== self::ORDER_DESC && $directionUpper !== self::ORDER_ASC){
+            throw new \Exception("Value '$direction' for direction is not valid. Please use '" . self::ORDER_ASC . "' or '" . self::ORDER_DESC . "' ");
         }
 
+        $this->addOrderBy(new OrderBy\Field($this->getBaseFace(), $field, $directionUpper));
         return $this;
-
     }
 
-    /**
-     * check is a face is joined to the query. This method is not aware of the current context
-     * @param string $path the face path to check
-     * @return bool
-     */
-    public function isJoined($path)
-    {
-        return isset($this->joins[$this->_doFQLTableName($path, ".")]);
-    }
 
-    public function addWhere(Where\AbstractWhereClause $where)
-    {
-        if (!$this->where) {
-            $this->where = new Where\WhereGroup();
-        }
-        $this->where->addWhere($where);
-    }
+
+
 
     /**
      * set the where clause

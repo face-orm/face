@@ -18,11 +18,6 @@ interface SelectInterface extends QueryInterface
 {
 
     /**
-     * @return QueryFace
-     */
-    public function getBaseQueryFace();
-
-    /**
      * @return JoinQueryFace[]
      */
     public function getJoins();

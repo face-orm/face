@@ -54,8 +54,6 @@ abstract class FQuery implements QueryInterface
     }
 
 
-    abstract public function getSqlString();
-
     /**
      * @return SelectBuilder\JoinQueryFace[]
      */
@@ -64,6 +62,9 @@ abstract class FQuery implements QueryInterface
         return $this->joins;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getBaseQueryFace(){
         return $this->fromQueryFace;
     }

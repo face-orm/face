@@ -51,7 +51,7 @@ class LimitOnSubQueryCompiler {
         foreach($facesToSelect["this"]->getColumnsReal() as $column){
             $columns[] = $column;
 
-            if($column->getEntityFaceElement()->isPrimary()){
+            if($column instanceof Select\Column\ElementColumn && $column->getEntityFaceElement()->isPrimary()){
                 $primariesColumns[] = $column;
             }
         }
