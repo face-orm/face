@@ -33,12 +33,6 @@ abstract class FQuery
 
 
     /**
-     *
-     * @var EntityFace
-     */
-    protected $baseFace;
-
-    /**
      * list of face joined to the query
      * @var JoinQueryFace[]
      */
@@ -62,8 +56,6 @@ abstract class FQuery
 
     function __construct(EntityFace $baseFace)
     {
-        $this->dotToken = self::$DOT_TOKEN;
-        $this->baseFace = $baseFace;
         $this->fromQueryFace = new QueryFace("this", $baseFace, $this);
         $this->joins=[];
         $this->valueBinds=[];
@@ -243,6 +235,6 @@ abstract class FQuery
      */
     public function getBaseFace()
     {
-        return $this->baseFace;
+        return $this->fromQueryFace->getFace();
     }
 }

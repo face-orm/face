@@ -77,7 +77,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
     private function _hasJoinMany(){
         foreach($this->joins as $join){
-            $element = $this->baseFace->getElement($join->getPath());
+            $element = $this->getBaseFace()->getElement($join->getPath());
             if($element->hasManyRelationship() || $element->hasManyThroughRelationship()){
                 return true;
             }else{
@@ -178,7 +178,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
         $path = $this->getNameInContext($path);
 
-        $face = $this->baseFace
+        $face = $this->getBaseFace()
             ->getElement($path)
             ->getFace();
 
@@ -210,7 +210,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
                 throw new \Exception("Value '$direction' for direction is not valid. Please use '" . self::ORDER_ASC . "' or '" . self::ORDER_DESC . "' ");
             }
 
-            $this->orderBy[] = new OrderBy\Field($this->baseFace, $field, $direction);
+            $this->orderBy[] = new OrderBy\Field($this->getBaseFace(), $field, $direction);
         }
 
         return $this;
@@ -319,7 +319,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
         $nsrelation = $this->getNameInContext($relation);
 
-        $relatedElement = $this->baseFace->getDirectElement($relation);
+        $relatedElement = $this->getBaseFace()->getDirectElement($relation);
         $join = $relatedElement->getSqlJoin();
 
         if (count($join) > 1) {
@@ -344,7 +344,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
             }
 
         } else {
-            throw new \Exception("There is no sql join for : " . $this->baseFace->getClass() . "." . $nsrelation);
+            throw new \Exception("There is no sql join for : " . $this->getBaseFace()->getClass() . "." . $nsrelation);
         }
 
         return $this;

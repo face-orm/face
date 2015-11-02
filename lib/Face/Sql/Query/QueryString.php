@@ -40,7 +40,7 @@ class QueryString extends FQuery
 
         $sqlPath = $this->_doFQLTableName($path, ".");
 
-        $this->joins[$sqlPath] = new JoinQueryFace($sqlPath, $this->baseFace->getElement($path)->getFace(), $this);
+        $this->joins[$sqlPath] = new JoinQueryFace($sqlPath, $this->getBaseFace()->getElement($path)->getFace(), $this);
         if($columns){
             $this->joins[$sqlPath]->setColumns($columns);
         }
