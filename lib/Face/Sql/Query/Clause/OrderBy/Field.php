@@ -5,6 +5,7 @@ namespace Face\Sql\Query\Clause\OrderBy;
 use Face\Core\EntityFace;
 use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class Field implements SqlClauseInterface{
 
@@ -22,7 +23,7 @@ class Field implements SqlClauseInterface{
         $this->baseFace = $baseFace;
     }
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         $str = "";
 

@@ -3,7 +3,9 @@
 
 namespace Face\Sql\Query\Clause;
 
-use Face\Sql\Query\FQuery;
+
+
+use Face\Sql\Query\QueryInterface;
 
 class Offset implements SqlClauseInterface {
 
@@ -15,7 +17,7 @@ class Offset implements SqlClauseInterface {
     }
 
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         if($this->offset > 0){
             return "OFFSET " . $this->offset;

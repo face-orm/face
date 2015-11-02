@@ -4,7 +4,7 @@ namespace Face\Sql\Query\Clause\Where;
 
 use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\Clause\Where;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 use Face\Traits\ContextAwareTrait;
 
 class WhereString extends AbstractWhereClause implements SqlClauseInterface
@@ -19,7 +19,7 @@ class WhereString extends AbstractWhereClause implements SqlClauseInterface
         $this->string = $string;
     }
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
 
         $newString=$this->string;

@@ -11,6 +11,8 @@ use Face\Sql\Query\Clause\Select;
 use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\SelectBuilder;
 use Face\Sql\Query\FQuery;
+use Face\Sql\Query\SelectInterface;
+use Face\Sql\Query\SelectQuery;
 
 /**
  * Class Compiler
@@ -23,11 +25,11 @@ use Face\Sql\Query\FQuery;
 class StandardCompiler {
 
     /**
-     * @var SelectBuilder
+     * @var SelectInterface
      */
     protected $selectBuilder;
 
-    function __construct(SelectBuilder $selectBuilder)
+    function __construct(SelectInterface $selectBuilder)
     {
         $this->selectBuilder = $selectBuilder;
     }
@@ -53,26 +55,25 @@ class StandardCompiler {
 
 
         // FROM
-        $fromClause = new From($this->selectBuilder->getBaseFace());
+        $fromClause = new From($this->selectBuilder->getBaseQueryFace()->getFace());
         $queryBuilder->addItem($fromClause);
 
 
         // JOINs
         foreach ($this->selectBuilder->getJoins() as $joinQueryFace) {
-            $join = new Join($this->selectBuilder->getBaseFace(), $joinQueryFace);
+            $join = new Join($this->selectBuilder->getBaseQueryFace()->getFace(), $joinQueryFace);
             $queryBuilder->addItem($join);
         }
 
 
         // SOFT JOINs
-        if (is_array($this->selectBuilder->getSoftThroughJoin())) {
-            foreach ($this->selectBuilder->getSoftThroughJoin() as $path => $joinQueryFace) {
-                if (!$this->selectBuilder->isJoined($path)) {
-                    $join = new Join($this->selectBuilder->getBaseFace(), $joinQueryFace);
-                    $queryBuilder->addItem($join);
-                }
+        foreach ($this->selectBuilder->getSoftThroughJoin() as $path => $joinQueryFace) {
+            if (!$this->selectBuilder->isJoined($path)) {
+                $join = new Join($this->selectBuilder->getBaseQueryFace()->getFace(), $joinQueryFace);
+                $queryBuilder->addItem($join);
             }
         }
+
 
         // WHERE
         $whereGroup = $this->selectBuilder->getWhere();

@@ -3,7 +3,7 @@
 namespace Face\Sql\Query\Clause;
 
 
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class Group implements SqlClauseInterface {
 
@@ -23,7 +23,7 @@ class Group implements SqlClauseInterface {
     /**
      * @inheritdoc
      */
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         $string = "";
 

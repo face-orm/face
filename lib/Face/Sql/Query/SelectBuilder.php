@@ -20,7 +20,7 @@ use Face\Traits\EntityFaceTrait;
  *
  * @author bobito
  */
-class SelectBuilder extends \Face\Sql\Query\FQuery
+class SelectBuilder extends \Face\Sql\Query\FQuery implements SelectInterface
 {
 
     use ContextAwareTrait;
@@ -40,9 +40,9 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
     /**
      * used by whereINRelation() to add join to the final query without parsing them
-     * @var array
+     * @var JoinQueryFace[]
      */
-    protected $softThroughJoin;
+    protected $softThroughJoin = [];
 
     protected $limit;
     protected $offset;
@@ -134,7 +134,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
 
     /**
-     * Be aware that this method wont use the global limit, it will offset on the FROM table only
+     * Be aware that this method wont use the global limit, it will limit on the FROM table only
 
      * @param int $limit limit used for the LIMIT clause
      * @param int $offset optionally you can pass the offset in this method. It's aimed to mimic the ``LIMIT 2,10`` syntax
@@ -166,8 +166,6 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
     }
 
 
-
-
     /**
      * add a join clause to the query
      * @param string $path the face path to the join
@@ -184,7 +182,7 @@ class SelectBuilder extends \Face\Sql\Query\FQuery
 
         $sqlPath = $this->_doFQLTableName($path, ".");
 
-        $qJoin = new JoinQueryFace($sqlPath, $face , $this);
+        $qJoin = new JoinQueryFace($sqlPath, $face);
 
         if(null !== $select){
             $qJoin->setColumns($select);

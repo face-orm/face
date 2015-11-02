@@ -2,9 +2,8 @@
 
 namespace Face\Sql\Query\Clause\Where;
 
-use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\Clause\Where;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class WhereGroup extends AbstractWhereClause
 {
@@ -14,7 +13,7 @@ class WhereGroup extends AbstractWhereClause
      */
     protected $whereList = [];
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
 
         if (count($this->whereList) == 0) {

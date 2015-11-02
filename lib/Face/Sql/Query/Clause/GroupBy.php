@@ -3,9 +3,8 @@
 namespace Face\Sql\Query\Clause;
 
 
-use Face\Core\EntityFace;
 use Face\Sql\Query\Clause\Select\Column;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class GroupBy implements SqlClauseInterface{
 
@@ -19,7 +18,7 @@ class GroupBy implements SqlClauseInterface{
         $this->columns = $columns;
     }
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         $string = "GROUP BY ";
 

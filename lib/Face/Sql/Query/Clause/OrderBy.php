@@ -4,9 +4,8 @@
 namespace Face\Sql\Query\Clause;
 
 
-use Face\Core\EntityFace;
 use Face\Sql\Query\Clause\OrderBy\Field;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class OrderBy implements SqlClauseInterface {
 
@@ -25,7 +24,7 @@ class OrderBy implements SqlClauseInterface {
 
 
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
 
         $str = "";

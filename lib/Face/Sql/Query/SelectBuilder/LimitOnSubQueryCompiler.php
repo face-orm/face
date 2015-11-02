@@ -15,6 +15,8 @@ use Face\Sql\Query\Clause\Offset;
 use Face\Sql\Query\Clause\OrderBy;
 use Face\Sql\Query\Clause\Select;
 use Face\Sql\Query\Clause\Where;
+use Face\Sql\Query\SelectInterface;
+use Face\Sql\Query\SelectQuery;
 
 class LimitOnSubQueryCompiler {
 
@@ -23,7 +25,7 @@ class LimitOnSubQueryCompiler {
      */
     protected $selectBuilder;
 
-    function __construct(SelectBuilder $selectBuilder)
+    function __construct(SelectInterface $selectBuilder)
     {
         $this->selectBuilder = $selectBuilder;
     }

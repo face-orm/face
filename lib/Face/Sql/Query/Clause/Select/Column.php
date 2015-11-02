@@ -8,9 +8,8 @@
 
 namespace Face\Sql\Query\Clause\Select;
 
-use Face\Core\EntityFaceElement;
 use Face\Sql\Query\Clause\SqlClauseInterface;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 abstract class Column implements SqlClauseInterface {
 
@@ -25,7 +24,7 @@ abstract class Column implements SqlClauseInterface {
 
 
 
-    public function getSqlString(FQuery $fQuery)
+    public function getSqlString(QueryInterface $fQuery)
     {
         $queryAlias = $this->getQueryAlias(true);
 

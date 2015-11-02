@@ -12,12 +12,7 @@ use Face\Sql\Query\SelectBuilder\JoinQueryFace;
 use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Util\StringUtils;
 
-/**
- * Description of Query
- *
- * @author Soufiane Ghzal
- */
-abstract class FQuery
+abstract class FQuery implements QueryInterface
 {
 
 
