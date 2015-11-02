@@ -90,4 +90,20 @@ class FaceQLTest extends Test\PHPUnitTestDb
         $this->assertCount(3, $trees->getAt(0)->getLemons()[0]->getSeeds());
     }
 
+
+    public function testParseJoinLemonsLimit(){
+        $parser = new \Face\Sql\Query\FaceQL();
+        /* @var $query \Face\Sql\Query\FQuery */
+        $query = $parser->parse("SELECT FROM tree LIMIT 1");
+
+        $this->assertInstanceOf("Face\Sql\Query\SelectBuilder", $query);
+        $this->assertEquals(1, $query->getLimit());
+
+        $trees = \Face\ORM::execute($query);
+
+        $this->assertCount(1, $trees);
+        $this->assertInstanceOf("Tree", $trees->getAt(0));
+        $this->assertEquals(8, $trees->getAt(0)->getAge());
+    }
+
 }
