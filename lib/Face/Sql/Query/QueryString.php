@@ -11,7 +11,7 @@ use Face\Core\EntityFace;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
 use Face\Sql\Query\SelectBuilder\QueryFace;
 
-class QueryString extends FQuery
+class QueryString extends JoinableQuery
 {
 
     protected $sqlString;
@@ -40,11 +40,11 @@ class QueryString extends FQuery
 
         $sqlPath = $this->_doFQLTableName($path, ".");
 
-        $this->joins[$sqlPath] = new JoinQueryFace($sqlPath, $this->getBaseFace()->getElement($path)->getFace(), $this);
+        $this->addJoin(new JoinQueryFace($sqlPath, $this->getBaseFace()->getElement($path)->getFace()));
         if($columns){
-            $this->joins[$sqlPath]->setColumns($columns);
+            $this->getJoins()[$sqlPath]->setColumns($columns);
         }
-        return $this->joins[$sqlPath];
+        return $this->getJoins()[$sqlPath];
     }
 
     public function getSqlString()

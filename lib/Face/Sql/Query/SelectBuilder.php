@@ -77,8 +77,7 @@ class SelectBuilder extends SelectQuery
             $qJoin->setColumns($select);
         }
 
-        $this->joins[$sqlPath] = $qJoin;
-
+        $this->addJoin($qJoin);
         return $this;
     }
 

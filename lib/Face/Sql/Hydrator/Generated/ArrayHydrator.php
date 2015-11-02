@@ -27,6 +27,7 @@ class ArrayHydrator extends GeneratedHydrator
 
 
         foreach($faceList as $path => $queryFace){
+
             $primaries = "";
 
             foreach($queryFace->getFace()->getPrimaries() as $primary){

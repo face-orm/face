@@ -17,7 +17,7 @@ use Face\Sql\Query\SelectBuilder\LimitOnSubQueryCompiler;
 use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Sql\Query\SelectBuilder\StandardCompiler;
 
-class SelectQuery extends FQuery implements SelectInterface
+class SelectQuery extends JoinableQuery implements SelectInterface
 {
 
     protected $limit;
@@ -64,7 +64,7 @@ class SelectQuery extends FQuery implements SelectInterface
      * @throws \Face\Exception\RootFaceReachedException
      */
     private function _hasJoinMany(){
-        foreach($this->joins as $join){
+        foreach($this->getJoins() as $join){
             $element = $this->getBaseFace()->getElement($join->getPath());
             if($element->hasManyRelationship() || $element->hasManyThroughRelationship()){
                 return true;
@@ -83,15 +83,7 @@ class SelectQuery extends FQuery implements SelectInterface
         return $this->softThroughJoin;
     }
 
-    /**
-     * check is a face is joined to the query. This method is not aware of the current context
-     * @param string $path the face path to check
-     * @return bool
-     */
-    public function isJoined($path)
-    {
-        return isset($this->joins[$this->_doFQLTableName($path, ".")]);
-    }
+
 
     /**
      * @return WhereGroup

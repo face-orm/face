@@ -8,7 +8,7 @@ use Face\Core\EntityFaceElement;
 use Face\Core\Navigator;
 use Face\Exception\BadParameterException;
 use Face\Exception\QueryFailedException;
-use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Util\StringUtils;
 
@@ -26,19 +26,10 @@ abstract class FQuery implements QueryInterface
     protected $dotToken;
 
 
-
-    /**
-     * list of face joined to the query
-     * @var JoinQueryFace[]
-     */
-    protected $joins;
-
-
     /**
      * @var QueryFace
      */
     protected $fromQueryFace;
-
 
     /**
      * list of binds to pass to pdo object
@@ -49,18 +40,11 @@ abstract class FQuery implements QueryInterface
     function __construct(EntityFace $baseFace)
     {
         $this->fromQueryFace = new QueryFace("this", $baseFace, $this);
-        $this->joins=[];
         $this->valueBinds=[];
     }
 
 
-    /**
-     * @return SelectBuilder\JoinQueryFace[]
-     */
-    public function getJoins()
-    {
-        return $this->joins;
-    }
+
 
     /**
      * @inheritdoc
@@ -127,18 +111,11 @@ abstract class FQuery implements QueryInterface
 
     /**
      * array of columns to be selected with their alias in this form : $array["alias"] = "real.path"
-     * @return array
+     * @return Column[]
      */
     public function getSelectedColumns()
     {
-        $finalColumns = $this->fromQueryFace->getColumnsReal();
-//
-//        foreach($this->joins as $join){
-//            $finalColumns = array_merge($finalColumns,$join->getColumnsReal());
-//        }
-
-
-        return $finalColumns;
+        return $this->fromQueryFace->getColumnsReal();
     }
 
 
@@ -161,14 +138,12 @@ abstract class FQuery implements QueryInterface
     }
 
     /**
-     * give all the entities which are part of the FQuery
+     * gives all the entities which are part of the FQuery
      * @return QueryFace[] list of the face
      */
     public function getAvailableQueryFaces()
     {
-        $array['this'] = $this->fromQueryFace;
-
-        return array_merge($array, $this->getJoins());
+        return ["this" => $this->fromQueryFace];
     }
 
     /**
