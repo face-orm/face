@@ -51,9 +51,6 @@ abstract class FQuery
      */
     protected $valueBinds;
 
-
-    protected $aliases;
-
     function __construct(EntityFace $baseFace)
     {
         $this->fromQueryFace = new QueryFace("this", $baseFace, $this);
