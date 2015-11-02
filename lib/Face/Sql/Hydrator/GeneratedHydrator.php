@@ -15,7 +15,7 @@ abstract class GeneratedHydrator extends AbstractHydrator
      */
     protected $cache;
 
-    protected $debugInFile = false;
+    protected $debugInFile = true;
 
     public function __construct(CacheInterface $cache = null){
         if (!$cache) {

@@ -133,7 +133,10 @@ class QueryFace {
                         if(!$alias){
                             $alias = $realPath;
                         }
-                        $finalColumns[$realPath] = new Column($this->getPath(), $alias, $elm);
+
+                        $elementColumn = new Column\ElementColumn($this->getPath(), $elm);
+                        $elementColumn->setQueryAlias($alias);
+                        $finalColumns[$realPath] = $elementColumn;
                     }
 
                 }
@@ -154,7 +157,9 @@ class QueryFace {
             if($elm->isValue() && $elm->isIdentifier()){
                 $realPath = $this->makePath($elm->getName());
                 if(!isset($columns[$realPath])) {
-                    $columns[$realPath] = new Column($this->getPath(), $realPath, $elm);
+                    $column = new Column\ElementColumn($this->getPath(), $elm);
+                    $column->setQueryAlias($realPath);
+                    $columns[$realPath] = $column;
                 }
             }
         }
@@ -165,7 +170,9 @@ class QueryFace {
         foreach($this->face->getElements() as $elm){
             if($elm->isValue()){
                 $realPath = $this->makePath($elm->getName());
-                $columns[$realPath] = new Column($this->getPath(), $realPath, $elm);
+                $column = new Column\ElementColumn($this->getPath(), $elm);
+                $column->setQueryAlias($realPath);
+                $columns[$realPath] = $column;
             }
         }
 

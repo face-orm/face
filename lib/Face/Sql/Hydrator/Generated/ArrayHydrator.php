@@ -30,7 +30,7 @@ class ArrayHydrator extends GeneratedHydrator
             $primaries = "";
 
             foreach($queryFace->getFace()->getPrimaries() as $primary){
-                $name = $queryFace->getColumnsReal()[$queryFace->makePath($primary->getName())]->getAlias();
+                $name = $queryFace->getColumnsReal()[$queryFace->makePath($primary->getName())]->getQueryAlias();
                 $primaries .= "\$row['$name'] . ";
             }
 
@@ -93,9 +93,11 @@ EOF;
         $propertiesSet = '';
 
         foreach($queryFace->getColumnsReal() as $columnPath => $column){
-            $propertyName = $column->getEntityFaceElement()->getPropertyName();
-            $columnName = $column->getAlias();
-            $propertiesSet .= "\$data['$path'][\$identity['$path']]->$propertyName = \$array['$columnName'];\n                ";
+            if($column->isHydratable()){
+                $propertyName = $column->getHydrationAlias();
+                $columnName = $column->getQueryAlias();
+                $propertiesSet .= "\$data['$path'][\$identity['$path']]->$propertyName = \$array['$columnName'];\n                ";
+            }
         }
         $entityFill = <<<EOF
 
