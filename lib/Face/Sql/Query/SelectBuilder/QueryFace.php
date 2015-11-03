@@ -16,12 +16,26 @@ class QueryFace {
 
     protected $basePath;
 
+    protected $isSilent = false;
+
 
     function __construct($basePath, EntityFace $face)
     {
         $this->face = $face;
         $this->basePath = $basePath;
     }
+
+    /**
+     * @param bool $silent
+     */
+    public function setSilent($silent){
+        $this->isSilent = $silent;
+    }
+
+    public function isSilent(){
+        return $this->isSilent;
+    }
+
 
     /**
      * @return array
@@ -106,6 +120,10 @@ class QueryFace {
      */
     public function getColumnsReal(){
 
+        if($this->isSilent()){
+            return [];
+        }
+
         $finalColumns = [];
 
 
@@ -165,7 +183,7 @@ class QueryFace {
         }
     }
 
-    protected function _includeAllColumns(&$columns){
+    private function _includeAllColumns(&$columns){
 
         foreach($this->face->getElements() as $elm){
             if($elm->isValue()){

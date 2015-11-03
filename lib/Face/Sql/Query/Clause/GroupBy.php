@@ -11,15 +11,19 @@ class GroupBy implements SqlClauseInterface{
     /**
      * @var Column[]
      */
-    protected $columns;
+    protected $columns = [];
 
-    function __construct($columns)
+    function __construct(array $columns)
     {
         $this->columns = $columns;
     }
 
     public function getSqlString(QueryInterface $q)
     {
+        if(count($this->columns) == 0){
+            return "";
+        }
+
         $string = "GROUP BY ";
 
         $i=0;
@@ -27,7 +31,7 @@ class GroupBy implements SqlClauseInterface{
             if($i>0){
                 $string .= ", ";
             }
-            $string .= $column->getSqlPath();
+            $string .= $column->getSqlStatement($q);
             $i++;
         }
 

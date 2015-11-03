@@ -17,28 +17,21 @@ abstract class Column implements SqlClauseInterface {
     protected $queryAlias;
     protected $hydrationAlias;
 
-    function __construct($parentPath)
-    {
-        $this->parentPath = $parentPath;
-    }
-
-
 
     public function getSqlString(QueryInterface $fQuery)
     {
         $queryAlias = $this->getQueryAlias(true);
 
         if($queryAlias){
-            return $this->getSqlPath() . " AS " . $queryAlias;
+            return $this->getSqlStatement($fQuery) . " AS " . $queryAlias;
         }else{
-            return $this->getSqlPath();
+            return $this->getSqlStatement($fQuery);
         }
     }
 
 
-    abstract public function getSqlPath();
 
-    abstract public function getPath();
+    abstract public function getSqlStatement(QueryInterface $queryInterface);
 
     abstract public function isHydratable();
 

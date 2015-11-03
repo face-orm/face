@@ -40,12 +40,8 @@ class StandardCompiler {
         /* @var $facesToSelect QueryFace[] */
         $facesToSelect["this"] = $this->selectBuilder->getBaseQueryFace();
         $facesToSelect = array_merge($facesToSelect, $this->selectBuilder->getJoins());
-        $columns = [];
-        foreach($facesToSelect as $queryFace){
-            foreach($queryFace->getColumnsReal() as $column){
-                $columns[] = $column;
-            }
-        }
+        $columns =  $this->selectBuilder->getSelectedColumns();
+
 
         $queryBuilder = new Group();
 
@@ -80,6 +76,10 @@ class StandardCompiler {
         if ($whereGroup) {
             $where = new Where($whereGroup);
             $queryBuilder->addItem($where);
+        }
+
+        if($this->selectBuilder->getGroupBy()){
+            $queryBuilder->addItem($this->selectBuilder->getGroupBy());
         }
 
         // ORDER

@@ -4,9 +4,14 @@ namespace Face\Sql\Hydrator\Generated;
 
 use Face\Core\EntityFace;
 use Face\Core\EntityFaceElement;
+use Face\Exception;
+use Face\Exception\RootFaceReachedException;
 use Face\Sql\Hydrator\GeneratedHydrator;
+use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\FQuery;
 use Face\Sql\Query\SelectBuilder\QueryFace;
+use Face\Sql\Query\SelectInterface;
+use Face\Sql\Query\SelectQuery;
 use Face\Sql\Reader\QueryArrayReader\PreparedFace;
 use Face\Util\StringUtils;
 
@@ -15,7 +20,7 @@ use Face\Util\StringUtils;
  */
 class ArrayHydrator extends GeneratedHydrator
 {
-    protected function generateCode(FQuery $FQuery)
+    protected function generateCode(SelectQuery $FQuery)
     {
 
         $identityGetter = "\$identityGetter = [];\n";
@@ -25,6 +30,11 @@ class ArrayHydrator extends GeneratedHydrator
 
         $faceList = $FQuery->getAvailableQueryFaces();
 
+        foreach($faceList as $path => $queryFace){
+            if($queryFace->isSilent()){
+                unset($faceList[$path]);
+            }
+        }
 
         foreach($faceList as $path => $queryFace){
 
@@ -47,6 +57,13 @@ class ArrayHydrator extends GeneratedHydrator
 
         }
 
+        $additionalFill = "";
+        $additionalColumns = $FQuery->getColumns();
+        foreach($additionalColumns as $column){
+            if($column->isHydratable()){
+                $additionalFill .= $this->generateColumnFill($column, $FQuery->getBaseQueryFace()->getFace(), $faceList);
+            }
+        }
 
 
 
@@ -69,9 +86,16 @@ class ArrayHydrator extends GeneratedHydrator
 
             // CREATE ENTITIES
             $entityFill
+            //................
+
 
             // MAKE RELATIONS
             $relations
+            //...............
+
+            // ADDITIONAL COLUMNS
+            $additionalFill
+            //...................
 
         }
 
@@ -111,6 +135,42 @@ EOF;
 EOF;
 
         return $entityFill;
+
+    }
+
+    private function generateColumnFill(Column $column, EntityFace $baseFace, $faceList){
+
+        // TODO: optimize
+        try {
+            $element = $baseFace->getElement($column->getHydrationAlias(), 1, $pieceOfPath);
+            if(!$element->isEntity()){
+                throw new Exception("Invalid element in column name: " . $column->getHydrationAlias());
+            }
+            $property = $pieceOfPath[1];
+            $facePath = $pieceOfPath[0];
+        } catch (RootFaceReachedException $e){
+            $property = $column->getHydrationAlias();
+            if(StringUtils::beginsWith("this.", $property)){
+                $property = substr($property, 5);
+            }
+            $facePath = "this";
+        }
+
+        if(!isset($faceList[$facePath])){
+            throw new Exception("Invalid entity '$facePath' in column hydration name: " . $column->getHydrationAlias());
+        }
+
+        $columnName = $column->getQueryAlias();
+
+        // TODO merge this with the if group in generateEntityFill
+        return <<<EOF
+
+            \$identity['$facePath'] = \$identityGetter['$facePath'](\$array);
+            if(\$identity['$facePath']){
+                \$data['$facePath'][\$identity['$facePath']]->$property = \$array['$columnName'];
+            }
+
+EOF;
 
     }
 

@@ -6,6 +6,7 @@ use Face\Cache\CacheInterface;
 use Face\Cache\NoCache;
 use Face\Exception;
 use Face\Sql\Query\FQuery;
+use Face\Sql\Query\SelectQuery;
 use Face\Sql\Result\ResultSet;
 
 abstract class GeneratedHydrator extends AbstractHydrator
@@ -75,9 +76,9 @@ abstract class GeneratedHydrator extends AbstractHydrator
 
     }
 
-    abstract protected function generateCode(FQuery $FQuery);
+    abstract protected function generateCode(SelectQuery $FQuery);
 
-    protected function getQueryKey(FQuery $FQuery){
+    protected function getQueryKey(SelectQuery $FQuery){
         $key = $FQuery->getBaseFace()->getSqlTable();
         $joins = [];
         foreach($FQuery->getJoins() as $join){

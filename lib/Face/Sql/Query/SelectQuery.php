@@ -9,7 +9,9 @@
 namespace Face\Sql\Query;
 
 
+use Face\Sql\Query\Clause\GroupBy;
 use Face\Sql\Query\Clause\OrderBy\Field;
+use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\Clause\Where\AbstractWhereClause;
 use Face\Sql\Query\Clause\Where\WhereGroup;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
@@ -24,6 +26,11 @@ class SelectQuery extends JoinableQuery implements SelectInterface
     protected $offset;
 
     /**
+     * @var GroupBy|null
+     */
+    protected $groupBy;
+
+    /**
      * used by whereINRelation() to add join to the final query without parsing them
      * @var JoinQueryFace[]
      */
@@ -35,12 +42,57 @@ class SelectQuery extends JoinableQuery implements SelectInterface
      */
     protected $where;
 
+    /**
+     * @var Column[]
+     */
+    protected $columns = [];
+
+
 
     /**
      * @var Field[]
      */
     protected $orderBy = [];
 
+    public function setGroupBy(GroupBy $groupBy){
+        $this->groupBy = $groupBy;
+    }
+
+    /**
+     * @return GroupBy|null
+     */
+    public function getGroupBy(){
+        return $this->groupBy;
+    }
+
+    /**
+     * @return Column[]
+     */
+    public function getSelectedColumns()
+    {
+        $columns =  $this->columns + $this->fromQueryFace->getColumnsReal();
+        foreach($this->getJoins() as $join){
+            $columns += $join->getColumnsReal();
+        }
+        return $columns;
+    }
+
+    /**
+     * Get the columns that do not belong to any QueryFace
+     * To get all the column please consider using getSelectedColumns() instead
+     * @return Clause\Select\Column[]
+     */
+    public function getColumns(){
+        return $this->columns;
+    }
+
+
+    /**
+     * @param Column $column
+     */
+    public function addColumn(Column $column){
+        $this->columns[] = $column;
+    }
 
 
     public function getSqlString()

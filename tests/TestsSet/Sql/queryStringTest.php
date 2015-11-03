@@ -35,6 +35,7 @@ class QueryStringTest extends Test\PHPUnitTestDb
      */
     public function testQueryString(){
 
+        $this->markTestSkipped("Query string should be derivable to a SelectInterface");
 
         $pdo = $this->getConnection()->getConnection();
 
@@ -61,6 +62,8 @@ class QueryStringTest extends Test\PHPUnitTestDb
      * @group querystring
      */
     public function testQueryStringTraitGenerator(){
+
+        $this->markTestSkipped("Query string should be derivable to a SelectInterface");
 
         $pdo = $this->getConnection()->getConnection();
 

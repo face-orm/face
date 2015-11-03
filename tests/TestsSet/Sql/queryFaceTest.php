@@ -23,8 +23,6 @@ class queryFaceTest extends Test\PHPUnitTestDb
         $this->assertEquals(2, count($columnsReal));
         $this->assertEquals("this.id", $columnsReal["this.id"]->getQueryAlias());
         $this->assertEquals("this.age", $columnsReal["this.age"]->getQueryAlias());
-        $this->assertEquals("this.id", $columnsReal["this.id"]->getPath());
-        $this->assertEquals("this.age", $columnsReal["this.age"]->getPath());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("id"),  $columnsReal["this.id"]->getEntityFaceElement());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("age"), $columnsReal["this.age"]->getEntityFaceElement());
 
@@ -35,8 +33,6 @@ class queryFaceTest extends Test\PHPUnitTestDb
         $this->assertEquals(2, count($columnsReal));
         $this->assertEquals("this.id", $columnsReal["this.id"]->getQueryAlias());
         $this->assertEquals("this.age", $columnsReal["this.age"]->getQueryAlias());
-        $this->assertEquals("this.id", $columnsReal["this.id"]->getPath());
-        $this->assertEquals("this.age", $columnsReal["this.age"]->getPath());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("id"),  $columnsReal["this.id"]->getEntityFaceElement());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("age"), $columnsReal["this.age"]->getEntityFaceElement());
 
@@ -46,7 +42,6 @@ class queryFaceTest extends Test\PHPUnitTestDb
         $columnsReal = $queryFace->getColumnsReal();
         $this->assertEquals(1, count($columnsReal));
         $this->assertEquals("this.id", $columnsReal["this.id"]->getQueryAlias());
-        $this->assertEquals("this.id", $columnsReal["this.id"]->getPath());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("id"),  $columnsReal["this.id"]->getEntityFaceElement());
 
 
@@ -55,8 +50,6 @@ class queryFaceTest extends Test\PHPUnitTestDb
         $this->assertEquals(2, count($columnsReal));
         $this->assertEquals("this.id", $columnsReal["this.id"]->getQueryAlias());
         $this->assertEquals("ega", $columnsReal["this.age"]->getQueryAlias());
-        $this->assertEquals("this.id", $columnsReal["this.id"]->getPath());
-        $this->assertEquals("this.age", $columnsReal["this.age"]->getPath());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("id"),  $columnsReal["this.id"]->getEntityFaceElement());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("age"), $columnsReal["this.age"]->getEntityFaceElement());
 
@@ -67,8 +60,6 @@ class queryFaceTest extends Test\PHPUnitTestDb
         $this->assertEquals(2, count($columnsReal));
         $this->assertEquals("this.id", $columnsReal["this.id"]->getQueryAlias());
         $this->assertEquals("ega", $columnsReal["this.age"]->getQueryAlias());
-        $this->assertEquals("this.id", $columnsReal["this.id"]->getPath());
-        $this->assertEquals("this.age", $columnsReal["this.age"]->getPath());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("id"),  $columnsReal["this.id"]->getEntityFaceElement());
         $this->assertEquals(Tree::getEntityFace()->getDirectElement("age"), $columnsReal["this.age"]->getEntityFaceElement());
 

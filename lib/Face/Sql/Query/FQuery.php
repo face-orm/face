@@ -30,10 +30,6 @@ abstract class FQuery implements QueryInterface
      */
     protected $fromQueryFace;
 
-    /**
-     * @var Column[]
-     */
-    protected $columns = [];
 
     /**
      * list of binds to pass to pdo object
@@ -47,25 +43,23 @@ abstract class FQuery implements QueryInterface
         $this->valueBinds=[];
     }
 
-    /**
-     * @param Column $column
-     */
-    public function addColumn(Column $column){
-        $this->columns[] = $column;
-    }
 
     /**
      * replaces the waved string by the sql-valid column name
      * @param $string
      */
-    public function parseColumnNames($string, ContextAwareInterface $context)
+    public function parseColumnNames($string, ContextAwareInterface $context = null)
     {
         $matchArray = [];
         preg_match_all("#~([a-zA-Z0-9_]\\.{0,1})+#", $string, $matchArray);
         $matchArray = array_unique($matchArray[0]);
 
         foreach ($matchArray as $match) {
-            $nsMatch = $context->getNameInContext($match);
+            if($context){
+                $nsMatch = $context->getNameInContext($match);
+            }else{
+                $nsMatch = $match;
+            }
 
             $path=ltrim($nsMatch, "~");
 
@@ -145,15 +139,6 @@ abstract class FQuery implements QueryInterface
         $this->valueBinds[$parameter] = [$value,$data_type];
 
         return $this;
-    }
-
-    /**
-     * array of columns to be selected with their alias in this form : $array["alias"] = "real.path"
-     * @return Column[]
-     */
-    public function getSelectedColumns()
-    {
-        return $this->columns + $this->fromQueryFace->getColumnsReal();
     }
 
 

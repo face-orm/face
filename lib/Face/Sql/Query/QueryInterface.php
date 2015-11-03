@@ -23,7 +23,11 @@ interface QueryInterface
      * replaces the waved string by their sql valid column name
      * @param $string
      */
-    public function parseColumnNames($string, ContextAwareInterface $context);
+    public function parseColumnNames($string, ContextAwareInterface $context = null);
+
+
+    // TODO : remove this and merge what we need where we need it
+    public function getAvailableQueryFaces();
 
 }
 

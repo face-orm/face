@@ -10,6 +10,7 @@ namespace Face\Sql\Query;
 
 
 use Face\Sql\Query\Clause\OrderBy\Field;
+use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\Clause\Where\WhereGroup;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
 use Face\Sql\Query\SelectBuilder\QueryFace;
@@ -52,5 +53,10 @@ interface SelectInterface extends QueryInterface
      * @return int
      */
     public function getOffset();
+
+    /**
+     * @return Column[]
+     */
+    public function getSelectedColumns();
 
 }

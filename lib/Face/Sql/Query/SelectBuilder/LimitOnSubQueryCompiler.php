@@ -140,6 +140,9 @@ class LimitOnSubQueryCompiler {
         $queryGroup->addItem($selectClause);
         $queryGroup->addItem($fromClause);
         $queryGroup->addItem($joinGroup);
+        if($this->selectBuilder->getGroupBy()){
+            $queryGroup->addItem($this->selectBuilder->getGroupBy());
+        }
         $queryGroup->addItem($whereQuery);
         $queryGroup->addItem($orderByClause);
 

@@ -48,6 +48,20 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     }
 
+    public function testGroupBy(){
+
+        $q=Tree::faceQueryBuilder();
+
+
+        $element = $q->getBaseFace()->getDirectElement("age");
+        $column = new Face\Sql\Query\Clause\Select\Column\ElementColumn("this", $element);
+        $q->setGroupBy(new \Face\Sql\Query\Clause\GroupBy([$column]));
+
+        $sqlString = $q->getSqlString();
+        $this->assertEquals("SELECT `this`.`id` AS `this.id`, `this`.`age` AS `this.age` FROM `tree` AS `this` GROUP BY `this`.`age`", $sqlString);
+
+    }
+
 
     public function testSelectBuilderString(){
 
@@ -291,7 +305,7 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
     }
 
-    
+
     /**
      * @group hasManyThrough
      */
@@ -322,12 +336,13 @@ class queryBuilderTest extends Test\PHPUnitTestDb
         $this->assertEquals(4,$trees[3]->getId());
         $this->assertEquals(300,$trees[3]->getAge());
 
+        var_dump($trees->getAt(2)->getId());
 
 
-        $this->assertEquals(3, count($trees[0]->childrenTrees));
-        $this->assertEquals(0, count($trees[1]->childrenTrees));
-        $this->assertEquals(1, count($trees[2]->childrenTrees));
-        $this->assertEquals(0, count($trees[3]->childrenTrees));
+        $this->assertEquals(3, count($trees->getAt(0)->childrenTrees));
+        $this->assertEquals(0, count($trees->getAt(1)->childrenTrees));
+        $this->assertEquals(1, count($trees->getAt(2)->childrenTrees));
+        $this->assertEquals(0, count($trees->getAt(3)->childrenTrees));
 
         $this->assertEquals(0, count($trees[0]->parentTrees));
         $this->assertEquals(1, count($trees[1]->parentTrees));

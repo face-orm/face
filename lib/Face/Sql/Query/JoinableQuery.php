@@ -10,6 +10,7 @@ namespace Face\Sql\Query;
 
 
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\SelectBuilder\QueryFace;
 
 abstract class JoinableQuery extends FQuery
 {
@@ -43,27 +44,11 @@ abstract class JoinableQuery extends FQuery
     }
 
     /**
-     * array of columns to be selected with their alias in this form : $array["alias"] = "real.path"
-     * @return array
-     */
-    public function getSelectedColumns()
-    {
-        $finalColumns = parent::getSelectedColumns();
-//
-//        foreach($this->joins as $join){
-//            $finalColumns = array_merge($finalColumns,$join->getColumnsReal());
-//        }
-
-
-        return $finalColumns;
-    }
-
-    /**
-     * @inheritdoc
+     * @return QueryFace[]
      */
     public function getAvailableQueryFaces()
     {
-        return array_merge(parent::getAvailableQueryFaces() + $this->getJoins());
+        return parent::getAvailableQueryFaces() + $this->getJoins();
     }
 
 }
