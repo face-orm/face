@@ -3,9 +3,8 @@
 namespace Face\Sql\Query;
 
 use Face\Config;
+use Face\ContextAwareInterface;
 use Face\Core\EntityFace;
-use Face\Core\EntityFaceElement;
-use Face\Core\Navigator;
 use Face\Exception\BadParameterException;
 use Face\Exception\QueryFailedException;
 use Face\Sql\Query\Clause\Select\Column;
@@ -32,6 +31,11 @@ abstract class FQuery implements QueryInterface
     protected $fromQueryFace;
 
     /**
+     * @var Column[]
+     */
+    protected $columns = [];
+
+    /**
      * list of binds to pass to pdo object
      * @var array
      */
@@ -43,7 +47,41 @@ abstract class FQuery implements QueryInterface
         $this->valueBinds=[];
     }
 
+    /**
+     * @param Column $column
+     */
+    public function addColumn(Column $column){
+        $this->columns[] = $column;
+    }
 
+    /**
+     * replaces the waved string by the sql-valid column name
+     * @param $string
+     */
+    public function parseColumnNames($string, ContextAwareInterface $context)
+    {
+        $matchArray = [];
+        preg_match_all("#~([a-zA-Z0-9_]\\.{0,1})+#", $string, $matchArray);
+        $matchArray = array_unique($matchArray[0]);
+
+        foreach ($matchArray as $match) {
+            $nsMatch = $context->getNameInContext($match);
+
+            $path=ltrim($nsMatch, "~");
+
+            $tablePath = rtrim(substr($nsMatch, 1, strrpos($nsMatch, ".")), ".");
+
+            $replace= $this->_doFQLTableName($tablePath, null, true)
+                . "."
+                . $this->getBaseFace()
+                    ->getElement($path)
+                    ->getSqlColumnName(true);
+
+            $string = str_replace($match, $replace, $string);
+        }
+
+        return $string;
+    }
 
 
     /**
@@ -115,7 +153,7 @@ abstract class FQuery implements QueryInterface
      */
     public function getSelectedColumns()
     {
-        return $this->fromQueryFace->getColumnsReal();
+        return $this->columns + $this->fromQueryFace->getColumnsReal();
     }
 
 
