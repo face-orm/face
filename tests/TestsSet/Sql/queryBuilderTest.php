@@ -52,7 +52,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
         $q=Tree::faceQueryBuilder();
 
-
         $element = $q->getBaseFace()->getDirectElement("age");
         $column = new Face\Sql\Query\Clause\Select\Column\ElementColumn("this", $element);
         $q->setGroupBy(new \Face\Sql\Query\Clause\GroupBy([$column]));
@@ -306,6 +305,23 @@ class queryBuilderTest extends Test\PHPUnitTestDb
     }
 
 
+    public function testHaving(){
+        $q=Tree::faceQueryBuilder();
+
+        $element = $q->getBaseFace()->getDirectElement("age");
+        $column = new Face\Sql\Query\Clause\Select\Column\ElementColumn("this", $element);
+        $q->setGroupBy(new \Face\Sql\Query\Clause\GroupBy([$column]));
+
+        $condition = new \Face\Sql\Query\Clause\Where\WhereGroup();
+        $condition->addWhere(new \Face\Sql\Query\Clause\Where\WhereString("COUNT(~this.id) > 0"));
+        $having = new \Face\Sql\Query\Clause\Having($condition);
+        $q->setHaving($having);
+
+        $sqlString = $q->getSqlString();
+
+        $this->assertEquals("SELECT `this`.`id` AS `this.id`, `this`.`age` AS `this.age` FROM `tree` AS `this` GROUP BY `this`.`age` HAVING (COUNT(`this`.`id`) > 0)", $sqlString);
+    }
+
     /**
      * @group hasManyThrough
      */
@@ -335,8 +351,6 @@ class queryBuilderTest extends Test\PHPUnitTestDb
 
         $this->assertEquals(4,$trees[3]->getId());
         $this->assertEquals(300,$trees[3]->getAge());
-
-        var_dump($trees->getAt(2)->getId());
 
 
         $this->assertEquals(3, count($trees->getAt(0)->childrenTrees));

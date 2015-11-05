@@ -36,6 +36,11 @@ class WhereGroup extends AbstractWhereClause
         return $str . ")";
     }
 
+    /**
+     * // TODO: rename it addCondition
+     * @param AbstractWhereClause $where
+     * @param null $logic
+     */
     public function addWhere(AbstractWhereClause $where, $logic = null)
     {
         $this->whereList[] = [$where,$logic];

@@ -86,9 +86,9 @@ class LimitOnSubQueryCompiler {
         }
 
         // WHERE SUBQUERY
-        $whereGroup = $this->selectBuilder->getWhere();
-        if ($whereGroup) {
-            $whereSubquery = new Where($whereGroup);
+        $where = $this->selectBuilder->getWhere();
+        if ($where) {
+            $whereSubquery = $where;
         }else{
             $whereSubquery = null;
         }

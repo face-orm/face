@@ -10,8 +10,10 @@ namespace Face\Sql\Query;
 
 
 use Face\Sql\Query\Clause\GroupBy;
+use Face\Sql\Query\Clause\Having;
 use Face\Sql\Query\Clause\OrderBy\Field;
 use Face\Sql\Query\Clause\Select\Column;
+use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\Clause\Where\AbstractWhereClause;
 use Face\Sql\Query\Clause\Where\WhereGroup;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
@@ -38,7 +40,7 @@ class SelectQuery extends JoinableQuery implements SelectInterface
 
     /**
      *
-     * @var WhereGroup
+     * @var Where
      */
     protected $where;
 
@@ -54,6 +56,11 @@ class SelectQuery extends JoinableQuery implements SelectInterface
      */
     protected $orderBy = [];
 
+    /**
+     * @var Having
+     */
+    protected $having = null;
+
     public function setGroupBy(GroupBy $groupBy){
         $this->groupBy = $groupBy;
     }
@@ -64,6 +71,20 @@ class SelectQuery extends JoinableQuery implements SelectInterface
     public function getGroupBy(){
         return $this->groupBy;
     }
+
+    public function setHaving(Having $having){
+        $this->having = $having;
+    }
+
+    /**
+     * @return Having
+     */
+    public function getHaving()
+    {
+        return $this->having;
+    }
+
+
 
     /**
      * @return Column[]
@@ -138,19 +159,16 @@ class SelectQuery extends JoinableQuery implements SelectInterface
 
 
     /**
-     * @return WhereGroup
+     * @return Where
      */
     public function getWhere()
     {
         return $this->where;
     }
 
-    public function addWhere(AbstractWhereClause $where)
+    public function setWhere(Where $where)
     {
-        if (!$this->where) {
-            $this->where = new WhereGroup();
-        }
-        $this->where->addWhere($where);
+        $this->where = $where;
     }
 
 

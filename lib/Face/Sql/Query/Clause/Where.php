@@ -18,7 +18,6 @@ class Where implements SqlClauseInterface {
         $this->where = $where;
     }
 
-
     /**
      * @inheritdoc
      */

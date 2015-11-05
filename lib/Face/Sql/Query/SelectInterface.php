@@ -9,8 +9,10 @@
 namespace Face\Sql\Query;
 
 
+use Face\Sql\Query\Clause\Having;
 use Face\Sql\Query\Clause\OrderBy\Field;
 use Face\Sql\Query\Clause\Select\Column;
+use Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\Clause\Where\WhereGroup;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
 use Face\Sql\Query\SelectBuilder\QueryFace;
@@ -35,7 +37,7 @@ interface SelectInterface extends QueryInterface
     public function isJoined($path);
 
     /**
-     * @return WhereGroup
+     * @return Where
      */
     public function getWhere();
 
@@ -58,5 +60,10 @@ interface SelectInterface extends QueryInterface
      * @return Column[]
      */
     public function getSelectedColumns();
+
+    /**
+     * @return Having
+     */
+    public function getHaving();
 
 }

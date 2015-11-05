@@ -72,14 +72,19 @@ class StandardCompiler {
 
 
         // WHERE
-        $whereGroup = $this->selectBuilder->getWhere();
-        if ($whereGroup) {
-            $where = new Where($whereGroup);
+        $where = $this->selectBuilder->getWhere();
+        if ($where) {
             $queryBuilder->addItem($where);
         }
 
+        // GROUP BY
         if($this->selectBuilder->getGroupBy()){
             $queryBuilder->addItem($this->selectBuilder->getGroupBy());
+        }
+
+        // HAVING
+        if($this->selectBuilder->getHaving()){
+            $queryBuilder->addItem($this->selectBuilder->getHaving());
         }
 
         // ORDER

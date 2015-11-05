@@ -39,7 +39,10 @@ class SelectBuilder extends SelectQuery
      */
     private $whereInCount=0;
 
-
+    /**
+     * @var Where\WhereGroup
+     */
+    protected $whereGroup;
 
     function __construct(EntityFace $baseFace, $columns = [])
     {
@@ -80,6 +83,18 @@ class SelectBuilder extends SelectQuery
         $this->addJoin($qJoin);
         return $this;
     }
+
+
+    public function addWhere(Where\AbstractWhereClause $whereCondition, $logic = null)
+    {
+        if (!$this->where) {
+            $this->whereGroup = new Where\WhereGroup();
+            $where = new Where($this->whereGroup);
+            $this->setWhere($where);
+        }
+        $this->whereGroup->addWhere($whereCondition, $logic);
+    }
+
 
 
     public function orderBy($field, $direction = null){
