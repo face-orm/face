@@ -13,7 +13,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "face/parser": "dev-master"
     },
     "autoload": {
         "psr-0" : {
@@ -24,7 +25,8 @@
         "phpunit/PHPUnit": "4.4.5",
         "phpunit/dbunit" : "1.2.*@dev",
         "codeclimate/php-test-reporter": "dev-master",
-        "squizlabs/php_codesniffer": "2.2.0"
+        "squizlabs/php_codesniffer": "2.2.0",
+        "jdorn/sql-formatter": "^1.2"
     },
 
     "suggest": {

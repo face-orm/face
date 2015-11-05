@@ -16,12 +16,26 @@ class QueryFace {
 
     protected $basePath;
 
+    protected $isSilent = false;
+
 
     function __construct($basePath, EntityFace $face)
     {
         $this->face = $face;
         $this->basePath = $basePath;
     }
+
+    /**
+     * @param bool $silent
+     */
+    public function setSilent($silent){
+        $this->isSilent = $silent;
+    }
+
+    public function isSilent(){
+        return $this->isSilent;
+    }
+
 
     /**
      * @return array
@@ -104,7 +118,11 @@ class QueryFace {
      * @param bool $userPrefix
      * @return Column[] list of joined columns with this format :   $array["real.path"] = @see Face\Sql\Query\Clause\Select\Column;
      */
-    public function getColumnsReal($userPrefix = false){
+    public function getColumnsReal(){
+
+        if($this->isSilent()){
+            return [];
+        }
 
         $finalColumns = [];
 
@@ -133,7 +151,10 @@ class QueryFace {
                         if(!$alias){
                             $alias = $realPath;
                         }
-                        $finalColumns[$realPath] = new Column($this->getPath(), $alias, $elm);
+
+                        $elementColumn = new Column\ElementColumn($this->getPath(), $elm);
+                        $elementColumn->setQueryAlias($alias);
+                        $finalColumns[$realPath] = $elementColumn;
                     }
 
                 }
@@ -154,18 +175,22 @@ class QueryFace {
             if($elm->isValue() && $elm->isIdentifier()){
                 $realPath = $this->makePath($elm->getName());
                 if(!isset($columns[$realPath])) {
-                    $columns[$realPath] = new Column($this->getPath(), $realPath, $elm);
+                    $column = new Column\ElementColumn($this->getPath(), $elm);
+                    $column->setQueryAlias($realPath);
+                    $columns[$realPath] = $column;
                 }
             }
         }
     }
 
-    protected function _includeAllColumns(&$columns){
+    private function _includeAllColumns(&$columns){
 
         foreach($this->face->getElements() as $elm){
             if($elm->isValue()){
                 $realPath = $this->makePath($elm->getName());
-                $columns[$realPath] = new Column($this->getPath(), $realPath, $elm);
+                $column = new Column\ElementColumn($this->getPath(), $elm);
+                $column->setQueryAlias($realPath);
+                $columns[$realPath] = $column;
             }
         }
 

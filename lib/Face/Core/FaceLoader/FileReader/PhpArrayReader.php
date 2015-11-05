@@ -16,10 +16,8 @@ class PhpArrayReader extends  FileReaderLoader{
      */
     protected function readFile($fileName)
     {
-
         // todo : handle errors
         return FaceFactory::buildFace(require $fileName, $this);
-
     }
 
 

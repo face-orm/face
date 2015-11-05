@@ -7,6 +7,7 @@ namespace Face\Sql\Query\Clause;
 use Face\Core\EntityFace;
 use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 use Face\Sql\Query\SelectBuilder\JoinQueryFace;
 
 class Join implements SqlClauseInterface {
@@ -28,7 +29,7 @@ class Join implements SqlClauseInterface {
     }
 
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         $path = $this->joinQueryFace->getPath();
         $face = $this->joinQueryFace->getFace();

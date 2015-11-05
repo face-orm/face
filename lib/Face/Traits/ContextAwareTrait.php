@@ -2,6 +2,8 @@
 
 namespace Face\Traits;
 
+use Face\ContextAwareInterface;
+
 /**
  * Class ContextAwareTrait
  *
@@ -42,7 +44,7 @@ trait ContextAwareTrait
      * @param $name
      * @return string
      */
-    protected function getNameInContext($name)
+    public function getNameInContext($name)
     {
         if (null === $this->__contextAwareContext) {
             return $name;

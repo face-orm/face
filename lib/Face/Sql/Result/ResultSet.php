@@ -3,10 +3,10 @@
 namespace Face\Sql\Result;
 
 use Face\Core\FacePool;
+use Face\Exception;
 use Face\Exception\RootFaceReachedException;
 use Face\Sql\Query\SelectBuilder;
 use Face\Core\EntityFace;
-use Face\Core\InstancesKeeper;
 
 /**
  * A result set is a list of results returned by a FaceQuery
@@ -15,24 +15,17 @@ use Face\Core\InstancesKeeper;
  */
 class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
 {
-    
-    /**
-     *
-     * @var \Face\Core\InstancesKeeper
-     */
-    protected $instanceKeeper;
 
     /**
      * @var EntityFace
      */
     protected $baseFace;
-    
-    protected $instancesByPath=array();
-    protected $instancesByPathIdentity=array();
-    
-    function __construct(EntityFace $baseFace, InstancesKeeper $instanceKeeper)
+
+    protected $instancesByPathIdentity = [];
+    protected $instanceByIndex = [];
+
+    function __construct(EntityFace $baseFace)
     {
-        $this->instanceKeeper = $instanceKeeper;
         $this->baseFace = $baseFace;
     }
 
@@ -44,34 +37,21 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
         return $this->baseFace;
     }
 
-
-
-    public function getInstanceKeeper()
-    {
-        return $this->instanceKeeper;
-    }
-
     public function getInstancesByPath($path = null)
     {
         if ($path) {
-            return isset($this->instancesByPath[$path]) ? $this->instancesByPath[$path] : [];
+            return isset($this->instancesByPathIdentity[$path]) ? $this->instancesByPathIdentity[$path] : [];
         } else {
-            return $this->instancesByPath;
+            return $this->instancesByPathIdentity;
         }
     }
 
-    public function getInstancesByClass($className)
-    {
-        return $this->instanceKeeper->getInstance($className);
+    public function setInstances($instancesByPath){
+        $this->instancesByPathIdentity = $instancesByPath;
+        $this->instanceByIndex = array_values($this->instancesByPathIdentity["this"]);
     }
-    
 
-    public function addInstanceByPath($path, $instance, $identity)
-    {
-        $this->instancesByPath[$path][] = $instance;
-        $this->instancesByPathIdentity[$path][$identity] = $instance;
-    }
-    
+
     public function pathHasIdentity($path, $identity)
     {
         return isset($this->instancesByPathIdentity[$path][$identity]);
@@ -83,18 +63,14 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
     public function getPathes(){
         return array_keys($this->instancesByPathIdentity);
     }
-    
+
     public function getBaseInstances()
     {
-        if (isset($this->instancesByPath["this"])) {
-            return $this->instancesByPath["this"];
+        if (isset($this->instancesByPathIdentity["this"])) {
+            return $this->instancesByPathIdentity["this"];
         } else {
             return [];
         }
-    }
-
-    public function first(){
-        return isset($this[0]) ? $this[0] : null;
     }
 
     /**
@@ -103,96 +79,59 @@ class ResultSet implements \ArrayAccess, \Countable, \IteratorAggregate
      * @return null
      */
     public function getAt($i){
-        return isset($this[$i]) ? $this[$i] : null;
+        return isset($this->instanceByIndex[$i])
+            ? $this->instanceByIndex[$i]
+            : null;
     }
 
-    /**
-     * @param EntityFace $join
-     * @param EntityFace $from
-     * @param \PDO $PDO
-     */
-//    public function queryJoin($what, \PDO $PDO){
-//
-//
-//        // TODO
-//
-//        $join = $this->baseFace->getElement($what);
-//
-//        try {
-//            $from = $this->baseFace->getElement($what, 1, $pieces);
-//            $joinPath = $pieces[1];
-//        } catch (RootFaceReachedException $e) {
-//            $from = $this->baseFace;
-//            $joinPath = $what;
-//        }
-//
-//        $instances = $this->getInstancesByClass($from->getClass());
-//
-//        if(!$instances){
-//            return;
-//        }else{
-//            $query = new SelectBuilder($from->getFace());
-//            $query->join($joinPath);
-//
-//            $from->getFace()->getIdentifiers();
-//        }
-//
-//
-//
-//    }
-    
-    
-    
-    
+
+
+
     /*================================
      *  FROM ARRAY ACCESS INTERFACE  =
      *================================*/
-    
+
     public function offsetExists($offset)
     {
-        return isset($this->instancesByPath["this"][$offset]);
+        return isset($this->instanceByIndex[$offset]);
     }
 
     public function offsetGet($offset)
     {
-        return isset($this->instancesByPath["this"][$offset]) ? $this->instancesByPath["this"][$offset] : null;
+        return $this->instanceByIndex[$offset];
     }
 
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
-            $this->$this->instancesByPath["this"][]        = $value;
-        } else {
-            $this->$this->instancesByPath["this"][$offset] = $value;
-        }
+        throw new Exception("Adding offset to a ResultSet is forbidden");
     }
 
     public function offsetUnset($offset)
     {
-        unset($this->$this->instancesByPath["this"][$offset]);
+        throw new Exception("removing offset from a ResultSet is forbidden");
     }
 
-    
-    
-    
-  
+
+
+
+
     /*=============================
      *  FROM COUNTABLE INTERFACE  =
      *=============================*/
-    
+
     public function count()
     {
-        return isset($this->instancesByPath["this"]) ? count($this->instancesByPath["this"]) : 0;
+        return isset($this->instancesByPathIdentity["this"]) ? count($this->instancesByPathIdentity["this"]) : 0;
     }
 
-    
-    
+
+
     /*======================================
      *  FROM INTERATOR AGGREGATEINTERFACE  =
      *======================================*/
-    
+
     public function getIterator()
     {
-        return isset($this->instancesByPath["this"]) ? new \ArrayIterator($this->instancesByPath["this"]) : new \ArrayIterator();
+        return isset($this->instancesByPathIdentity["this"]) ? new \ArrayIterator($this->instancesByPathIdentity["this"]) : new \ArrayIterator();
     }
 }

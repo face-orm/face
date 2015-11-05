@@ -5,7 +5,7 @@ namespace Face\Sql\Query\Clause;
 
 use Face\Core\EntityFace;
 use Face\Exception\BadParameterException;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class From implements SqlClauseInterface{
 
@@ -19,7 +19,7 @@ class From implements SqlClauseInterface{
         $this->fromItem = $what;
     }
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         $table = null;
         if(is_string($this->fromItem)){

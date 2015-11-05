@@ -4,7 +4,7 @@ namespace Face\Sql\Query\Clause;
 
 
 use Face\Sql\Query\Clause\Select\Column;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class Select implements SqlClauseInterface {
 
@@ -19,7 +19,7 @@ class Select implements SqlClauseInterface {
     }
 
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         $sql="SELECT ";
 

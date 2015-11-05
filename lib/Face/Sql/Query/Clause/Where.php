@@ -4,7 +4,7 @@ namespace Face\Sql\Query\Clause;
 
 
 use Face\Sql\Query\Clause\Where\AbstractWhereClause;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class Where implements SqlClauseInterface {
 
@@ -18,11 +18,10 @@ class Where implements SqlClauseInterface {
         $this->where = $where;
     }
 
-
     /**
      * @inheritdoc
      */
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
 
         $w = $this->where->getSqlString($q);

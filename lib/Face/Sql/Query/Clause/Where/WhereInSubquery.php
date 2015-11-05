@@ -5,7 +5,7 @@ namespace Face\Sql\Query\Clause\Where;
 use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\Clause\SqlClauseInterface;
 use Face\Sql\Query\Clause\Where;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
 class WhereInSubquery extends AbstractWhereClause
 {
@@ -27,7 +27,7 @@ class WhereInSubquery extends AbstractWhereClause
     }
 
 
-    public function getSqlString(FQuery $q)
+    public function getSqlString(QueryInterface $q)
     {
         $string = "(";
 

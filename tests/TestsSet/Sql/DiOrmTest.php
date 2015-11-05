@@ -35,7 +35,7 @@ class DiOrmTest extends Test\PHPUnitTestDb
 
     }
 
-    
+
     public function testDiOrmSelect()
     {
 
@@ -67,7 +67,7 @@ class DiOrmTest extends Test\PHPUnitTestDb
 
         $this->assertEquals(5 , $insertResult->getInsertId() );
         $this->assertEquals(1 , $insertResult->countAffectedRows() );
-        $this->isInstanceOf("PDOStatement" , $insertResult->getPdoStatement() );
+        $this->assertInstanceOf("PDOStatement" , $insertResult->getPdoStatement() );
 
         $fQuery= Tree::faceQueryBuilder($this->getDiOrm()->getConfig());
         $fQuery->where('~age=:age')
@@ -87,7 +87,7 @@ class DiOrmTest extends Test\PHPUnitTestDb
         $updateResult = $this->getDiOrm()->simpleUpdate($tree);
 
         $this->assertEquals(1 , $updateResult->countAffectedRows() );
-        $this->isInstanceOf("PDOStatement" , $updateResult->getPdoStatement() );
+        $this->assertInstanceOf("PDOStatement" , $updateResult->getPdoStatement() );
 
         $fQuery= Tree::faceQueryBuilder($this->getDiOrm()->getConfig());
         $fQuery->where('~id=:id')
@@ -108,7 +108,7 @@ class DiOrmTest extends Test\PHPUnitTestDb
         $deleteResult = $this->getDiOrm()->simpleDelete($seed);
 
         $this->assertEquals(1 , $deleteResult->countAffectedRows() );
-        $this->isInstanceOf("PDOStatement" , $deleteResult->getPdoStatement() );
+        $this->assertInstanceOf("PDOStatement" , $deleteResult->getPdoStatement() );
 
         $fQuery= Seed::faceQueryBuilder($this->getDiOrm()->getConfig());
         $fQuery->where('~id=:id')
@@ -118,7 +118,7 @@ class DiOrmTest extends Test\PHPUnitTestDb
         $this->assertEquals(0,$seeds->count());
 
     }
-    
+
 
     public function testSelectBuilder(){
 
@@ -136,7 +136,7 @@ class DiOrmTest extends Test\PHPUnitTestDb
         $this->assertEquals(8,$trees[0]->getAge());
 
     }
- 
+
 
 }
 

@@ -8,65 +8,52 @@
 
 namespace Face\Sql\Query\Clause\Select;
 
-use Face\Core\EntityFaceElement;
 use Face\Sql\Query\Clause\SqlClauseInterface;
-use Face\Sql\Query\FQuery;
+use Face\Sql\Query\QueryInterface;
 
-class Column implements SqlClauseInterface {
+abstract class Column implements SqlClauseInterface {
 
     protected $path;
-    protected $alias;
-    /**
-     * @var EntityFaceElement
-     */
-    protected $entityFaceElement;
+    protected $queryAlias;
+    protected $hydrationAlias;
 
-    function __construct($parentPath, $alias, EntityFaceElement $entityFaceElement)
+
+    public function getSqlString(QueryInterface $fQuery)
     {
-        $this->parentPath = $parentPath;
-        $this->alias = $alias;
-        $this->entityFaceElement = $entityFaceElement;
-    }
+        $queryAlias = $this->getQueryAlias(true);
 
-    public function getSqlString(FQuery $fQuery)
-    {
-        return
-            $this->getSqlPath() . " AS " . $this->getAlias(true);
-    }
-
-    public function getSqlPath(){
-        return FQuery::__doFQLTableNameStatic($this->parentPath, null, true) . '.' . $this->entityFaceElement->getSqlColumnName(true);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPath()
-    {
-        return $this->parentPath . "." . $this->entityFaceElement->getName();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAlias($escaped = false)
-    {
-        if($escaped){
-            return "`" . $this->alias . "`";
+        if($queryAlias){
+            return $this->getSqlStatement($fQuery) . " AS " . $queryAlias;
         }else{
-            return $this->alias;
+            return $this->getSqlStatement($fQuery);
         }
     }
 
+
+
+    abstract public function getSqlStatement(QueryInterface $queryInterface);
+
+    abstract public function isHydratable();
+
+    abstract public function getHydrationAlias();
+
     /**
-     * @return EntityFaceElement
+     * Set an alias that is used as column name in the query
+     * @param string $alias
      */
-    public function getEntityFaceElement()
-    {
-        return $this->entityFaceElement;
+    public function setQueryAlias($alias){
+        $this->queryAlias = $alias;
     }
 
-
-
-
+    /**
+     * @return mixed
+     */
+    public function getQueryAlias($escaped = false)
+    {
+        if($escaped && $this->queryAlias){
+            return "`" . $this->queryAlias . "`";
+        }else{
+            return $this->queryAlias;
+        }
+    }
 }

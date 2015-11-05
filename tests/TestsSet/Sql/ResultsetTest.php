@@ -9,20 +9,16 @@ class ResultsetTest extends PHPUnit_Framework_TestCase
     public function testConstruction(){
 
         $face = Tree::getEntityFace();
-        $ik = new \Face\Core\InstancesKeeper();
 
-        $r = new \Face\Sql\Result\ResultSet($face,$ik);
-
-        $this->assertSame($ik,$r->getInstanceKeeper());
+        $r = new \Face\Sql\Result\ResultSet($face);
 
     }
 
     public function testBasics(){
 
         $face = Tree::getEntityFace();
-        $ik = new \Face\Core\InstancesKeeper();
 
-        $r = new \Face\Sql\Result\ResultSet($face,$ik);
+        $r = new \Face\Sql\Result\ResultSet($face);
 
         // testgetBaseInstanceEmpty
         $this->assertEquals([],$r->getBaseInstances());
@@ -43,40 +39,6 @@ class ResultsetTest extends PHPUnit_Framework_TestCase
         $lemon2 = new Lemon();
         $lemon2->setId(2);
         $lemon2->setMature(2);
-
-        $r->addInstanceByPath("this",$tree1,$tree1->faceGetIdentity());
-        $r->addInstanceByPath("this",$tree2,$tree2->faceGetIdentity());
-
-        $r->addInstanceByPath("this.lemons",$lemon1,$lemon1->faceGetIdentity());
-        $r->addInstanceByPath("this.lemons",$lemon2,$lemon2->faceGetIdentity());
-
-
-        // test getInstancesByPath
-
-        $noPath = $r->getInstancesByPath();
-
-        $this->assertSame([
-            "this"=>[$tree1,$tree2],
-            "this.lemons"=>[$lemon1,$lemon2]
-        ],$noPath);
-
-        $withPath = $r->getInstancesByPath("this.lemons");
-
-        $this->assertSame([$lemon1,$lemon2],$withPath);
-
-
-
-        // testgetBaseInstance
-
-        $this->assertSame($r->getInstancesByPath("this"),$r->getBaseInstances());
-
-
-        // TEST ->get($i) and ->first()
-        $this->assertSame($tree1, $r->first());
-        $this->assertSame($tree1, $r->getAt(0));
-        $this->assertSame($tree2, $r->getAt(1));
-        $this->assertSame(NULL, $r->getAt(3));
-
     }
 
 

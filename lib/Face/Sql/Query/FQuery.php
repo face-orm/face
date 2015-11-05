@@ -3,21 +3,15 @@
 namespace Face\Sql\Query;
 
 use Face\Config;
+use Face\ContextAwareInterface;
 use Face\Core\EntityFace;
-use Face\Core\EntityFaceElement;
-use Face\Core\Navigator;
 use Face\Exception\BadParameterException;
 use Face\Exception\QueryFailedException;
-use Face\Sql\Query\SelectBuilder\JoinQueryFace;
+use Face\Sql\Query\Clause\Select\Column;
 use Face\Sql\Query\SelectBuilder\QueryFace;
 use Face\Util\StringUtils;
 
-/**
- * Description of Query
- *
- * @author Soufiane Ghzal
- */
-abstract class FQuery
+abstract class FQuery implements QueryInterface
 {
 
 
@@ -29,20 +23,6 @@ abstract class FQuery
 
     // alias that can be replaced from an instance
     protected $dotToken;
-
-    
-    
-    /**
-     *
-     * @var EntityFace
-     */
-    protected $baseFace;
-    
-    /**
-     * list of face joined to the query
-     * @var JoinQueryFace[]
-     */
-    protected $joins;
 
 
     /**
@@ -57,29 +37,50 @@ abstract class FQuery
      */
     protected $valueBinds;
 
-
-    protected $aliases;
-
     function __construct(EntityFace $baseFace)
     {
-        $this->dotToken = self::$DOT_TOKEN;
-        $this->baseFace = $baseFace;
         $this->fromQueryFace = new QueryFace("this", $baseFace, $this);
-        $this->joins=[];
         $this->valueBinds=[];
     }
 
-    
-    abstract public function getSqlString();
 
     /**
-     * @return SelectBuilder\JoinQueryFace[]
+     * replaces the waved string by the sql-valid column name
+     * @param $string
      */
-    public function getJoins()
+    public function parseColumnNames($string, ContextAwareInterface $context = null)
     {
-        return $this->joins;
+        $matchArray = [];
+        preg_match_all("#~([a-zA-Z0-9_]\\.{0,1})+#", $string, $matchArray);
+        $matchArray = array_unique($matchArray[0]);
+
+        foreach ($matchArray as $match) {
+            if($context){
+                $nsMatch = $context->getNameInContext($match);
+            }else{
+                $nsMatch = $match;
+            }
+
+            $path=ltrim($nsMatch, "~");
+
+            $tablePath = rtrim(substr($nsMatch, 1, strrpos($nsMatch, ".")), ".");
+
+            $replace= $this->_doFQLTableName($tablePath, null, true)
+                . "."
+                . $this->getBaseFace()
+                    ->getElement($path)
+                    ->getSqlColumnName(true);
+
+            $string = str_replace($match, $replace, $string);
+        }
+
+        return $string;
     }
 
+
+    /**
+     * @inheritdoc
+     */
     public function getBaseQueryFace(){
         return $this->fromQueryFace;
     }
@@ -104,10 +105,10 @@ abstract class FQuery
         }
 
         $stmt = $this->getPdoStatement($pdo);
-        
+
         if ($stmt->execute()) {
             return $stmt;
-            
+
         } else {
             // TODO : handle errors ".__FILE__.":".__LINE__;
             throw new QueryFailedException($stmt);
@@ -132,28 +133,12 @@ abstract class FQuery
 
         return $stmt;
     }
-    
+
     public function bindValue($parameter, $value, $data_type = \PDO::PARAM_STR)
     {
         $this->valueBinds[$parameter] = [$value,$data_type];
-        
+
         return $this;
-    }
-
-    /**
-     * array of columns to be selected with their alias in this form : $array["alias"] = "real.path"
-     * @return array
-     */
-    public function getSelectedColumns()
-    {
-        $finalColumns = $this->fromQueryFace->getColumnsReal();
-//
-//        foreach($this->joins as $join){
-//            $finalColumns = array_merge($finalColumns,$join->getColumnsReal());
-//        }
-
-
-        return $finalColumns;
     }
 
 
@@ -176,16 +161,14 @@ abstract class FQuery
     }
 
     /**
-     * give all the entities which are part of the FQuery
-     * @return EntityFace[] list of the face
+     * gives all the entities which are part of the FQuery
+     * @return QueryFace[] list of the face
      */
     public function getAvailableQueryFaces()
     {
-        $array['this'] = $this->fromQueryFace;
-
-        return array_merge($array, $this->getJoins());
+        return ["this" => $this->fromQueryFace];
     }
-    
+
     /**
      * convention for having the same table alias every where. E.G  "a.b" will become "this__dot_a__dot__b"
      * @param string $path
@@ -243,6 +226,6 @@ abstract class FQuery
      */
     public function getBaseFace()
     {
-        return $this->baseFace;
+        return $this->fromQueryFace->getFace();
     }
 }
